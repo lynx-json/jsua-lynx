@@ -1,0 +1,32 @@
+{
+  "name": "jsua-lynx",
+  "version": "0.1.0",
+  "description": "JSUA extensions for the Lynx media type.",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --recursive test",
+    "build": "babel src -d lib",
+    "install": "npm run build"
+  },
+  "keywords": [
+    "lynx",
+    "lynx+json",
+    "jsua"
+  ],
+  "author": "lynx-json.org",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-env": "^1.1.8",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0"
+  },
+  "dependencies": {
+    "lynx-parser": "github:johnhowes/lynx-parser"
+  }
+}
