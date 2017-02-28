@@ -20,20 +20,20 @@ export function register(hint, builder, input) {
 }
 
 export function build(content) {
+  if (!content) return Promise.reject(new Error("'content' param is required."));
+  if (!content.blob) return Promise.reject(new Error("'content' object must have a 'blob' property."));
+  
   return new Promise(function (resolve, reject) {
     var fileReader = new FileReader();
     
     fileReader.onloadend = function (evt) {
-      LYNX.parse(evt.target.result)
-        .then(node => {
-          return {
-            content,
-            node
-          };
-        })
+      if (!evt) reject(new Error("'evt' param is required."));
+      if (evt.target === undefined) reject(new Error("'evt' object must have a 'target' property."));
+      if (evt.target.result === undefined) reject(new Error("'evt.target' object must have a 'result' property."));
+      
+      LYNX.parse(evt.target.result, { location: content.url })
         .then(builders.nodeViewBuilder)
-        .then(resolve)
-        .catch(reject);
+        .then(resolve, reject);
     };
     
     fileReader.readAsText(content.blob);
