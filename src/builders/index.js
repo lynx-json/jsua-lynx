@@ -1,4 +1,6 @@
 import * as building from "../building";
+import { textViewBuilder } from "./text";
+import { textInputViewBuilder } from "./text-input";
 
 export function resolveViewBuilder(registrations, hints, input) {
   function matches(hint) {
@@ -34,14 +36,7 @@ export function nodeViewBuilder(node) {
   return view;
 }
 
-export function textViewBuilder(node) {
-  var view = document.createElement("pre");
-  
-  if (node.value === null || node.value === undefined) {
-    view.textContent = "";  
-  } else {
-    view.textContent = node.value.toString();  
-  }
-  
-  return view;
-}
+export { 
+  textViewBuilder,
+  textInputViewBuilder
+};
