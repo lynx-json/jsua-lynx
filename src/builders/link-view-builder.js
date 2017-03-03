@@ -1,29 +1,16 @@
+import * as containers from "./container-view-builder";
+
 export function linkViewBuilder(node) {
   var view = document.createElement("a");
   
-  var href = node.document.resolveURI(node.value.href);
-  rootElement.href = href;
+  view.href = node.value.href;
+  view.type = node.value.type;
   
-  if (node.value.type) {
-    rootElement.type = node.value.type;
-  }
-
-  function appendChild(child) {
-    rootElement.appendChild(child);
-  }
+  containers.buildChildViews(node).forEach(view.appendChild);
   
-  function appendChildren(children) {
-    if (children.length === 0) {
-      rootElement.textContent = href;
-    }
-    else {
-      children.forEach(appendChild);  
-    }
+  if (view.children.length === 0) {
+    view.textContent = view.href;
   }
-  
-  return app.extensions.lynx.rendering.children(node)
-    .then(appendChildren)
-    .then(function () { return rootElement; });
     
   return view;
 }

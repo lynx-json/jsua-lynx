@@ -1,9 +1,15 @@
 global.document = {
   createElement: function (tagName) {
-    return {
+    var element = {
       setAttribute: function (attr, val) {
-        this[attr] = val;
+        element[attr] = val;
+      },
+      children: [],
+      appendChild: function (child) {
+        element.children.push(child);
       }
     };
+    
+    return element;
   }
 };

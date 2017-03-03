@@ -31,7 +31,7 @@ describe("builders / nodeViewBuilder", function () {
   });
   
   it("should throw when a view builder is not be resolved", function () {  
-    let resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
+    var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
     resolveViewBuilderStub.returns(null);
     
     expect(function () {
@@ -43,12 +43,12 @@ describe("builders / nodeViewBuilder", function () {
   });
   
   it("should call the resolved builder function", function () {  
-    let resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
-    let builderStub = sinon.stub();
+    var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
+    var builderStub = sinon.stub();
     builderStub.returns({});
     resolveViewBuilderStub.returns(builderStub);
     
-    let view = builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } });
+    var view = builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } });
     
     expect(view).to.not.be.null;
     builderStub.called.should.be.true;
