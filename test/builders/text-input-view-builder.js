@@ -21,7 +21,6 @@ describe("textInputViewBuilder", function () {
     expect(view).to.not.be.null;
     view.value.should.equal("");
     view.name.should.equal(node.spec.input.name);
-    view['data-lynx-input'].should.be.true;
   });
   
   it("should return view with value", function () {
@@ -58,7 +57,6 @@ describe("textInputViewBuilder", function () {
     view.value.should.equal(node.value);
     view.name.should.equal(node.spec.input.name);
     view.type.should.equal("text");
-    view['data-lynx-input'].should.be.true;
   });
   
   it("should return view for concealed 'line' input", function () {
@@ -79,10 +77,9 @@ describe("textInputViewBuilder", function () {
     view.value.should.equal(node.value);
     view.name.should.equal(node.spec.input.name);
     view.type.should.equal("password");
-    view["data-lynx-input"].should.be.true;
   });
   
-  it("should set 'data-lynx-options' attribute", function () {
+  it("should set attribute 'data-lynx-options'", function () {
     var node = {
       spec: {
         hints: [ { name: "http://iso.org/8601/date" }, { name: "text" } ],
@@ -97,6 +94,5 @@ describe("textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view["data-lynx-options"].should.equal(node.spec.options);
   });
 });

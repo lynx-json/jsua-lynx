@@ -23,7 +23,9 @@ A view representing a node of a Lynx document may have the following attributes:
 * `data-lynx-visibility` - the node's `visibility`
 * `data-lynx-hints` - the node's `hints`
 * `data-lynx-name` - the node's `name`
+* `data-lynx-labeled-by` - the node's `labeledBy` property value
 * `data-lynx-scope` - the node's `scope` (`container` nodes)
 * `data-lynx-follow` - the node's `follow` property value (`link` nodes)
 * `data-lynx-input` - the view is an input control
 * `data-lynx-options` - the node's `options` property value (input nodes)
+* `data-lynx-option` - the view is an option control

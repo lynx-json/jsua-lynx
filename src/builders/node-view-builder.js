@@ -24,16 +24,16 @@ export function nodeViewBuilder(node) {
   if (node.spec.visibility) view.setAttribute("data-lynx-visibility", node.spec.visibility);
   if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
   if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
-  // data-lynx-option
-  // data-lynx-options
-  // data-lynx-scope (fka data-content-scope)
-  // data-lynx-submitter
-  // data-lynx-labeled-by
+  if (input) view.setAttribute("data-lynx-input", "true");
+  if (node.spec.options) view.setAttribute("data-lynx-options", node.spec.options);
+  if (node.spec.option) view.setAttribute("data-lynx-option", "true");
+  if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
   // data-lynx-marker-for
   // data-lynx-validation-formatted
   // data-lynx-validation-state
   // view.lynx.validation = node.spec.validation
   // data-lynx-data-* properties
+  // data-lynx-submitter (submit should handle this)
   
   return view;
 }
