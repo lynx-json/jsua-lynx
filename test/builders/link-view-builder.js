@@ -1,4 +1,4 @@
-require("./html-document-api");
+require("../html-document-api");
 var links = require("../../lib/builders/link-view-builder");
 var containers = require("../../lib/builders/container-view-builder");
 var chai = require("chai");
@@ -51,9 +51,52 @@ describe("linkViewBuilder", function () {
     expect(view).to.not.be.null;
     view.children.length.should.equal(1);
     view.href.should.equal(node.value.href);
-    view.href.should.not.equal(view.textContent);
     view.type.should.equal(node.value.type);
     buildChildViewsStub.called.should.be.true;
+    buildChildViewsStub.restore();
+  });
+  
+  it("should set attribute 'follow' when on value", function () {
+    var node = {
+      spec: {
+        hints: [ { name: "link" } ]
+      },
+      value: {
+        href: "/foo",
+        type: "text/plain",
+        follow: 0
+      }
+    };
+    
+    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
+    buildChildViewsStub.returns([]);
+    
+    var view = links.linkViewBuilder(node);
+    
+    expect(view).to.not.be.null;
+    view["data-lynx-follow"].should.equal(0);
+    buildChildViewsStub.restore();
+  });
+  
+  it("should set attribute 'follow' when on spec", function () {
+    var node = {
+      spec: {
+        hints: [ { name: "link" } ],
+        follow: 0
+      },
+      value: {
+        href: "/foo",
+        type: "text/plain"
+      }
+    };
+    
+    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
+    buildChildViewsStub.returns([]);
+    
+    var view = links.linkViewBuilder(node);
+    
+    expect(view).to.not.be.null;
+    view["data-lynx-follow"].should.equal(0);
     buildChildViewsStub.restore();
   });
 });

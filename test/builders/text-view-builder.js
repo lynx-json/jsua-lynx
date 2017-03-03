@@ -1,4 +1,4 @@
-require("./html-document-api");
+require("../html-document-api");
 var builders = require("../../lib/builders");
 var chai = require("chai");
 var should = chai.should();

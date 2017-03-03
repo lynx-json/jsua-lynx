@@ -27,7 +27,7 @@ export function textInputViewBuilder(node) {
   
   view.setAttribute("data-lynx-input", true);
   
-  if (node.spec.options) view.setAttribute("data-lynx-options-value-hint", node.spec.hints[0].name);
+  if (node.spec.options) view.setAttribute("data-lynx-options", node.spec.options);
   
   return view;
 }

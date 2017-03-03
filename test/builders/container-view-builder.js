@@ -1,4 +1,4 @@
-require("./html-document-api");
+require("../html-document-api");
 var containers = require("../../lib/builders/container-view-builder");
 var nodes = require("../../lib/builders/node-view-builder");
 var chai = require("chai");

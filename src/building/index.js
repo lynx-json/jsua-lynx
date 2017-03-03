@@ -31,8 +31,16 @@ export function build(content) {
       if (evt.target === undefined) reject(new Error("'evt' object must have a 'target' property."));
       if (evt.target.result === undefined) reject(new Error("'evt.target' object must have a 'result' property."));
       
+      var doc;
       LYNX.parse(evt.target.result, { location: content.url })
+        .then(node => doc = node)
         .then(builders.nodeViewBuilder)
+        .then(view => {
+          view.setAttribute("data-content-url", content.url);
+          view.setAttribute("data-content-type", content.blob.type);
+          if (doc.realm) view.setAttribute("data-lynx-realm", doc.realm);
+          return view;
+        })
         .then(resolve, reject);
     };
     

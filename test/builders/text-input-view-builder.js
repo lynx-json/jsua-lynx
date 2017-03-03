@@ -1,4 +1,4 @@
-require("./html-document-api");
+require("../html-document-api");
 var builders = require("../../lib/builders/text-input-view-builder");
 var chai = require("chai");
 var should = chai.should();
@@ -97,6 +97,6 @@ describe("textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view["data-lynx-options-value-hint"].should.equal("http://iso.org/8601/date");
+    view["data-lynx-options"].should.equal(node.options);
   });
 });

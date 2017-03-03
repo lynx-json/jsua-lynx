@@ -1,3 +1,4 @@
+require("../html-document-api");
 var builders = require("../../lib/builders");
 var resolver = require("../../lib/builders/resolve-view-builder");
 var chai = require("chai");
@@ -45,12 +46,27 @@ describe("builders / nodeViewBuilder", function () {
   it("should call the resolved builder function", function () {  
     var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
     var builderStub = sinon.stub();
-    builderStub.returns({});
+    builderStub.returns(document.createElement());
     resolveViewBuilderStub.returns(builderStub);
     
-    var view = builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } });
+    var node = { 
+      spec: { 
+        name: "node1",
+        visibility: "visible",
+        hints: [ { name: "group" }, { name: "container" } ] 
+      },
+      value: {
+        scope: "http://lynx-json.org/tests/"
+      }
+    };
+    
+    var view = builders.nodeViewBuilder(node);
     
     expect(view).to.not.be.null;
+    view["data-lynx-hints"].should.equal(node.spec.hints.join(" "));
+    view["data-lynx-visibility"].should.equal(node.spec.visibility);
+    view["data-lynx-scope"].should.equal(node.value.scope);
+    view["data-lynx-name"].should.equal(node.spec.name);
     builderStub.called.should.be.true;
     resolveViewBuilderStub.called.should.be.true;
     resolveViewBuilderStub.restore();
