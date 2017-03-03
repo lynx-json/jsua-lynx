@@ -21,7 +21,7 @@ export function nodeViewBuilder(node) {
   
   // Apply common node view attributes...
   view.setAttribute("data-lynx-hints", node.spec.hints.map(hint => hint.name).join(" "));
-  view.setAttribute("data-lynx-visibility", node.spec.visibility || "");
+  if (node.spec.visibility) view.setAttribute("data-lynx-visibility", node.spec.visibility);
   if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
   if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
   // data-lynx-option
