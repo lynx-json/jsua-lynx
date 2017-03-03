@@ -63,7 +63,7 @@ describe("builders / nodeViewBuilder", function () {
     var view = builders.nodeViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view["data-lynx-hints"].should.equal(node.spec.hints.join(" "));
+    view["data-lynx-hints"].should.equal(node.spec.hints.map(hint => hint.name).join(" "));
     view["data-lynx-visibility"].should.equal(node.spec.visibility);
     view["data-lynx-scope"].should.equal(node.value.scope);
     view["data-lynx-name"].should.equal(node.spec.name);

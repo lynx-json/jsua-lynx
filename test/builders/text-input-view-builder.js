@@ -82,7 +82,7 @@ describe("textInputViewBuilder", function () {
     view["data-lynx-input"].should.be.true;
   });
   
-  it("should set 'data-lynx-options-value-hint' attribute with most specific hint", function () {
+  it("should set 'data-lynx-options' attribute", function () {
     var node = {
       spec: {
         hints: [ { name: "http://iso.org/8601/date" }, { name: "text" } ],
@@ -97,6 +97,6 @@ describe("textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view["data-lynx-options"].should.equal(node.options);
+    view["data-lynx-options"].should.equal(node.spec.options);
   });
 });
