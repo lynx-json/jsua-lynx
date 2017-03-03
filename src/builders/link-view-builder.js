@@ -6,7 +6,7 @@ export function linkViewBuilder(node) {
   view.href = node.value.href;
   view.type = node.value.type;
   
-  containers.buildChildViews(node).forEach(view.appendChild);
+  containers.buildChildViews(node).forEach(childView => view.appendChild(childView));
   
   if (view.children.length === 0) {
     view.textContent = view.href;

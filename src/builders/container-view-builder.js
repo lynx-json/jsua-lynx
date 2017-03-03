@@ -2,7 +2,7 @@ import * as nodes from "./node-view-builder";
 
 export function containerViewBuilder(node) {
   var view = document.createElement("div");
-  buildChildViews(node).forEach(view.appendChild);
+  buildChildViews(node).forEach(childView => view.appendChild(childView));
   return view;
 }
 
