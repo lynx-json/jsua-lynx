@@ -99,4 +99,26 @@ describe("linkViewBuilder", function () {
     view["data-lynx-follow"].should.equal(0);
     buildChildViewsStub.restore();
   });
+  
+  it("should resolve the 'href' if a 'base' URI is present", function () {
+    var node = {
+      base: "http://example.com",
+      spec: {
+        hints: [ { name: "link" } ]
+      },
+      value: {
+        href: "/foo",
+        type: "text/plain"
+      }
+    };
+    
+    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
+    buildChildViewsStub.returns([]);
+    
+    var view = links.linkViewBuilder(node);
+    
+    expect(view).to.not.be.null;
+    view.href.should.equal("http://example.com/foo");
+    buildChildViewsStub.restore();
+  });
 });

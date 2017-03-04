@@ -14,7 +14,10 @@ export function buildChildViews(node) {
   if (node.value === undefined || node.value === null) return [];
   
   if (Array.isArray(node.value)) {
-    return node.value.map(nodes.nodeViewBuilder);
+    return node.value.map(child => {
+      child.base = node.base;
+      return child;
+    }).map(nodes.nodeViewBuilder);
   }
   
   if (typeof node.value === "object") {
@@ -23,6 +26,10 @@ export function buildChildViews(node) {
     return node.spec.children
       .map(childSpec => node.value[childSpec.name])
       .filter(isNotNullOrUndefined)
+      .map(child => {
+        child.base = node.base;
+        return child;
+      })
       .map(nodes.nodeViewBuilder);
   }
   

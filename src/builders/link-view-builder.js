@@ -1,9 +1,15 @@
 import * as containers from "./container-view-builder";
+import * as url from "url";
 
 export function linkViewBuilder(node) {
   var view = document.createElement("a");
   
-  view.href = node.value.href;
+  if (node.base) {
+    view.href = url.resolve(node.base, node.value.href);  
+  } else {
+    view.href = node.value.href;
+  }
+  
   view.type = node.value.type;
   
   if (node.value.follow !== undefined) {
