@@ -3,6 +3,7 @@ import * as builders from "./builders";
 
 building.register("container", builders.containerViewBuilder);
 building.register("link", builders.linkViewBuilder);
+building.register("submit", builders.submitViewBuilder);
 building.register("text", builders.textViewBuilder);
 building.register("text", builders.textInputViewBuilder, true);
 

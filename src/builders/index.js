@@ -4,6 +4,7 @@ import { textViewBuilder } from "./text-view-builder";
 import { textInputViewBuilder } from "./text-input-view-builder";
 import { containerViewBuilder } from "./container-view-builder";
 import { linkViewBuilder } from "./link-view-builder";
+import { submitViewBuilder } from "./submit-view-builder";
 
 export { 
   resolveViewBuilder,
@@ -11,5 +12,6 @@ export {
   textViewBuilder,
   textInputViewBuilder,
   containerViewBuilder,
-  linkViewBuilder
+  linkViewBuilder,
+  submitViewBuilder
 };
