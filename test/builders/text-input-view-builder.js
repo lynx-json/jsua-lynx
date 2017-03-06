@@ -4,7 +4,7 @@ var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
 
-describe("textInputViewBuilder", function () {
+describe("builders / textInputViewBuilder", function () {
   it("should return view for 'text' input", function () {
     var node = {
       spec: {

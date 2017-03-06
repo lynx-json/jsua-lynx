@@ -6,7 +6,7 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("linkViewBuilder", function () {
+describe("builders / submitViewBuilder", function () {
   it("should return view for 'submit' with no children", function () {
     var node = {
       spec: {
@@ -51,8 +51,8 @@ describe("linkViewBuilder", function () {
     expect(view).to.not.be.null;
     view.children.length.should.equal(1);
     view.formAction.should.equal(node.value.action);
-    view.formMethod.should.equal("");
-    view.formEnctype.should.equal("");
+    expect(view.formMethod).to.be.undefined;
+    expect(view.formEnctype).to.be.undefined;
     buildChildViewsStub.called.should.be.true;
     buildChildViewsStub.restore();
   });

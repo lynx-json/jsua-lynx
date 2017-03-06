@@ -6,7 +6,7 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("containerViewBuilder", function () {
+describe("builders / containerViewBuilder", function () {
   it("should return view for 'container' with array value", function () {
     var node = {
       spec: {

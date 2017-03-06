@@ -10,8 +10,8 @@ export function submitViewBuilder(node) {
     view.formAction = node.value.action;
   }
   
-  view.formEnctype = node.value.enctype || "";
-  view.formMethod = node.value.method || "";
+  if (node.value.method) view.formMethod = node.value.method;
+  if (node.value.enctype) view.formEnctype = node.value.enctype;
   
   if (node.value.send !== undefined) {
     view.setAttribute("data-lynx-send", node.value.send);

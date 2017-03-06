@@ -30,6 +30,7 @@ A view representing a node of a Lynx document may have the following attributes:
 * `data-lynx-follow` - the node's `follow` property value (`link` nodes)
 * `data-lynx-input` - the view is an input control (input nodes)
 * `data-lynx-options` - the node's `options` property value (input nodes)
+* `data-lynx-submitter` - the node's `submitter` property value (`form` and input nodes)
 * `data-lynx-option` - the view is an option control
 * `formaction` - the node's `action` property value (`submit` nodes)
 * `formmethod` - the node's `method` property value (`submit` nodes)

@@ -3,6 +3,7 @@ import { nodeViewBuilder } from "./node-view-builder";
 import { textViewBuilder } from "./text-view-builder";
 import { textInputViewBuilder } from "./text-input-view-builder";
 import { containerViewBuilder } from "./container-view-builder";
+import { formViewBuilder } from "./form-view-builder";
 import { linkViewBuilder } from "./link-view-builder";
 import { submitViewBuilder } from "./submit-view-builder";
 
@@ -13,5 +14,6 @@ export {
   textInputViewBuilder,
   containerViewBuilder,
   linkViewBuilder,
-  submitViewBuilder
+  submitViewBuilder,
+  formViewBuilder
 };

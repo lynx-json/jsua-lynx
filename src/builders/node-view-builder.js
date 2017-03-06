@@ -28,12 +28,12 @@ export function nodeViewBuilder(node) {
   if (node.spec.options) view.setAttribute("data-lynx-options", node.spec.options);
   if (node.spec.option) view.setAttribute("data-lynx-option", "true");
   if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
+  if (node.spec.submitter) view.setAttribute("data-lynx-submitter", node.spec.submitter);
   // data-lynx-marker-for
   // data-lynx-validation-formatted
   // data-lynx-validation-state
   // view.lynx.validation = node.spec.validation
   // data-lynx-data-* properties
-  // data-lynx-submitter (submit should handle this)
   
   return view;
 }

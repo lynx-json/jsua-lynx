@@ -4,7 +4,7 @@ var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
 
-describe("textViewBuilder", function () {
+describe("builders / textViewBuilder", function () {
   it("should return view", function () {
     var node = {
       value: "Hello, World!"

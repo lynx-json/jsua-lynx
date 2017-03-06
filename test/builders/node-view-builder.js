@@ -126,4 +126,20 @@ describe("builders / nodeViewBuilder", function () {
       view["data-lynx-options"].should.equal(node.spec.options);
     });
   });
+  
+  it("should set attribute 'data-lynx-submitter'", function () {  
+    var node = { 
+      spec: { 
+        name: "node1",
+        hints: [ { name: "text" } ],
+        submitter: "node2"
+      },
+      value: {}
+    };
+    
+    runTest(node, function (view) {
+      expect(view).to.not.be.null;
+      view["data-lynx-submitter"].should.equal(node.spec.submitter);
+    });
+  });
 });

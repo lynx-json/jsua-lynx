@@ -6,7 +6,7 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("linkViewBuilder", function () {
+describe("builders / linkViewBuilder", function () {
   it("should return view for 'link' with no children", function () {
     var node = {
       spec: {
