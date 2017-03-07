@@ -1,10 +1,13 @@
 import { transfer } from "jsua/lib/transferring";
 import { build } from "jsua/lib/views/building";
+import * as url from "url";
 
 export function contentViewBuilder(node) {
   var url = node.value.src;
   
-  if (!url) {
+  if (url) {
+    url = url.resolve(node.base || "http:", url);
+  } else {
     url = "data:" + node.value.type;
     
     if (node.value.encoding) {
