@@ -5,7 +5,9 @@ export function formViewBuilder(node) {
   view.autocomplete = "off";
   view.setAttribute("novalidate", "novalidate");
   
-  containers.buildChildViews(node).forEach(childView => view.appendChild(childView));
-    
-  return view;
+  return containers.buildChildViews(node)
+    .then(function (childViews) {
+      childViews.forEach(childView => view.appendChild(childView));
+      return view;
+    });
 }

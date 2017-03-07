@@ -19,17 +19,17 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = links.linkViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(0);
-    view.href.should.equal(node.value.href);
-    view.href.should.equal(view.textContent);
-    view.type.should.equal(node.value.type);
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    links.linkViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(0);
+      view.href.should.equal(node.value.href);
+      view.href.should.equal(view.textContent);
+      view.type.should.equal(node.value.type);
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should return view for 'link' with children", function () {
@@ -44,16 +44,16 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([{}]);
+    buildChildViewsStub.returns(Promise.resolve([{}]));
     
-    var view = links.linkViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(1);
-    view.href.should.equal(node.value.href);
-    view.type.should.equal(node.value.type);
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    links.linkViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(1);
+      view.href.should.equal(node.value.href);
+      view.type.should.equal(node.value.type);
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should set attribute 'follow' when on value", function () {
@@ -69,13 +69,13 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = links.linkViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view["data-lynx-follow"].should.equal(0);
-    buildChildViewsStub.restore();
+    links.linkViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view["data-lynx-follow"].should.equal(0);
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should set attribute 'follow' when on spec", function () {
@@ -91,13 +91,13 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = links.linkViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view["data-lynx-follow"].should.equal(0);
-    buildChildViewsStub.restore();
+    links.linkViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view["data-lynx-follow"].should.equal(0);
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should resolve the 'href' if a 'base' URI is present", function () {
@@ -113,12 +113,12 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = links.linkViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.href.should.equal("http://example.com/foo");
-    buildChildViewsStub.restore();
+    links.linkViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.href.should.equal("http://example.com/foo");
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
 });

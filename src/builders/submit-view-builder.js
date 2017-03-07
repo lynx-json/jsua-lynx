@@ -19,11 +19,14 @@ export function submitViewBuilder(node) {
     view.setAttribute("data-lynx-send", node.spec.send);
   }
   
-  containers.buildChildViews(node).forEach(childView => view.appendChild(childView));
-  
-  if (view.children.length === 0) {
-    view.textContent = "Submit";
-  }
-    
-  return view;
+  return containers.buildChildViews(node)
+    .then(function (childViews) {
+      childViews.forEach(childView => view.appendChild(childView));
+      
+      if (view.children.length === 0) {
+        view.textContent = "Submit";
+      }
+      
+      return view;
+    });
 }

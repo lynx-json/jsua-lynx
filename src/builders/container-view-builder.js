@@ -2,8 +2,12 @@ import * as nodes from "./node-view-builder";
 
 export function containerViewBuilder(node) {
   var view = document.createElement("div");
-  buildChildViews(node).forEach(childView => view.appendChild(childView));
-  return view;
+  
+  return buildChildViews(node)
+    .then(function (childViews) {
+      childViews.forEach(childView => view.appendChild(childView));
+      return view;
+    });
 }
 
 export function buildChildViews(node) {
@@ -11,19 +15,21 @@ export function buildChildViews(node) {
     return childNode !== undefined && childNode !== null;
   }
   
-  if (node.value === undefined || node.value === null) return [];
+  if (node.value === undefined || node.value === null) return Promise.resolve([]);
   
   if (Array.isArray(node.value)) {
-    return node.value.map(child => {
-      child.base = node.base;
-      return child;
-    }).map(nodes.nodeViewBuilder);
+    let promisesForChildViews = node.value.map(child => {
+        child.base = node.base;
+        return child;
+      }).map(nodes.nodeViewBuilder);
+      
+    return Promise.all(promisesForChildViews);
   }
   
   if (typeof node.value === "object") {
-    if (!Array.isArray(node.spec.children)) return [];
+    if (!Array.isArray(node.spec.children)) return Promise.resolve([]);
     
-    return node.spec.children
+    let promisesForChildViews = node.spec.children
       .map(childSpec => node.value[childSpec.name])
       .filter(isNotNullOrUndefined)
       .map(child => {
@@ -31,8 +37,10 @@ export function buildChildViews(node) {
         return child;
       })
       .map(nodes.nodeViewBuilder);
+    
+    return Promise.all(promisesForChildViews);
   }
   
   console.log("Unable to determine child nodes for node: ", node);
-  return [];
+  return Promise.resolve([]);
 }

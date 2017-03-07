@@ -2,11 +2,13 @@ require("../html-document-api");
 var forms = require("../../lib/builders/form-view-builder");
 var containers = require("../../lib/builders/container-view-builder");
 var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("builders / submitViewBuilder", function () {
+describe("builders / formViewBuilder", function () {
   it("should return view for 'form' with no children", function () {
     var node = {
       spec: {
@@ -16,14 +18,14 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = forms.formViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(0);
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    forms.formViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(0);
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should return view for 'form' with children", function () {
@@ -35,13 +37,13 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([{}]);
+    buildChildViewsStub.returns(Promise.resolve([{}]));
     
-    var view = forms.formViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(1);
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    forms.formViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(1);
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
 });

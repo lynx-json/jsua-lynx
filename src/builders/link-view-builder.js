@@ -18,11 +18,14 @@ export function linkViewBuilder(node) {
     view.setAttribute("data-lynx-follow", node.spec.follow);
   }
   
-  containers.buildChildViews(node).forEach(childView => view.appendChild(childView));
-  
-  if (view.children.length === 0) {
-    view.textContent = view.href;
-  }
-    
-  return view;
+  return containers.buildChildViews(node)
+    .then(function (childViews) {
+      childViews.forEach(childView => view.appendChild(childView));
+      
+      if (view.children.length === 0) {
+        view.textContent = view.href;
+      }
+      
+      return view;
+    });
 }

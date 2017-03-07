@@ -2,8 +2,6 @@ require("../html-document-api");
 var building = require("../../lib/building");
 var builders = require("../../lib/builders");
 var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
 var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
@@ -79,45 +77,53 @@ describe("building", function () {
   
   describe("build", function () {
     it("should reject when no params", function () {
-      building.build().should.be.rejected;
+      building.build()
+        .should.be.rejectedWith(Error);
     });
     
     it("should reject when param doesn't have 'blob' property", function () {
-      building.build({}).should.be.rejected;
+      building.build({})
+        .should.be.rejectedWith(Error);
     });
     
     it("should reject when no params to FileReader onloadend event", function () {
       FileReader.eventParam = null;
-      building.build({ blob: {} }).should.be.rejected;
+      building.build({ blob: {} })
+        .should.be.rejectedWith(Error);
     });
     
     it("should reject when param to FileReader onloadend event doesn't have 'target' property", function () {
       FileReader.eventParam = {};
-      building.build({ blob: {} }).should.be.rejected;
+      building.build({ blob: {} })
+        .should.be.rejectedWith(Error);
     });
     
     it("should reject when param to FileReader onloadend event doesn't have 'target.result' property", function () {
       FileReader.eventParam = { target: {} };
-      building.build({ blob: {} }).should.be.rejected;
+      building.build({ blob: {} })
+        .should.be.rejectedWith(Error);
     });
     
     it("should reject when invalid Lynx content is present", function () {
-      var node = {};
-      var content = JSON.stringify(node);
-      var eventParam = { target: { result: content } };
+      var eventParam = { target: { result: "" } };
       FileReader.eventParam = eventParam;
       
       var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = {};
-      nodeViewBuilderStub.returns(view);
+      nodeViewBuilderStub.returns(Promise.resolve(view));
       
-      var promiseForView = building.build({ blob: {}});
-      nodeViewBuilderStub.restore();
+      function restore(param) {
+        nodeViewBuilderStub.restore();
+        if (param instanceof Error) throw param;
+        return param;
+      }
       
-      promiseForView.should.be.rejected;
+      building.build({ blob: {}})
+        .then(restore, restore)
+        .should.be.rejectedWith(Error);
     });
     
-    it("should resolve when valid Lynx content is present", function (done) {
+    it("should resolve when valid Lynx content is present", function () {
       var node = {
         spec: {
           hints: [ "text" ]
@@ -130,21 +136,22 @@ describe("building", function () {
       
       var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = document.createElement();
-      nodeViewBuilderStub.returns(view);
+      nodeViewBuilderStub.returns(Promise.resolve(view));
       
       var content = { url: "http://example.com/", blob: { type: "application/lynx+json" }};
-      var promiseForView = building.build(content);
-      nodeViewBuilderStub.restore();
       
-      promiseForView.then(function (result) {
+      building.build(content).then(function (result) {
+        nodeViewBuilderStub.restore();
+        return result;
+      }).then(function (result) {
         nodeViewBuilderStub.called.should.be.true;
         expect(result).to.not.be.null;
         result["data-content-url"].should.equal(content.url);
         result["data-content-type"].should.equal(content.blob.type);
-      }).then(done, done);
+      }).should.not.be.rejectedWith(Error);
     });
     
-    it("should set attribute 'realm'", function (done) {
+    it("should set attribute 'realm'", function () {
       var node = {
         realm: "http://lynx-json.org/tests/",
         spec: {
@@ -158,17 +165,20 @@ describe("building", function () {
       
       var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = document.createElement();
-      nodeViewBuilderStub.returns(view);
+      nodeViewBuilderStub.returns(Promise.resolve(view));
       
       var content = { url: "http://example.com/", blob: { type: "application/lynx+json" }};
-      var promiseForView = building.build(content);
-      nodeViewBuilderStub.restore();
       
-      promiseForView.then(function (result) {
+      building.build(content)
+      .then(function (result) {
+        nodeViewBuilderStub.restore();
+        return result;
+      })
+      .then(function (result) {
         nodeViewBuilderStub.called.should.be.true;
         expect(result).to.not.be.null;
         result["data-lynx-realm"].should.equal(node.realm);
-      }).then(done, done);
+      }).should.not.be.rejectedWith(Error);
     });
   });
 });

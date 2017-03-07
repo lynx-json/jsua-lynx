@@ -20,14 +20,14 @@ describe("builders / containerViewBuilder", function () {
     };
     
     var nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
-    nodeViewBuilderStub.returns({});
+    nodeViewBuilderStub.returns(Promise.resolve({}));
     
-    var view = containers.containerViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(3);
-    nodeViewBuilderStub.calledThrice.should.be.true;
-    nodeViewBuilderStub.restore();
+    containers.containerViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(3);
+      nodeViewBuilderStub.calledThrice.should.be.true;
+      nodeViewBuilderStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should return view for 'container' with object value", function () {
@@ -48,13 +48,13 @@ describe("builders / containerViewBuilder", function () {
     };
     
     var nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
-    nodeViewBuilderStub.returns({});
+    nodeViewBuilderStub.returns(Promise.resolve({}));
     
-    var view = containers.containerViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(3);
-    nodeViewBuilderStub.calledThrice.should.be.true;
-    nodeViewBuilderStub.restore();
+    containers.containerViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(3);
+      nodeViewBuilderStub.calledThrice.should.be.true;
+      nodeViewBuilderStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
 });

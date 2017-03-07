@@ -20,17 +20,17 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = submits.submitViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(0);
-    view.formAction.should.equal(node.value.action);
-    view.formMethod.should.equal(node.value.method);
-    view.formEnctype.should.equal(node.value.enctype);
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    submits.submitViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(0);
+      view.formAction.should.equal(node.value.action);
+      view.formMethod.should.equal(node.value.method);
+      view.formEnctype.should.equal(node.value.enctype);
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should return view for 'submit' with children", function () {
@@ -44,17 +44,17 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([{}]);
+    buildChildViewsStub.returns(Promise.resolve([{}]));
     
-    var view = submits.submitViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.children.length.should.equal(1);
-    view.formAction.should.equal(node.value.action);
-    expect(view.formMethod).to.be.undefined;
-    expect(view.formEnctype).to.be.undefined;
-    buildChildViewsStub.called.should.be.true;
-    buildChildViewsStub.restore();
+    submits.submitViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(1);
+      view.formAction.should.equal(node.value.action);
+      expect(view.formMethod).to.be.undefined;
+      expect(view.formEnctype).to.be.undefined;
+      buildChildViewsStub.called.should.be.true;
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should set attribute 'send' when on value", function () {
@@ -69,13 +69,13 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = submits.submitViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view["data-lynx-send"].should.equal("change");
-    buildChildViewsStub.restore();
+    submits.submitViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view["data-lynx-send"].should.equal("change");
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should set attribute 'send' when on spec", function () {
@@ -90,13 +90,13 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = submits.submitViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view["data-lynx-send"].should.equal("change");
-    buildChildViewsStub.restore();
+    submits.submitViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view["data-lynx-send"].should.equal("change");
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
   
   it("should resolve the 'action' if a 'base' URI is present", function () {
@@ -111,12 +111,12 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns([]);
+    buildChildViewsStub.returns(Promise.resolve([]));
     
-    var view = submits.submitViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.formAction.should.equal("http://example.com/foo");
-    buildChildViewsStub.restore();
+    submits.submitViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.formAction.should.equal("http://example.com/foo");
+      buildChildViewsStub.restore();
+    }).should.not.be.rejectedWith(Error);
   });
 });

@@ -1,5 +1,5 @@
 # jsua-lynx (PRELIMINARY DOCUMENTATION)
-Extensions to `jsua` for the Lynx media type.
+Extensions to the `jsua` package for the Lynx media type.
 
 `building.build` accepts `content` and then:
   * parses it as Lynx
@@ -7,8 +7,15 @@ Extensions to `jsua` for the Lynx media type.
   * passes the `result` object to `builders.nodeViewBuilder`
 
 `builders.nodeViewBuilder` accepts `result` and then:
-  * finds the builder that matches the most specific hint
+  * finds (see `building.register`) the builder that matches the most specific hint
   * passes the `result` object to the builder
+  
+`building.register` registers a view builder (for a Lynx node) function that accepts the following params:
+  * `hint` - the hint to build views for
+  * `builder` - the builder function with signature f(node) -> view || Promise<view>
+  * `input` - `true` if the builder expects the node to contain an `input` specification
+
+`building.registrations` returns the registrations added via `building.register`
 
 ## View Attributes
 
