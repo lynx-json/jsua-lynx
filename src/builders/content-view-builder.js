@@ -14,7 +14,7 @@ export function contentViewBuilder(node) {
     url += "," + node.value.data;
   }
   
-  return transfer(url)
+  return transfer({ url })
     .then(build)
     .then(function (view) {
       if (node.value.alt) {
