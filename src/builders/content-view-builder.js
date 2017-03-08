@@ -3,21 +3,21 @@ import { build } from "jsua/lib/views/building";
 import * as url from "url";
 
 export function contentViewBuilder(node) {
-  var url = node.value.src;
+  var src = node.value.src;
   
-  if (url) {
-    url = url.resolve(node.base || "http:", url);
+  if (src) {
+    src = url.resolve(node.base || "http:", src);
   } else {
-    url = "data:" + node.value.type;
+    src = "data:" + node.value.type;
     
     if (node.value.encoding) {
-      url += ";" + node.value.encoding;
+      src += ";" + node.value.encoding;
     }
     
-    url += "," + node.value.data;
+    src += "," + node.value.data;
   }
   
-  return transfer({ url })
+  return transfer({ url: src })
     .then(build)
     .then(function (view) {
       if (node.value.alt) {
