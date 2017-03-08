@@ -7,7 +7,7 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe.only("builders / contentViewBuilder", function () {
+describe("builders / contentViewBuilder", function () {
   it("should return view for 'content'", function (done) {
     var node = {
       base: "http://example.com",
