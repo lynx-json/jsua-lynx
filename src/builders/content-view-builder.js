@@ -20,10 +20,13 @@ export function contentViewBuilder(node) {
   return transfer({ url: src })
     .then(build)
     .then(function (result) {
-      var view = result.view;
+      var view = document.createElement("div");
+      
+      var embeddedView = result.view;
+      view.appendChild(embeddedView);
       
       if (node.value.alt) {
-        view.setAttribute("alt", node.value.alt);
+        embeddedView.setAttribute("alt", node.value.alt);
       }
       
       return view;

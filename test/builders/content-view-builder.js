@@ -29,7 +29,8 @@ describe("builders / contentViewBuilder", function () {
     
     contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
-      view.alt.should.equal(node.value.alt);
+      view.children.length.should.equal(1);
+      view.children[0].alt.should.equal(node.value.alt);
       transferStub.called.should.be.true;
       transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;
