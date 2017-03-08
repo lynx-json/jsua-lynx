@@ -25,5 +25,13 @@ export function textInputViewBuilder(node) {
     view.value = node.value.toString();
   }
   
+  view.getValue = function () {
+    return view.value;
+  };
+  
+  view.setValue = function (val) {
+    view.value = val;
+  };
+  
   return view;
 }

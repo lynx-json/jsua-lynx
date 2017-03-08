@@ -7,6 +7,8 @@ global.document = {
       children: [],
       appendChild: function (child) {
         element.children.push(child);
+      },
+      addEventListener: function () {
       }
     };
     
