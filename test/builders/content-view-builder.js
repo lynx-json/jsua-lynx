@@ -7,9 +7,10 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("builders / contentViewBuilder", function () {
-  it("should return view for 'content'", function () {
+describe.only("builders / contentViewBuilder", function () {
+  it("should return view for 'content'", function (done) {
     var node = {
+      base: "http://example.com",
       spec: {
         hints: [ { name: "content" } ]
       },
@@ -24,15 +25,16 @@ describe("builders / contentViewBuilder", function () {
     transferStub.returns(Promise.resolve({}));
     
     var buildStub = sinon.stub(building, "build");
-    buildStub.returns(Promise.resolve(document.createElement()));
+    buildStub.returns(Promise.resolve({ view: document.createElement() }));
     
     contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.alt.should.equal(node.value.alt);
       transferStub.called.should.be.true;
+      transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;
       transferStub.restore();
       buildStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    }).should.not.be.rejectedWith(Error).then(done, done);
   });
 });
