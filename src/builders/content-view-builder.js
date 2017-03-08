@@ -19,7 +19,9 @@ export function contentViewBuilder(node) {
   
   return transfer({ url: src })
     .then(build)
-    .then(function (view) {
+    .then(function (result) {
+      var view = result.view;
+      
       if (node.value.alt) {
         view.setAttribute("alt", node.value.alt);
       }
