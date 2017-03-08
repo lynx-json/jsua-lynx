@@ -2,14 +2,19 @@ import { transfer } from "jsua/lib/transferring";
 import { build } from "jsua/lib/views/building";
 import * as url from "url";
 
-function toDataUrl(node) {
+function getPromiseForRequest(node) {
+  if (node.value.src) {
+    var src = url.resolve(node.base || "", node.value.src);
+    return Promise.resolve({ url: src });
+  }
+  
   return new Promise(function (resolve) {
     var buf = new Buffer(node.value.data, node.value.encoding || "utf8");
     var blob = new Blob([buf], { type: node.value.type });
     var fileReader = new FileReader();
     
     fileReader.onloadend = function (evt) {
-      resolve(evt.target.result);
+      resolve({ url: evt.target.result });
     };
     
     fileReader.readAsDataURL(blob);
@@ -17,16 +22,7 @@ function toDataUrl(node) {
 }
 
 export function contentViewBuilder(node) {
-  var promiseForSrc;
-  
-  if (node.value.src) {
-    var src = url.resolve(node.base || "", node.value.src);
-    promiseForSrc = Promise.resolve(src);
-  } else {
-    promiseForSrc = toDataUrl(node);
-  }
-  
-  return promiseForSrc.then(src => { return { url: src }; })
+  return getPromiseForRequest(node)
     .then(transfer)
     .then(build)
     .then(function (result) {
@@ -44,16 +40,7 @@ export function contentViewBuilder(node) {
 }
 
 export function imageViewBuilder(node) {
-  var promiseForSrc;
-  
-  if (node.value.src) {
-    var src = url.resolve(node.base || "", node.value.src);
-    promiseForSrc = Promise.resolve(src);
-  } else {
-    promiseForSrc = toDataUrl(node);
-  }
-  
-  return promiseForSrc.then(src => { return { url: src }; })
+  return getPromiseForRequest(node)
     .then(transfer)
     .then(build)
     .then(function (result) {
