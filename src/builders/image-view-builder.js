@@ -1,7 +1,9 @@
 import { contentViewBuilder } from "./content-view-builder";
 
 export function imageViewBuilder(node) {
-  return contentViewBuilder(node).then(function (view) {
+  return contentViewBuilder(node).then(function (result) {
+    var view = result.view;
+    
     if (node.value.alt) {
       view.setAttribute("title", node.value.alt);
     }
