@@ -1,5 +1,5 @@
 require("../html-document-api");
-var images = require("../../lib/builders/image-view-builder");
+var contents = require("../../lib/builders/content-view-builder");
 var transferring = require("jsua/lib/transferring");
 var building = require("jsua/lib/views/building");
 var chai = require("chai");
@@ -10,6 +10,7 @@ var sinon = require("sinon");
 describe("builders / imageViewBuilder", function () {
   it("should return view for 'image'", function () {
     var node = {
+      base: "http://example.com",
       spec: {
         hints: [ { name: "image" }, { name: "content" } ]
       },
@@ -28,7 +29,7 @@ describe("builders / imageViewBuilder", function () {
     var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement() }));
     
-    images.imageViewBuilder(node).then(function (view) {
+    contents.imageViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
       view.children[0].title.should.equal(node.value.alt);
