@@ -4,13 +4,12 @@ var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
 
-function File(data, name, options) {
+function Blob(data, options) {
   this.data = data[0];
-  this.name = name;
   this.type = options.type;
 }
 
-global.File = File;
+global.Blob = Blob;
 
 describe("builders / contentInputViewBuilder", function () {
   it("should return view for 'content' input", function() {
@@ -53,7 +52,6 @@ describe("builders / contentInputViewBuilder", function () {
     expect(value).to.not.be.null;
     value.data.toString().should.equal("Hi");
     value.type.should.equal("text/plain");
-    value.name.should.equal("");
   });
   
   it("should set initial base64 encoded value", function() {
@@ -77,7 +75,6 @@ describe("builders / contentInputViewBuilder", function () {
     expect(value).to.not.be.null;
     value.data.toString().should.equal("Hi");
     value.type.should.equal("text/plain");
-    value.name.should.equal("");
   });
   
   it("setValue() should set the value", function() {
@@ -93,7 +90,7 @@ describe("builders / contentInputViewBuilder", function () {
     
     var view = builders.contentInputViewBuilder(node);
     
-    var file = new File(["Hi"], "", { type: "text/plain" });
+    var file = new Blob(["Hi"], { type: "text/plain" });
     view.setValue(file);
     
     var value = view.getValue();
@@ -101,6 +98,5 @@ describe("builders / contentInputViewBuilder", function () {
     expect(value).to.not.be.null;
     value.data.toString().should.equal("Hi");
     value.type.should.equal("text/plain");
-    value.name.should.equal("");
   });
 });

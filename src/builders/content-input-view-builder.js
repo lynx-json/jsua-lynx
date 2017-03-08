@@ -19,7 +19,7 @@ export function contentInputViewBuilder(node) {
   
   if (node.value) {
     var buf = new Buffer(node.value.data, node.value.encoding || "utf8");
-    value = new File([buf], "", { type: node.value.type });
+    value = new Blob([buf], { type: node.value.type });
   }
   
   return view;
