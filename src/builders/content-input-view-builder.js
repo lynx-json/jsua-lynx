@@ -53,10 +53,10 @@ export function contentInputViewBuilder(node) {
     
     if (!node.value) return resolve(view);
     
-    if (node.value.data) {
+    if ("data" in node.value) {
       view.setValue(getBlob(node));
       resolve(view);
-    } else if (node.value.src) {
+    } else if ("src" in node.value) {
       getPromiseForRequest(node)
         .then(transfer)
         .then(function (content) {
