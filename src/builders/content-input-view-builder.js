@@ -9,6 +9,7 @@ export function contentInputViewBuilder(node) {
     var inputView = document.createElement("input");
     inputView.type = "file";
     inputView.name = node.spec.input.name || "";
+    view.appendChild(inputView);
     
     var value = null;
     
