@@ -1,5 +1,5 @@
 require("../html-document-api");
-var contents = require("../../lib/builders/content-view-builder");
+var contents = require("../../lib/builders/image-view-builder");
 var transferring = require("jsua/lib/transferring");
 var building = require("jsua/lib/views/building");
 var chai = require("chai");
