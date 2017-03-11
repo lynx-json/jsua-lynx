@@ -42,9 +42,11 @@ describe("builders / contentInputViewBuilder", function () {
     
     return builders.contentInputViewBuilder(node).then(function (view) {
       var inputView = view.querySelector("input");
+      var contentView = view.querySelector("[data-lynx-content-view]");
       
       expect(view).to.not.be.null;
       expect(inputView).to.not.be.null;
+      expect(contentView).to.be.null;
       inputView.type.should.equal("file");
       inputView.name.should.equal(node.spec.input.name);
       expect(view.getValue()).to.be.null;
@@ -72,7 +74,10 @@ describe("builders / contentInputViewBuilder", function () {
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
+      var contentView = view.querySelector("[data-lynx-content-view]");
       var value = view.getValue();
+      
+      expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
@@ -101,7 +106,10 @@ describe("builders / contentInputViewBuilder", function () {
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
+      var contentView = view.querySelector("[data-lynx-content-view]");
       var value = view.getValue();
+      
+      expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
@@ -129,7 +137,10 @@ describe("builders / contentInputViewBuilder", function () {
       var file = new Blob(["Hi"], { type: "text/plain" });
       return view.setValue(file);
     }).then(function (view) {
+      var contentView = view.querySelector("[data-lynx-content-view]");
       var value = view.getValue();
+      
+      expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
