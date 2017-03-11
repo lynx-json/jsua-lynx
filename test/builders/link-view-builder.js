@@ -44,7 +44,7 @@ describe("builders / linkViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns(Promise.resolve([{}]));
+    buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
     links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
@@ -73,7 +73,7 @@ describe("builders / linkViewBuilder", function () {
     
     links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-follow"].should.equal(0);
+      view.getAttribute("data-lynx-follow").should.equal("0");
       buildChildViewsStub.restore();
     }).should.not.be.rejectedWith(Error);
   });
@@ -95,7 +95,7 @@ describe("builders / linkViewBuilder", function () {
     
     links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-follow"].should.equal(0);
+      view.getAttribute("data-lynx-follow").should.equal("0");
       buildChildViewsStub.restore();
     }).should.not.be.rejectedWith(Error);
   });

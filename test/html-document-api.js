@@ -1,17 +1,7 @@
-global.document = {
-  createElement: function (tagName) {
-    var element = {
-      setAttribute: function (attr, val) {
-        element[attr] = val;
-      },
-      children: [],
-      appendChild: function (child) {
-        element.children.push(child);
-      },
-      addEventListener: function () {
-      }
-    };
-    
-    return element;
-  }
-};
+if (typeof window !== "undefined") return;
+
+var jsdom = require("jsdom").jsdom;
+global.document = jsdom();
+global.window = document.defaultView;
+global.Blob = window.Blob;
+global.FileReader = window.FileReader;

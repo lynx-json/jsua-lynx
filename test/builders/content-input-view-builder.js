@@ -1,18 +1,32 @@
 require("../html-document-api");
 var builders = require("../../lib/builders/content-input-view-builder");
 var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 var should = chai.should();
 var expect = chai.expect;
 
-function Blob(data, options) {
-  this.data = data[0];
-  this.type = options.type;
+function getBlobValue(blob) {
+  return new Promise(function (resolve, reject) {
+    if (!blob) reject(new Error("'blob' param is required."));
+    
+    var reader = new FileReader();
+    
+    reader.onloadend = function () {
+      if (!reader.result) reject(new Error("Failed to read Blob."));
+      resolve(reader.result);
+    };
+    
+    reader.onerror = function (err) {
+      reject(err);
+    };
+    
+    reader.readAsText(blob);
+  });
 }
 
-global.Blob = Blob;
-
 describe("builders / contentInputViewBuilder", function () {
-  it("should return view for 'content' input", function() {
+  it("should return view for 'content' input", function(done) {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -23,16 +37,19 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    var view = builders.contentInputViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.type.should.equal("file");
-    view.name.should.equal(node.spec.input.name);
-    expect(view.getValue()).to.be.null;
-    expect(view.setValue).to.not.be.undefined;
+    builders.contentInputViewBuilder(node).then(function (view) {
+      var inputView = view.querySelector("input");
+      
+      expect(view).to.not.be.null;
+      expect(inputView).to.not.be.null;
+      inputView.type.should.equal("file");
+      inputView.name.should.equal(node.spec.input.name);
+      expect(view.getValue()).to.be.null;
+      expect(view.setValue).to.not.be.undefined;
+    }).then(done, done);
   });
   
-  it("should set initial UTF-8 encoded value", function() {
+  it("should set initial UTF-8 encoded value", function(done) {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -46,15 +63,17 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    var view = builders.contentInputViewBuilder(node);
-    var value = view.getValue();
-    
-    expect(value).to.not.be.null;
-    value.data.toString().should.equal("Hi");
-    value.type.should.equal("text/plain");
+    builders.contentInputViewBuilder(node).then(function (view) {
+      var value = view.getValue();
+      expect(value).to.not.be.null;
+      value.type.should.equal("text/plain");
+      return getBlobValue(value);
+    }).then(function (blobValue) {
+      blobValue.should.equal("Hi");
+    }).then(done, done);
   });
   
-  it("should set initial base64 encoded value", function() {
+  it("should set initial base64 encoded value", function(done) {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -69,15 +88,17 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    var view = builders.contentInputViewBuilder(node);
-    var value = view.getValue();
-    
-    expect(value).to.not.be.null;
-    value.data.toString().should.equal("Hi");
-    value.type.should.equal("text/plain");
+    builders.contentInputViewBuilder(node).then(function (view) {
+      var value = view.getValue();
+      expect(value).to.not.be.null;
+      value.type.should.equal("text/plain");
+      return getBlobValue(value);
+    }).then(function (blobValue) {
+      blobValue.should.equal("Hi");
+    }).then(done, done);
   });
   
-  it("setValue() should set the value", function() {
+  it("setValue() should set the value", function(done) {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -88,15 +109,16 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    var view = builders.contentInputViewBuilder(node);
-    
-    var file = new Blob(["Hi"], { type: "text/plain" });
-    view.setValue(file);
-    
-    var value = view.getValue();
-    
-    expect(value).to.not.be.null;
-    value.data.toString().should.equal("Hi");
-    value.type.should.equal("text/plain");
+    builders.contentInputViewBuilder(node).then(function (view) {
+      var file = new Blob(["Hi"], { type: "text/plain" });
+      return view.setValue(file);
+    }).then(function (view) {
+      var value = view.getValue();
+      expect(value).to.not.be.null;
+      value.type.should.equal("text/plain");
+      return getBlobValue(value);
+    }).then(function (blobValue) {
+      blobValue.should.equal("Hi");
+    }).then(done, done);
   });
 });

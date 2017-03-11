@@ -44,7 +44,7 @@ describe("builders / submitViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns(Promise.resolve([{}]));
+    buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
     submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
@@ -73,7 +73,7 @@ describe("builders / submitViewBuilder", function () {
     
     submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-send"].should.equal("change");
+      view.getAttribute("data-lynx-send").should.equal("change");
       buildChildViewsStub.restore();
     }).should.not.be.rejectedWith(Error);
   });
@@ -94,7 +94,7 @@ describe("builders / submitViewBuilder", function () {
     
     submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-send"].should.equal("change");
+      view.getAttribute("data-lynx-send").should.equal("change");
       buildChildViewsStub.restore();
     }).should.not.be.rejectedWith(Error);
   });

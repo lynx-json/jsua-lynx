@@ -37,7 +37,7 @@ describe("builders / formViewBuilder", function () {
     };
     
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
-    buildChildViewsStub.returns(Promise.resolve([{}]));
+    buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
     forms.formViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;

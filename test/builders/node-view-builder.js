@@ -6,6 +6,20 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
+function runTest(node, assert) {
+  var builderStub = sinon.stub();
+  builderStub.returns(document.createElement("div"));
+  
+  var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
+  resolveViewBuilderStub.returns(builderStub);
+  
+  builders.nodeViewBuilder(node).then(assert).then(function () {
+    builderStub.called.should.be.true;
+    resolveViewBuilderStub.called.should.be.true;
+    resolveViewBuilderStub.restore();
+  });
+}
+
 describe("builders / nodeViewBuilder", function () {
   it("should reject when no params", function () {
     builders.nodeViewBuilder().should.be.rejectedWith(Error);
@@ -33,19 +47,6 @@ describe("builders / nodeViewBuilder", function () {
     resolveViewBuilderStub.restore();
   });
   
-  function runTest(node, assert) {
-    var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
-    var builderStub = sinon.stub();
-    builderStub.returns(document.createElement());
-    resolveViewBuilderStub.returns(builderStub);
-    
-    builders.nodeViewBuilder(node).then(assert).then(function () {
-      builderStub.called.should.be.true;
-      resolveViewBuilderStub.called.should.be.true;
-      resolveViewBuilderStub.restore();
-    });
-  }
-  
   it("should call the resolved builder function", function () {  
     var node = { 
       spec: { 
@@ -61,11 +62,11 @@ describe("builders / nodeViewBuilder", function () {
     
     runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-hints"].should.equal(node.spec.hints.map(hint => hint.name).join(" "));
-      view["data-lynx-visibility"].should.equal(node.spec.visibility);
-      view["data-lynx-scope"].should.equal(node.value.scope);
-      view["data-lynx-name"].should.equal(node.spec.name);
-      view["data-lynx-labeled-by"].should.equal(node.spec.labeledBy);
+      view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.map(hint => hint.name).join(" "));
+      view.getAttribute("data-lynx-visibility").should.equal(node.spec.visibility);
+      view.getAttribute("data-lynx-scope").should.equal(node.value.scope);
+      view.getAttribute("data-lynx-name").should.equal(node.spec.name);
+      view.getAttribute("data-lynx-labeled-by").should.equal(node.spec.labeledBy);
     });
   });
   
@@ -80,7 +81,7 @@ describe("builders / nodeViewBuilder", function () {
     
     runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-option"].should.equal("true");
+      view.getAttribute("data-lynx-option").should.equal("true");
     });
   });
   
@@ -96,7 +97,7 @@ describe("builders / nodeViewBuilder", function () {
     
     runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-input"].should.equal("true");
+      view.getAttribute("data-lynx-input").should.equal("true");
     });
   });
   
@@ -112,7 +113,7 @@ describe("builders / nodeViewBuilder", function () {
     
     runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-options"].should.equal(node.spec.options);
+      view.getAttribute("data-lynx-options").should.equal(node.spec.options);
     });
   });
   
@@ -128,7 +129,7 @@ describe("builders / nodeViewBuilder", function () {
     
     runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view["data-lynx-submitter"].should.equal(node.spec.submitter);
+      view.getAttribute("data-lynx-submitter").should.equal(node.spec.submitter);
     });
   });
 });

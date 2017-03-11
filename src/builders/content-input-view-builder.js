@@ -2,6 +2,46 @@ import { getBlob, getPromiseForRequest } from "./content-node-helpers";
 import { transfer } from "jsua/lib/transferring";
 import { build } from "jsua/lib/views/building";
 
+function updateEmbeddedView(contentInputView, blob) {
+  var oldEmbeddedView = contentInputView.querySelector("[data-lynx-content-view]");
+  
+  if (!blob) {
+    if (oldEmbeddedView) contentInputView.removeChild(oldEmbeddedView);
+    return Promise.resolve(contentInputView);
+  }
+  
+  var content = {
+    url: blob.name || "",
+    blob: blob
+  };
+  
+  return Promise.resolve(content)
+    .then(build)
+    .catch(function (err) {
+      console.log("Error building embedded content view in content input view.", err);
+    })
+    .then(function (result) {
+      var embeddedView;
+      
+      if (result && result.view) {
+        embeddedView = result.view;
+      } else {
+        embeddedView = document.createElement("div");
+        embeddedView.textContent = "View Unavailable";
+      }
+      
+      embeddedView.setAttribute("data-lynx-content-view", true);
+      
+      if (oldEmbeddedView) {
+        contentInputView.replaceChild(embeddedView, oldEmbeddedView);
+      } else {
+        contentInputView.appendChild(embeddedView);
+      }
+      
+      return contentInputView;
+    });
+}
+
 export function contentInputViewBuilder(node) {
   return new Promise(function (resolve, reject) {
     var view = document.createElement("div");
@@ -17,35 +57,10 @@ export function contentInputViewBuilder(node) {
       return value;
     };
     
-    view.setValue = function (val) {
-      if (val === value) return;
-      value = val;
-      
-      var oldEmbeddedView = document.querySelector("[data-lynx-content-view]");
-      
-      if (!value) {
-        if (oldEmbeddedView) view.removeChild(oldEmbeddedView);
-        return;
-      }
-      
-      var content = {
-        url: value.name || "",
-        blob: value
-      };
-      
-      Promise.resolve(content)
-        .then(build)
-        .then(function (result) {
-          var embeddedView = result.view;
-          
-          embeddedView.setAttribute("data-lynx-content-view", true);
-          
-          if (oldEmbeddedView) {
-            view.replaceChild(embeddedView, oldEmbeddedView);
-          } else {
-            view.appendChild(embeddedView);
-          }
-        });
+    view.setValue = function (blob) {
+      if (blob === value) return;
+      value = blob;
+      return updateEmbeddedView(view, value);
     };
     
     inputView.addEventListener("change", function (evt) {
@@ -54,18 +69,24 @@ export function contentInputViewBuilder(node) {
     
     if (!node.value) return resolve(view);
     
+    var promiseForView;
+    
     if ("data" in node.value) {
-      view.setValue(getBlob(node));
-      resolve(view);
+      promiseForView = view.setValue(getBlob(node));
     } else if ("src" in node.value) {
-      getPromiseForRequest(node)
+      promiseForView = getPromiseForRequest(node)
         .then(transfer)
-        .then(function (content) {
-          content.blob.name = content.url;
-          view.setValue(content.blob);
-          return view;
+        .catch(function (err) {
+          // intentionally eat a transfer error here b/c primary task is file upload
+          return null;
         })
-        .then(resolve, reject);
+        .then(function (content) {
+          if (!content) return view;
+          content.blob.name = content.url;
+          return view.setValue(content.blob);
+        });
     }
+    
+    promiseForView.then(resolve, reject);
   });
 }

@@ -25,12 +25,12 @@ describe("builders / contentViewBuilder", function () {
     transferStub.returns(Promise.resolve({}));
     
     var buildStub = sinon.stub(building, "build");
-    buildStub.returns(Promise.resolve({ view: document.createElement() }));
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
-      view.children[0].alt.should.equal(node.value.alt);
+      view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
       transferStub.called.should.be.true;
       transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;

@@ -27,14 +27,14 @@ describe("builders / imageViewBuilder", function () {
     transferStub.returns(Promise.resolve({}));
     
     var buildStub = sinon.stub(building, "build");
-    buildStub.returns(Promise.resolve({ view: document.createElement() }));
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     contents.imageViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
-      view.children[0].title.should.equal(node.value.alt);
-      view.children[0]["data-lynx-height"].should.equal(node.value.height);
-      view.children[0]["data-lynx-width"].should.equal(node.value.width);
+      view.children.item(0).title.should.equal(node.value.alt);
+      view.children.item(0).getAttribute("data-lynx-height").should.equal(node.value.height.toString());
+      view.children.item(0).getAttribute("data-lynx-width").should.equal(node.value.width.toString());
       transferStub.called.should.be.true;
       transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;
