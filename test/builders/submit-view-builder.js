@@ -22,7 +22,7 @@ describe("builders / submitViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
-    submits.submitViewBuilder(node).then(function (view) {
+    return submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(0);
       view.formAction.should.equal(node.value.action);
@@ -30,7 +30,7 @@ describe("builders / submitViewBuilder", function () {
       view.formEnctype.should.equal(node.value.enctype);
       buildChildViewsStub.called.should.be.true;
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
   
   it("should return view for 'submit' with children", function () {
@@ -46,7 +46,7 @@ describe("builders / submitViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
-    submits.submitViewBuilder(node).then(function (view) {
+    return submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
       view.formAction.should.equal(node.value.action);
@@ -54,7 +54,7 @@ describe("builders / submitViewBuilder", function () {
       expect(view.formEnctype).to.be.undefined;
       buildChildViewsStub.called.should.be.true;
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
   
   it("should set attribute 'send' when on value", function () {
@@ -71,11 +71,11 @@ describe("builders / submitViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
-    submits.submitViewBuilder(node).then(function (view) {
+    return submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-send").should.equal("change");
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
   
   it("should set attribute 'send' when on spec", function () {
@@ -92,11 +92,11 @@ describe("builders / submitViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
-    submits.submitViewBuilder(node).then(function (view) {
+    return submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-send").should.equal("change");
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
   
   it("should resolve the 'action' if a 'base' URI is present", function () {
@@ -113,10 +113,10 @@ describe("builders / submitViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
-    submits.submitViewBuilder(node).then(function (view) {
+    return submits.submitViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.formAction.should.equal("http://example.com/foo");
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
 });

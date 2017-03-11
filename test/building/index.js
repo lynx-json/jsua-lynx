@@ -66,28 +66,33 @@ describe("building", function () {
   
   describe("build", function () {
     it("should reject when no params", function () {
-      building.build()
-        .should.be.rejectedWith(Error);
+      return building.build().catch(function (err) {
+        expect(err).to.be.an("error");
+      });
     });
     
     it("should reject when param doesn't have 'blob' property", function () {
-      building.build({})
-        .should.be.rejectedWith(Error);
+      return building.build({}).catch(function (err) {
+        expect(err).to.be.an("error");
+      });
     });
     
     it("should reject when no params to FileReader onloadend event", function () {
-      building.build({ blob: {} })
-        .should.be.rejectedWith(Error);
+      return building.build({ blob: {} }).catch(function (err) {
+        expect(err).to.be.an("error");
+      });
     });
     
     it("should reject when param to FileReader onloadend event doesn't have 'target' property", function () {
-      building.build({ blob: {} })
-        .should.be.rejectedWith(Error);
+      return building.build({ blob: {} }).catch(function (err) {
+        expect(err).to.be.an("error");
+      });
     });
     
     it("should reject when param to FileReader onloadend event doesn't have 'target.result' property", function () {
-      building.build({ blob: {} })
-        .should.be.rejectedWith(Error);
+      return building.build({ blob: {} }).catch(function (err) {
+        expect(err).to.be.an("error");
+      });
     });
     
     it("should reject when invalid Lynx content is present", function () {
@@ -103,9 +108,11 @@ describe("building", function () {
         return param;
       }
       
-      building.build({ blob: {}})
-        .then(restore, restore)
-        .should.be.rejectedWith(Error);
+      return building.build({ blob: {}})
+        .catch(function (err) {
+          expect(err).to.be.an("error");
+        })
+        .then(restore, restore);
     });
     
     it("should resolve when valid Lynx content is present", function () {
@@ -122,7 +129,7 @@ describe("building", function () {
       var blob = new Blob([JSON.stringify(node)], { type: "application/lynx+json" });
       var content = { url: "http://example.com/", blob: blob };
       
-      building.build(content).then(function (view) {
+      return building.build(content).then(function (view) {
         nodeViewBuilderStub.restore();
         return view;
       }).then(function (view) {
@@ -130,7 +137,7 @@ describe("building", function () {
         expect(view).to.not.be.null;
         view.getAttribute("data-content-url").should.equal(content.url);
         view.getAttribute("data-content-type").should.equal(content.blob.type);
-      }).should.not.be.rejectedWith(Error);
+      });
     });
     
     it("should set attribute 'realm'", function () {
@@ -148,16 +155,16 @@ describe("building", function () {
       var blob = new Blob([JSON.stringify(node)], { type: "application/lynx+json" });
       var content = { url: "http://example.com/", blob: blob };
       
-      building.build(content)
-      .then(function (view) {
-        nodeViewBuilderStub.restore();
-        return view;
-      })
-      .then(function (view) {
-        nodeViewBuilderStub.called.should.be.true;
-        expect(view).to.not.be.null;
-        view.getAttribute("data-lynx-realm").should.equal(node.realm);
-      }).should.not.be.rejectedWith(Error);
+      return building.build(content)
+        .then(function (view) {
+          nodeViewBuilderStub.restore();
+          return view;
+        })
+        .then(function (view) {
+          nodeViewBuilderStub.called.should.be.true;
+          expect(view).to.not.be.null;
+          view.getAttribute("data-lynx-realm").should.equal(node.realm);
+        });
     });
   });
 });

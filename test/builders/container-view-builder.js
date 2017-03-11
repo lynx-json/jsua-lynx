@@ -7,7 +7,7 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("builders / containerViewBuilder", function () {
-  it("should return view for 'container' with array value", function (done) {
+  it("should return view for 'container' with array value", function () {
     var node = {
       spec: {
         hints: [ { name: "container" } ]
@@ -24,12 +24,12 @@ describe("builders / containerViewBuilder", function () {
     nodeViewBuilderStub.onCall(1).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(2).returns(Promise.resolve(document.createElement("div")));
     
-    containers.containerViewBuilder(node).then(function (view) {
+    return containers.containerViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       nodeViewBuilderStub.calledThrice.should.be.true;
       view.childElementCount.should.equal(3);
       nodeViewBuilderStub.restore();
-    }).then(done, done);
+    });
   });
   
   it("should return view for 'container' with object value", function () {
@@ -54,11 +54,11 @@ describe("builders / containerViewBuilder", function () {
     nodeViewBuilderStub.onCall(1).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(2).returns(Promise.resolve(document.createElement("div")));
     
-    containers.containerViewBuilder(node).then(function (view) {
+    return containers.containerViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(3);
       nodeViewBuilderStub.calledThrice.should.be.true;
       nodeViewBuilderStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
 });

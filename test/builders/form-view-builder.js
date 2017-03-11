@@ -2,8 +2,6 @@ require("../html-document-api");
 var forms = require("../../lib/builders/form-view-builder");
 var containers = require("../../lib/builders/container-view-builder");
 var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
 var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
@@ -20,12 +18,12 @@ describe("builders / formViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
-    forms.formViewBuilder(node).then(function (view) {
+    return forms.formViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(0);
       buildChildViewsStub.called.should.be.true;
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
   
   it("should return view for 'form' with children", function () {
@@ -39,11 +37,11 @@ describe("builders / formViewBuilder", function () {
     var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
-    forms.formViewBuilder(node).then(function (view) {
+    return forms.formViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
       buildChildViewsStub.called.should.be.true;
       buildChildViewsStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
 });

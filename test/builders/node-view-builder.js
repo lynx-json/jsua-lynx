@@ -13,7 +13,7 @@ function runTest(node, assert) {
   var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
   resolveViewBuilderStub.returns(builderStub);
   
-  builders.nodeViewBuilder(node).then(assert).then(function () {
+  return builders.nodeViewBuilder(node).then(assert).then(function () {
     builderStub.called.should.be.true;
     resolveViewBuilderStub.called.should.be.true;
     resolveViewBuilderStub.restore();
@@ -22,29 +22,40 @@ function runTest(node, assert) {
 
 describe("builders / nodeViewBuilder", function () {
   it("should reject when no params", function () {
-    builders.nodeViewBuilder().should.be.rejectedWith(Error);
+    return builders.nodeViewBuilder().catch(function (err) {
+      expect(err).to.be.an("error");
+    });
   });
   
   it("should reject when param doesn't have 'spec' property", function () {
-    builders.nodeViewBuilder({}).should.be.rejectedWith(Error);
+    return builders.nodeViewBuilder({}).catch(function (err) {
+      expect(err).to.be.an("error");
+    });
   });
   
   it("should reject when param doesn't have 'spec.hints' property", function () {
-    builders.nodeViewBuilder({ spec: {} }).should.be.rejectedWith(Error);
+    return builders.nodeViewBuilder({ spec: {} }).catch(function (err) {
+      expect(err).to.be.an("error");
+    });
   });
   
   it("should reject when 'spec.hints' property is empty", function () {
-    builders.nodeViewBuilder({ spec: { hints: [] } }).should.be.rejectedWith(Error);
+    return builders.nodeViewBuilder({ spec: { hints: [] } }).catch(function (err) {
+      expect(err).to.be.an("error");
+    });
   });
   
   it("should reject when a view builder is not be resolved", function () {  
     var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
     resolveViewBuilderStub.returns(null);
     
-    builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } }).should.be.rejectedWith(Error);
-        
-    resolveViewBuilderStub.called.should.be.true;
-    resolveViewBuilderStub.restore();
+    return builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } }).catch(function (err) {
+      resolveViewBuilderStub.called.should.be.true;
+      resolveViewBuilderStub.restore();
+      throw err;
+    }).catch(function (err) {
+      expect(err).to.be.an("error");
+    });
   });
   
   it("should call the resolved builder function", function () {  
@@ -60,7 +71,7 @@ describe("builders / nodeViewBuilder", function () {
       }
     };
     
-    runTest(node, function (view) {
+    return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.map(hint => hint.name).join(" "));
       view.getAttribute("data-lynx-visibility").should.equal(node.spec.visibility);
@@ -79,7 +90,7 @@ describe("builders / nodeViewBuilder", function () {
       value: {}
     };
     
-    runTest(node, function (view) {
+    return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-option").should.equal("true");
     });
@@ -95,7 +106,7 @@ describe("builders / nodeViewBuilder", function () {
       value: {}
     };
     
-    runTest(node, function (view) {
+    return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-input").should.equal("true");
     });
@@ -111,7 +122,7 @@ describe("builders / nodeViewBuilder", function () {
       value: {}
     };
     
-    runTest(node, function (view) {
+    return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-options").should.equal(node.spec.options);
     });
@@ -127,7 +138,7 @@ describe("builders / nodeViewBuilder", function () {
       value: {}
     };
     
-    runTest(node, function (view) {
+    return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-submitter").should.equal(node.spec.submitter);
     });

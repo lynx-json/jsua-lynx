@@ -1,10 +1,10 @@
 require("../html-document-api");
 var builders = require("../../lib/builders/content-input-view-builder");
+var building = require("jsua/lib/views/building");
 var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
 var should = chai.should();
 var expect = chai.expect;
+var sinon = require("sinon");
 
 function getBlobValue(blob) {
   return new Promise(function (resolve, reject) {
@@ -26,7 +26,7 @@ function getBlobValue(blob) {
 }
 
 describe("builders / contentInputViewBuilder", function () {
-  it("should return view for 'content' input", function(done) {
+  it("should return view for 'content' input", function() {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -37,7 +37,10 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    builders.contentInputViewBuilder(node).then(function (view) {
+    var buildStub = sinon.stub(building, "build");
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var inputView = view.querySelector("input");
       
       expect(view).to.not.be.null;
@@ -46,10 +49,12 @@ describe("builders / contentInputViewBuilder", function () {
       inputView.name.should.equal(node.spec.input.name);
       expect(view.getValue()).to.be.null;
       expect(view.setValue).to.not.be.undefined;
-    }).then(done, done);
+    }).then(function () {
+      buildStub.restore();
+    });
   });
   
-  it("should set initial UTF-8 encoded value", function(done) {
+  it("should set initial UTF-8 encoded value", function() {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -63,17 +68,21 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    builders.contentInputViewBuilder(node).then(function (view) {
+    var buildStub = sinon.stub(building, "build");
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var value = view.getValue();
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-    }).then(done, done);
+      buildStub.restore();
+    });
   });
   
-  it("should set initial base64 encoded value", function(done) {
+  it("should set initial base64 encoded value", function() {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -88,17 +97,21 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    builders.contentInputViewBuilder(node).then(function (view) {
+    var buildStub = sinon.stub(building, "build");
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var value = view.getValue();
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-    }).then(done, done);
+      buildStub.restore();
+    });
   });
   
-  it("setValue() should set the value", function(done) {
+  it("setValue() should set the value", function() {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -109,7 +122,10 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    builders.contentInputViewBuilder(node).then(function (view) {
+    var buildStub = sinon.stub(building, "build");
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var file = new Blob(["Hi"], { type: "text/plain" });
       return view.setValue(file);
     }).then(function (view) {
@@ -119,6 +135,7 @@ describe("builders / contentInputViewBuilder", function () {
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-    }).then(done, done);
+      buildStub.restore();
+    });
   });
 });

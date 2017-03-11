@@ -8,7 +8,7 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("builders / contentViewBuilder", function () {
-  it("should return view for 'content'", function (done) {
+  it("should return view for 'content'", function () {
     var node = {
       base: "http://example.com",
       spec: {
@@ -27,7 +27,7 @@ describe("builders / contentViewBuilder", function () {
     var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
-    contents.contentViewBuilder(node).then(function (view) {
+    return contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
       view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
@@ -36,6 +36,6 @@ describe("builders / contentViewBuilder", function () {
       buildStub.called.should.be.true;
       transferStub.restore();
       buildStub.restore();
-    }).should.not.be.rejectedWith(Error).then(done, done);
+    });
   });
 });

@@ -29,7 +29,7 @@ describe("builders / imageViewBuilder", function () {
     var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
-    contents.imageViewBuilder(node).then(function (view) {
+    return contents.imageViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
       view.children.item(0).title.should.equal(node.value.alt);
@@ -40,6 +40,6 @@ describe("builders / imageViewBuilder", function () {
       buildStub.called.should.be.true;
       transferStub.restore();
       buildStub.restore();
-    }).should.not.be.rejectedWith(Error);
+    });
   });
 });
