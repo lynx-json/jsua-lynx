@@ -1,6 +1,6 @@
 require("../html-document-api");
-var building = require("../../lib/building");
-var builders = require("../../lib/builders");
+var building = require("../../src/building");
+var builders = require("../../src/builders");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

@@ -49,7 +49,7 @@ describe("builders / nodeViewBuilder", function () {
     var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
     resolveViewBuilderStub.returns(null);
     
-    return builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } }).catch(function (err) {
+    return builders.nodeViewBuilder({ spec: { hints: [ "text" ] } }).catch(function (err) {
       resolveViewBuilderStub.called.should.be.true;
       resolveViewBuilderStub.restore();
       throw err;
@@ -63,7 +63,7 @@ describe("builders / nodeViewBuilder", function () {
       spec: { 
         name: "node1",
         visibility: "visible",
-        hints: [ { name: "group" }, { name: "container" } ],
+        hints: [ "group", "container" ],
         labeledBy: "node2"
       },
       value: {
@@ -73,7 +73,7 @@ describe("builders / nodeViewBuilder", function () {
     
     return runTest(node, function (view) {
       expect(view).to.not.be.null;
-      view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.map(hint => hint.name).join(" "));
+      view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.join(" "));
       view.getAttribute("data-lynx-visibility").should.equal(node.spec.visibility);
       view.getAttribute("data-lynx-scope").should.equal(node.value.scope);
       view.getAttribute("data-lynx-name").should.equal(node.spec.name);
@@ -132,7 +132,7 @@ describe("builders / nodeViewBuilder", function () {
     var node = { 
       spec: { 
         name: "node1",
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         submitter: "node2"
       },
       value: {}
