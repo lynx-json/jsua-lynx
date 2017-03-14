@@ -6,7 +6,7 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe.only("builders / containerInputViewBuilder", function () {
+describe("builders / containerInputViewBuilder", function () {
   beforeEach(function () {
     nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
     

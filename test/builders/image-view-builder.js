@@ -8,6 +8,18 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("builders / imageViewBuilder", function () {
+  beforeEach(function () {
+    buildStub = sinon.stub(building, "build");
+    transferStub = sinon.stub(transferring, "transfer");
+  });
+  
+  afterEach(function () {
+    buildStub.restore();
+    transferStub.restore();
+  });
+  
+  var buildStub, transferStub;
+  
   it("should return view for 'image'", function () {
     var node = {
       base: "http://example.com",
@@ -23,10 +35,8 @@ describe("builders / imageViewBuilder", function () {
       }
     };
     
-    var transferStub = sinon.stub(transferring, "transfer");
     transferStub.returns(Promise.resolve({}));
     
-    var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return contents.imageViewBuilder(node).then(function (view) {
@@ -38,8 +48,6 @@ describe("builders / imageViewBuilder", function () {
       transferStub.called.should.be.true;
       transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;
-      transferStub.restore();
-      buildStub.restore();
     });
   });
 });
