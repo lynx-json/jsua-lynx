@@ -42,7 +42,7 @@ describe("builders / contentInputViewBuilder", function () {
     
     return builders.contentInputViewBuilder(node).then(function (view) {
       var inputView = view.querySelector("input");
-      var contentView = view.querySelector("[data-lynx-content-view]");
+      var contentView = view.querySelector("[data-lynx-embedded-view]");
       
       expect(view).to.not.be.null;
       expect(inputView).to.not.be.null;
@@ -74,7 +74,7 @@ describe("builders / contentInputViewBuilder", function () {
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
-      var contentView = view.querySelector("[data-lynx-content-view]");
+      var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.getValue();
       
       expect(contentView).to.not.be.null;
@@ -106,7 +106,7 @@ describe("builders / contentInputViewBuilder", function () {
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
-      var contentView = view.querySelector("[data-lynx-content-view]");
+      var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.getValue();
       
       expect(contentView).to.not.be.null;
@@ -137,7 +137,7 @@ describe("builders / contentInputViewBuilder", function () {
       var file = new Blob(["Hi"], { type: "text/plain" });
       return view.setValue(file);
     }).then(function (view) {
-      var contentView = view.querySelector("[data-lynx-content-view]");
+      var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.getValue();
       
       expect(contentView).to.not.be.null;

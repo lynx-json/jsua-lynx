@@ -20,6 +20,8 @@ describe("builders / formViewBuilder", function () {
     
     return forms.formViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
+      view.autocomplete.should.equal("off");
+      view.getAttribute("novalidate").should.equal("novalidate");
       view.children.length.should.equal(0);
       buildChildViewsStub.called.should.be.true;
       buildChildViewsStub.restore();

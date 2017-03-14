@@ -1,6 +1,7 @@
 import { getBlob, getPromiseForRequest } from "./content-node-helpers";
 import { transfer } from "jsua/lib/transferring";
 import { build } from "jsua/lib/views/building";
+import { finish } from "jsua/lib/views/finishing";
 
 function updateEmbeddedView(contentInputView, blob) {
   var oldEmbeddedView = contentInputView.querySelector("[data-lynx-content-view]");
@@ -30,7 +31,7 @@ function updateEmbeddedView(contentInputView, blob) {
         embeddedView.textContent = "View Unavailable";
       }
       
-      embeddedView.setAttribute("data-lynx-content-view", true);
+      embeddedView.setAttribute("data-lynx-embedded-view", true);
       
       if (oldEmbeddedView) {
         contentInputView.replaceChild(embeddedView, oldEmbeddedView);
