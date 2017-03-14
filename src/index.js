@@ -2,6 +2,7 @@ import * as building from "./building";
 import * as builders from "./builders";
 
 building.register("container", builders.containerViewBuilder);
+building.register("container", builders.containerInputViewBuilder, true);
 building.register("form", builders.formViewBuilder);
 building.register("content", builders.contentViewBuilder);
 building.register("content", builders.contentInputViewBuilder, true);

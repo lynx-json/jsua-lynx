@@ -3,6 +3,7 @@ import { nodeViewBuilder } from "./node-view-builder";
 import { textViewBuilder } from "./text-view-builder";
 import { textInputViewBuilder } from "./text-input-view-builder";
 import { containerViewBuilder } from "./container-view-builder";
+import { containerInputViewBuilder } from "./container-input-view-builder";
 import { formViewBuilder } from "./form-view-builder";
 import { contentViewBuilder } from "./content-view-builder";
 import { imageViewBuilder } from "./image-view-builder";
@@ -16,6 +17,7 @@ export {
   textViewBuilder,
   textInputViewBuilder,
   containerViewBuilder,
+  containerInputViewBuilder,
   formViewBuilder,
   contentViewBuilder,
   contentInputViewBuilder,
