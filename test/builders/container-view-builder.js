@@ -7,6 +7,16 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("builders / containerViewBuilder", function () {
+  beforeEach(function () {
+    nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
+  });
+  
+  afterEach(function () {
+    nodeViewBuilderStub.restore();
+  });
+  
+  var nodeViewBuilderStub;
+  
   it("should return view for 'container' with array value", function () {
     var node = {
       spec: {
@@ -19,7 +29,7 @@ describe("builders / containerViewBuilder", function () {
       ]
     };
     
-    var nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
+    
     nodeViewBuilderStub.onCall(0).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(1).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(2).returns(Promise.resolve(document.createElement("div")));
@@ -28,7 +38,6 @@ describe("builders / containerViewBuilder", function () {
       expect(view).to.not.be.null;
       nodeViewBuilderStub.calledThrice.should.be.true;
       view.childElementCount.should.equal(3);
-      nodeViewBuilderStub.restore();
     });
   });
   
@@ -49,7 +58,6 @@ describe("builders / containerViewBuilder", function () {
       }
     };
     
-    var nodeViewBuilderStub = sinon.stub(nodes, "nodeViewBuilder");
     nodeViewBuilderStub.onCall(0).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(1).returns(Promise.resolve(document.createElement("div")));
     nodeViewBuilderStub.onCall(2).returns(Promise.resolve(document.createElement("div")));
@@ -58,7 +66,6 @@ describe("builders / containerViewBuilder", function () {
       expect(view).to.not.be.null;
       view.children.length.should.equal(3);
       nodeViewBuilderStub.calledThrice.should.be.true;
-      nodeViewBuilderStub.restore();
     });
   });
 });

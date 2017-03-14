@@ -7,6 +7,16 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("builders / linkViewBuilder", function () {
+  beforeEach(function () {
+    buildChildViewsStub = sinon.stub(containers, "buildChildViews");
+  });
+  
+  afterEach(function () {
+    buildChildViewsStub.restore();
+  });
+  
+  var buildChildViewsStub;
+  
   it("should return view for 'link' with no children", function () {
     var node = {
       spec: {
@@ -18,7 +28,6 @@ describe("builders / linkViewBuilder", function () {
       }
     };
     
-    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
     return links.linkViewBuilder(node).then(function (view) {
@@ -28,7 +37,6 @@ describe("builders / linkViewBuilder", function () {
       view.href.should.equal(view.textContent);
       view.type.should.equal(node.value.type);
       buildChildViewsStub.called.should.be.true;
-      buildChildViewsStub.restore();
     });
   });
   
@@ -43,7 +51,6 @@ describe("builders / linkViewBuilder", function () {
       }
     };
     
-    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([document.createElement("div")]));
     
     return links.linkViewBuilder(node).then(function (view) {
@@ -52,7 +59,6 @@ describe("builders / linkViewBuilder", function () {
       view.href.should.equal(node.value.href);
       view.type.should.equal(node.value.type);
       buildChildViewsStub.called.should.be.true;
-      buildChildViewsStub.restore();
     });
   });
   
@@ -68,13 +74,11 @@ describe("builders / linkViewBuilder", function () {
       }
     };
     
-    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
     return links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-follow").should.equal("0");
-      buildChildViewsStub.restore();
     });
   });
   
@@ -90,13 +94,11 @@ describe("builders / linkViewBuilder", function () {
       }
     };
     
-    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
     return links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-follow").should.equal("0");
-      buildChildViewsStub.restore();
     });
   });
   
@@ -112,13 +114,11 @@ describe("builders / linkViewBuilder", function () {
       }
     };
     
-    var buildChildViewsStub = sinon.stub(containers, "buildChildViews");
     buildChildViewsStub.returns(Promise.resolve([]));
     
     return links.linkViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.href.should.equal("http://example.com/foo");
-      buildChildViewsStub.restore();
     });
   });
 });

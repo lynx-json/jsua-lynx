@@ -26,6 +26,16 @@ function getBlobValue(blob) {
 }
 
 describe("builders / contentInputViewBuilder", function () {
+  beforeEach(function () {
+    buildStub = sinon.stub(building, "build");
+  });
+  
+  afterEach(function () {
+    buildStub.restore();
+  });
+  
+  var buildStub;
+  
   it("should return view for 'content' input", function() {
     var node = {
       spec: {
@@ -37,7 +47,6 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
@@ -51,8 +60,6 @@ describe("builders / contentInputViewBuilder", function () {
       inputView.name.should.equal(node.spec.input.name);
       expect(view.getValue()).to.be.null;
       expect(view.setValue).to.not.be.undefined;
-    }).then(function () {
-      buildStub.restore();
     });
   });
   
@@ -70,7 +77,6 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
@@ -83,7 +89,6 @@ describe("builders / contentInputViewBuilder", function () {
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-      buildStub.restore();
     });
   });
   
@@ -102,7 +107,6 @@ describe("builders / contentInputViewBuilder", function () {
       }
     };
     
-    var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
@@ -115,7 +119,6 @@ describe("builders / contentInputViewBuilder", function () {
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-      buildStub.restore();
     });
   });
   
@@ -130,7 +133,6 @@ describe("builders / contentInputViewBuilder", function () {
       value: null
     };
     
-    var buildStub = sinon.stub(building, "build");
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
     
     return builders.contentInputViewBuilder(node).then(function (view) {
@@ -146,7 +148,6 @@ describe("builders / contentInputViewBuilder", function () {
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
-      buildStub.restore();
     });
   });
 });

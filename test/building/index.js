@@ -65,6 +65,16 @@ describe("building", function () {
   });
   
   describe("build", function () {
+    beforeEach(function () {
+      nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
+    });
+    
+    afterEach(function () {
+      nodeViewBuilderStub.restore();
+    });
+    
+    var nodeViewBuilderStub;
+    
     it("should reject when no params", function () {
       return building.build().catch(function (err) {
         expect(err).to.be.an("error");
@@ -98,25 +108,16 @@ describe("building", function () {
     it("should reject when invalid Lynx content is present", function () {
       var eventParam = { target: { result: "" } };
       
-      var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = {};
       nodeViewBuilderStub.returns(Promise.resolve(view));
-      
-      function restore(param) {
-        nodeViewBuilderStub.restore();
-        if (param instanceof Error) throw param;
-        return param;
-      }
       
       return building.build({ blob: {}})
         .catch(function (err) {
           expect(err).to.be.an("error");
-        })
-        .then(restore, restore);
+        });
     });
     
     it("should resolve when valid Lynx content is present", function () {
-      var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = document.createElement("div");
       nodeViewBuilderStub.returns(Promise.resolve(view));
       
@@ -130,9 +131,6 @@ describe("building", function () {
       var content = { url: "http://example.com/", blob: blob };
       
       return building.build(content).then(function (view) {
-        nodeViewBuilderStub.restore();
-        return view;
-      }).then(function (view) {
         nodeViewBuilderStub.called.should.be.true;
         expect(view).to.not.be.null;
         view.getAttribute("data-content-url").should.equal(content.url);
@@ -141,7 +139,6 @@ describe("building", function () {
     });
     
     it("should set attribute 'realm'", function () {
-      var nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
       var view = document.createElement("div");
       nodeViewBuilderStub.returns(Promise.resolve(view));
       
@@ -156,10 +153,6 @@ describe("building", function () {
       var content = { url: "http://example.com/", blob: blob };
       
       return building.build(content)
-        .then(function (view) {
-          nodeViewBuilderStub.restore();
-          return view;
-        })
         .then(function (view) {
           nodeViewBuilderStub.called.should.be.true;
           expect(view).to.not.be.null;

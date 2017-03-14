@@ -6,21 +6,29 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-function runTest(node, assert) {
-  var builderStub = sinon.stub();
-  builderStub.returns(document.createElement("div"));
+describe("builders / nodeViewBuilder", function () {
+  beforeEach(function () {
+    resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
+  });
   
-  var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
-  resolveViewBuilderStub.returns(builderStub);
-  
-  return builders.nodeViewBuilder(node).then(assert).then(function () {
-    builderStub.called.should.be.true;
-    resolveViewBuilderStub.called.should.be.true;
+  afterEach(function () {
     resolveViewBuilderStub.restore();
   });
-}
-
-describe("builders / nodeViewBuilder", function () {
+  
+  function runTest(node, assert) {
+    var builderStub = sinon.stub();
+    builderStub.returns(document.createElement("div"));
+    
+    resolveViewBuilderStub.returns(builderStub);
+    
+    return builders.nodeViewBuilder(node).then(assert).then(function () {
+      builderStub.called.should.be.true;
+      resolveViewBuilderStub.called.should.be.true;
+    });
+  }
+  
+  var resolveViewBuilderStub;
+  
   it("should reject when no params", function () {
     return builders.nodeViewBuilder().catch(function (err) {
       expect(err).to.be.an("error");
@@ -46,12 +54,11 @@ describe("builders / nodeViewBuilder", function () {
   });
   
   it("should reject when a view builder is not be resolved", function () {  
-    var resolveViewBuilderStub = sinon.stub(resolver, "resolveViewBuilder");
+    
     resolveViewBuilderStub.returns(null);
     
     return builders.nodeViewBuilder({ spec: { hints: [ { name: "text" } ] } }).catch(function (err) {
       resolveViewBuilderStub.called.should.be.true;
-      resolveViewBuilderStub.restore();
       throw err;
     }).catch(function (err) {
       expect(err).to.be.an("error");
