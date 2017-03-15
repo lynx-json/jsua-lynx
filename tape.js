@@ -9,16 +9,6 @@ test('A passing test', (assert) => {
 
   assert.end();
 });
-
-test('Assertions with tape.', (assert) => {
-  const expected = 'something to test';
-  const actual = 'sonething to test';
-
-  assert.equal(actual, expected,
-    'Given two mismatched values, .equal() should produce a nice bug report');
-
-  assert.end();
-});
  
 // smokestack.capture('screenshots/0001.png', function(err) {
 //   if (err) throw err;
