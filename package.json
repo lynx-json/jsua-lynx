@@ -29,6 +29,7 @@
     "jsdom": "^9.11.0",
     "mocha": "^3.2.0",
     "sinon": "^1.17.7",
+    "smokestack": "^3.4.1",
     "tape": "^4.6.3"
   },
   "dependencies": {
