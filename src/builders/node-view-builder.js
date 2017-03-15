@@ -13,7 +13,7 @@ export function nodeViewBuilder(node) {
   if (!node.spec.hints || node.spec.hints.length === 0) return Promise.reject(new Error("'hints' property not found or zero length."));
   
   var input = !!node.spec.input;
-  var hints = node.spec.hints.map(hint => hint.name);
+  var hints = node.spec.hints;
   var builder = resolver.resolveViewBuilder(building.registrations, hints, input);
   
   if (!builder) return Promise.reject(new Error("No builder registered for node with input=" + input + " and hints=" + hints.join(",")));
@@ -26,7 +26,7 @@ export function nodeViewBuilder(node) {
       reject(e);
     }
   }).then(function (view) {
-    view.setAttribute("data-lynx-hints", node.spec.hints.map(hint => hint.name).join(" "));
+    view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
     if (node.spec.visibility) view.setAttribute("data-lynx-visibility", node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);

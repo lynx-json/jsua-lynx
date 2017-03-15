@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha --recursive test",
+    "test": "mocha test --recursive --compilers js:babel-register --require babel-polyfill",
     "build": "babel node_modules/jsua/src -d node_modules/jsua/lib && babel src -d lib"
   },
   "keywords": [
@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "jsua": "github:lynx-json/jsua",
-    "lynx-parser": "github:johnhowes/lynx-parser"
+    "lynx-parser": "github:lynx-json/lynx-parser"
   }
 }
