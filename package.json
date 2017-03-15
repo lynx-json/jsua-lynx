@@ -7,8 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test --recursive --compilers js:babel-register --require babel-polyfill",
-    "pretest": "npm run build",
+    "test": "browserify tape.js | smokestack --saucelabs",
+    "test-old": "mocha test --recursive --compilers js:babel-register --require babel-polyfill",
+    "pretest-old": "npm run build",
     "build": "babel node_modules/jsua/src -d node_modules/jsua/lib && babel src -d lib"
   },
   "keywords": [
