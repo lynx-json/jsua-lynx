@@ -14,7 +14,7 @@ export function containerInputViewBuilder(node) {
     itemView.appendChild(removeView);
     removeView.setAttribute("data-lynx-container-input-remove", true);
     removeView.type = "button";
-    removeView.textContent = "+";
+    removeView.textContent = "-";
     removeView.addEventListener("click", function () {
       view.removeChild(itemView);
     });
