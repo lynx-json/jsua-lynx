@@ -52,3 +52,15 @@ A view representing a node of a Lynx document may have the following attributes:
 * `data-lynx-container-input-value` - the view for the value of an item in the `container` input node
 * `data-lynx-container-input-remove` - the control used to remove a value from a `container` input node
 * `data-lynx-container-input-item` - contains the `data-lynx-container-input-value` view and its associated `data-lynx-container-input-remove` control
+* `data-lynx-validation-state` - the current validation state of the view
+
+## View Events
+
+A view representing a node of a Lynx document may emit the following events:
+
+* `lynx-visibility-change` - emitted when the view's `data-lynx-visibility` value changes.
+* `lynx-validation-state-change` - emitted when the view's `data-lynx-validation-state` value changes. The event object will have a `validation` property whose value is an object (conforming to Lynx's "Validation Constraint Object" interface) with the following properties:
+  - `state` - the overall validation state for the view after considering the state of all constraints
+  - `priorState` - the overall validation state for the view prior to the change
+  - `changes` - an array of the validation constraints for the view that have changed state
+  - `constraints` - an array of all validation constraints for the view each having their own `state` and `priorState` properties (and also conforming to Lynx's "Validation Constraint Object" interface)
