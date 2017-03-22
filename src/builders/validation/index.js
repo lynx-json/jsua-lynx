@@ -53,6 +53,7 @@ export function validateValue(validation, value) {
   
   validation.priorState = validation.state;
   validation.state = resolveValidationState(validation.constraints.map(constraint => constraint.state));
+  if (validation.state !== validation.priorState) validation.changes.push(validation);
 }
 
 function raiseValiditionStateChangedEvent(view, validation) {

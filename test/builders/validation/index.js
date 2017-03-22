@@ -29,10 +29,11 @@ describe("validation / validateValue", function () {
     fooValidatorStub.calledOnce.should.be.true;
     normalizedValidationObj.state.should.equal("valid");
     normalizedValidationObj.priorState.should.equal("unknown");
-    normalizedValidationObj.changes.length.should.equal(1);
+    normalizedValidationObj.changes.length.should.equal(2);
     normalizedValidationObj.changes[0].should.equal(normalizedValidationObj.constraints[0]);
     normalizedValidationObj.changes[0].state.should.equal("valid");
     normalizedValidationObj.changes[0].priorState.should.equal("unknown");
+    normalizedValidationObj.changes[1].should.equal(normalizedValidationObj);
   });
   
   it("should call all validators and update validation states", function () {
@@ -67,13 +68,14 @@ describe("validation / validateValue", function () {
     barValidatorStub.calledOnce.should.be.true;
     normalizedValidationObj.state.should.equal("invalid");
     normalizedValidationObj.priorState.should.equal("unknown");
-    normalizedValidationObj.changes.length.should.equal(2);
+    normalizedValidationObj.changes.length.should.equal(3);
     normalizedValidationObj.changes[0].should.equal(normalizedValidationObj.constraints[0]);
     normalizedValidationObj.changes[0].state.should.equal("valid");
     normalizedValidationObj.changes[0].priorState.should.equal("unknown");
     normalizedValidationObj.changes[1].should.equal(normalizedValidationObj.constraints[1]);
     normalizedValidationObj.changes[1].state.should.equal("invalid");
     normalizedValidationObj.changes[1].priorState.should.equal("unknown");
+    normalizedValidationObj.changes[2].should.equal(normalizedValidationObj);
   });
 });
 
