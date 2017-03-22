@@ -81,10 +81,38 @@ describe("builders / nodeViewBuilder", function () {
     return runTest(node, function (view) {
       expect(view).to.not.be.null;
       view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.join(" "));
-      view.getAttribute("data-lynx-visibility").should.equal(node.spec.visibility);
       view.getAttribute("data-lynx-scope").should.equal(node.value.scope);
       view.getAttribute("data-lynx-name").should.equal(node.spec.name);
       view.getAttribute("data-lynx-labeled-by").should.equal(node.spec.labeledBy);
+    });
+  });
+  
+  it("should add visibility accessors and publish change events", function () {  
+    var node = { 
+      spec: {
+        visibility: "visible",
+        hints: [ "container" ]
+      },
+      value: {
+        scope: "http://lynx-json.org/tests/"
+      }
+    };
+    
+    return runTest(node, function (view) {
+      expect(view).to.not.be.null;
+      expect(view.lynxGetVisibility).to.not.be.null;
+      expect(view.lynxSetVisibility).to.not.be.null;
+      view.getAttribute("data-lynx-visibility").should.equal("visible");
+      view.lynxGetVisibility().should.equal("visible");
+      
+      return new Promise(function (resolve) {
+        view.addEventListener("lynx-visibility-change", function () {
+          view.lynxGetVisibility().should.equal("hidden");
+          resolve();
+        });
+        
+        view.lynxSetVisibility("hidden");
+      });
     });
   });
   

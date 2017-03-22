@@ -27,7 +27,7 @@ export function nodeViewBuilder(node) {
     }
   }).then(function (view) {
     view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
-    if (node.spec.visibility) view.setAttribute("data-lynx-visibility", node.spec.visibility);
+    addVisibilityExtensionsToView(view, node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
     if (input) view.setAttribute("data-lynx-input", "true");
@@ -42,4 +42,25 @@ export function nodeViewBuilder(node) {
     // data-lynx-data-* properties
     return view;
   });
+}
+
+function addVisibilityExtensionsToView(view, initialVisibility) {
+  view.lynxGetVisibility = function () {
+    return view.getAttribute("data-lynx-visibility");
+  };
+  
+  view.lynxSetVisibility = function (visibility) {
+    var priorVisibility = view.lynxGetVisibility();
+    view.setAttribute("data-lynx-visibility", visibility);
+    if (priorVisibility !== visibility) raiseVisibilityChangedEvent(view);
+  };
+  
+  initialVisibility = initialVisibility || "visible";
+  view.setAttribute("data-lynx-visibility", initialVisibility);
+}
+
+function raiseVisibilityChangedEvent(view) {
+  var changeEvent = document.createEvent("Event");
+  changeEvent.initEvent("lynx-visibility-change", true, false);
+  view.dispatchEvent(changeEvent);
 }
