@@ -17,6 +17,7 @@ export function containerInputViewBuilder(node) {
     removeView.textContent = "-";
     removeView.addEventListener("click", function () {
       view.removeChild(itemView);
+      raiseValueChangeEvent(view);
     });
     
     return itemView;
@@ -30,10 +31,10 @@ export function containerInputViewBuilder(node) {
   addView.type = "button";
   addView.textContent = "+";
   addView.addEventListener("click", function () {
-    return view.addValue();
+    view.lynxAddValue();
   });
   
-  view.addValue = function (val) {
+  view.lynxAddValue = function (val) {
     var childNode = {
       base: node.base,
       spec: JSON.parse(JSON.stringify(node.spec.children)),
@@ -43,17 +44,25 @@ export function containerInputViewBuilder(node) {
     return Promise.resolve(childNode)
       .then(nodeViewBuilder)
       .then(appendChildView)
+      .then(function (itemView) {
+        raiseValueChangeEvent(view);
+        return itemView;
+      })
       .catch(function (err) {
         console.log("Error adding value to container input.", err);
       });
   };
   
-  view.removeValue = function (val) {
+  view.lynxRemoveValue = function (val) {
     var valueToRemove = val || "";
-    Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
+    
+    var itemViewsToRemove = Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
       .filter(valueView => valueToRemove === valueView.value)
-      .map(valueView => valueView.parentElement)
-      .forEach(itemView => itemView.parentElement.removeChild(itemView));
+      .map(valueView => valueView.parentElement);
+      
+    if (itemViewsToRemove.length === 0) return;
+    itemViewsToRemove.forEach(itemView => itemView.parentElement.removeChild(itemView));
+    raiseValueChangeEvent(view);
   };
   
   return containers.buildChildViews(node)
@@ -61,4 +70,10 @@ export function containerInputViewBuilder(node) {
       childViews.forEach(appendChildView);
       return view;
     });
+}
+
+function raiseValueChangeEvent(view) {
+  var changeEvent = document.createEvent("Event");
+  changeEvent.initEvent("change", true, false);
+  view.dispatchEvent(changeEvent);
 }

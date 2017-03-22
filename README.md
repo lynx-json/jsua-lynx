@@ -1,8 +1,8 @@
 # jsua-lynx (PRELIMINARY DOCUMENTATION)
-Extensions to the `jsua` package for the Lynx media type.
+Extensions to the `jsua` package for the Lynx JSON media type.
 
 `building.build` accepts `content` and then:
-  * parses it as Lynx
+  * parses it as Lynx JSON
   * creates a `result` object `{ content, node }`
   * passes the `result` object to `builders.nodeViewBuilder`
 
@@ -10,7 +10,7 @@ Extensions to the `jsua` package for the Lynx media type.
   * finds (see `building.register`) the builder that matches the most specific hint
   * passes the `result` object to the builder
   
-`building.register` registers a view builder (for a Lynx node) function that accepts the following params:
+`building.register` registers a view builder (for a Lynx JSON node) function that accepts the following params:
   * `hint` - the hint to build views for
   * `builder` - the builder function with signature f(node) -> view || Promise<view>
   * `input` - `true` if the builder expects the node to contain an `input` specification
@@ -19,13 +19,13 @@ Extensions to the `jsua` package for the Lynx media type.
 
 ## View Attributes
 
-A view representing a Lynx document may have the following attributes:
+A view representing a Lynx JSON document may have the following attributes:
 
 * `data-content-url` - the document's URL
 * `data-content-type` - the document's content type (`application/lynx+json`)
 * `data-lynx-realm` - the document's realm URI
 
-A view representing a node of a Lynx document may have the following attributes:
+A view representing a node of a Lynx JSON document may have the following attributes:
 
 * `data-lynx-visibility` - the node's `visibility`
 * `data-lynx-hints` - the node's `hints`
@@ -54,13 +54,22 @@ A view representing a node of a Lynx document may have the following attributes:
 * `data-lynx-container-input-item` - contains the `data-lynx-container-input-value` view and its associated `data-lynx-container-input-remove` control
 * `data-lynx-validation-state` - the current validation state of the view
 
+## View Functions
+
+A view representing a node of a Lynx JSON document may have the following methods/functions:
+
+* `lynxGetVisibility` and `lynxSetVisibility` - accessors for getting/setting the visibility of a view.
+* `lynxGetValue` and `lynxSetValue` - accessors for getting/setting the value of an input
+* `lynxAddValue` and `lynxRemoveValue` - accessors for adding/remove values from a container input
+
 ## View Events
 
-A view representing a node of a Lynx document may emit the following events:
+A view representing a node of a Lynx JSON document may emit the following events:
 
-* `lynx-visibility-change` - emitted when the view's `data-lynx-visibility` value changes.
-* `lynx-validation-state-change` - emitted when the view's `data-lynx-validation-state` value changes. The event object will have a `validation` property whose value is an object (conforming to Lynx's "Validation Constraint Object" interface) with the following properties:
+* `change` - emitted when an input view's value changes
+* `lynx-visibility-change` - emitted when the view's `data-lynx-visibility` value changes
+* `lynx-validation-state-change` - emitted when the view's `data-lynx-validation-state` value changes. The event object will have a `validation` property whose value is an object (conforming to Lynx JSON's ["Validation Constraint Set Object"](http://lynx-json.org/specification/specifications/properties/validation/) interface) with the following additional properties:
   - `state` - the overall validation state for the view after considering the state of all constraints
   - `priorState` - the overall validation state for the view prior to the change
-  - `changes` - an array of the validation constraints for the view that have changed state
-  - `constraints` - an array of all validation constraints for the view each having their own `state` and `priorState` properties (and also conforming to Lynx's "Validation Constraint Object" interface)
+  - `constraints` - an array of the validation constraints (conforming Lynx JSON's "Validation Constraint Object" interface) for the view also with their own `state` and `priorState` properties
+  - `changes` - an array of references to the validation constraints that have changed state
