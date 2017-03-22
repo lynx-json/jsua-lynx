@@ -54,18 +54,19 @@ export function contentInputViewBuilder(node) {
     
     var value = null;
     
-    view.getValue = function () {
+    view.lynxGetValue = function () {
       return value;
     };
     
-    view.setValue = function (blob) {
+    view.lynxSetValue = function (blob) {
       if (blob === value) return;
       value = blob;
+      raiseValueChangeEvent(view);
       return updateEmbeddedView(view, value);
     };
     
     inputView.addEventListener("change", function (evt) {
-      view.setValue(inputView.files[0]);
+      view.lynxSetValue(inputView.files[0]);
     });
     
     if (!node.value) return resolve(view);
@@ -73,7 +74,7 @@ export function contentInputViewBuilder(node) {
     var promiseForView;
     
     if ("data" in node.value) {
-      promiseForView = view.setValue(getBlob(node));
+      promiseForView = view.lynxSetValue(getBlob(node));
     } else if ("src" in node.value) {
       promiseForView = getPromiseForRequest(node)
         .then(transfer)
@@ -84,10 +85,16 @@ export function contentInputViewBuilder(node) {
         .then(function (content) {
           if (!content) return view;
           content.blob.name = content.url;
-          return view.setValue(content.blob);
+          return view.lynxSetValue(content.blob);
         });
     }
     
     promiseForView.then(resolve, reject);
   });
+}
+
+function raiseValueChangeEvent(view) {
+  var changeEvent = document.createEvent("Event");
+  changeEvent.initEvent("change", true, false);
+  view.dispatchEvent(changeEvent);
 }

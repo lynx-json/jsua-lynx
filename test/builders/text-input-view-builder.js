@@ -23,6 +23,35 @@ describe("builders / textInputViewBuilder", function () {
     view.name.should.equal(node.spec.input.name);
   });
   
+  it("should add value accessors and publish change events", function () {
+    var node = {
+      spec: {
+        hints: [ { name: "text" } ],
+        input: {
+          name: "test"
+        }
+      },
+      value: null
+    };
+    
+    var view = builders.textInputViewBuilder(node);
+    
+    expect(view).to.not.be.null;
+    view.value.should.equal("");
+    expect(view.lynxGetValue).to.not.be.null;
+    expect(view.lynxSetValue).to.not.be.null;
+    view.lynxGetValue().should.equal("");
+    return new Promise(function (resolve) {
+      view.addEventListener("change", function () {
+        view.value.should.equal("testing setter and change event");
+        view.lynxGetValue().should.equal("testing setter and change event");
+        resolve();
+      });
+      
+      view.lynxSetValue("testing setter and change event");
+    });
+  });
+  
   it("should return view with value", function () {
     var node = {
       spec: {

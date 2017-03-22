@@ -58,8 +58,8 @@ describe("builders / contentInputViewBuilder", function () {
       expect(contentView).to.be.null;
       inputView.type.should.equal("file");
       inputView.name.should.equal(node.spec.input.name);
-      expect(view.getValue()).to.be.null;
-      expect(view.setValue).to.not.be.undefined;
+      expect(view.lynxGetValue()).to.be.null;
+      expect(view.lynxSetValue).to.not.be.undefined;
     });
   });
   
@@ -81,7 +81,7 @@ describe("builders / contentInputViewBuilder", function () {
     
     return builders.contentInputViewBuilder(node).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
-      var value = view.getValue();
+      var value = view.lynxGetValue();
       
       expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
@@ -111,7 +111,7 @@ describe("builders / contentInputViewBuilder", function () {
     
     return builders.contentInputViewBuilder(node).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
-      var value = view.getValue();
+      var value = view.lynxGetValue();
       
       expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
@@ -122,7 +122,7 @@ describe("builders / contentInputViewBuilder", function () {
     });
   });
   
-  it("setValue() should set the value", function() {
+  it("lynxSetValue() should set the value", function() {
     var node = {
       spec: {
         hints: [ "content" ],
@@ -137,10 +137,10 @@ describe("builders / contentInputViewBuilder", function () {
     
     return builders.contentInputViewBuilder(node).then(function (view) {
       var file = new Blob(["Hi"], { type: "text/plain" });
-      return view.setValue(file);
+      return view.lynxSetValue(file);
     }).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
-      var value = view.getValue();
+      var value = view.lynxGetValue();
       
       expect(contentView).to.not.be.null;
       expect(value).to.not.be.null;
@@ -148,6 +148,31 @@ describe("builders / contentInputViewBuilder", function () {
       return getBlobValue(value);
     }).then(function (blobValue) {
       blobValue.should.equal("Hi");
+    });
+  });
+  
+  it("lynxSetValue() should publish change event", function() {
+    var node = {
+      spec: {
+        hints: [ "content" ],
+        input: {
+          name: "fileUpload"
+        }
+      },
+      value: null
+    };
+    
+    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    
+    return builders.contentInputViewBuilder(node).then(function (view) {
+      var file = new Blob(["Hi"], { type: "text/plain" });
+      
+      return new Promise(function (resolve) {
+        view.addEventListener("change", function () {
+          resolve();
+        });
+        view.lynxSetValue(file);  
+      });
     });
   });
 });

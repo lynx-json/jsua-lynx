@@ -25,13 +25,23 @@ export function textInputViewBuilder(node) {
     view.value = node.value.toString();
   }
   
-  view.getValue = function () {
+  view.lynxGetValue = function () {
     return view.value;
   };
   
-  view.setValue = function (val) {
+  view.lynxSetValue = function (val) {
+    var priorValue = view.value;
     view.value = val;
+    if (priorValue !== view.value) {
+      raiseValueChangeEvent(view);
+    }
   };
   
   return view;
+}
+
+function raiseValueChangeEvent(view) {
+  var changeEvent = document.createEvent("Event");
+  changeEvent.initEvent("change", true, false);
+  view.dispatchEvent(changeEvent);
 }
