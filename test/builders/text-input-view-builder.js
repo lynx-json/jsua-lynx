@@ -8,7 +8,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should return view for 'text' input", function () {
     var node = {
       spec: {
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "test"
         }
@@ -26,7 +26,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should add value accessors and publish change events", function () {
     var node = {
       spec: {
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "test"
         }
@@ -55,7 +55,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should return view with value", function () {
     var node = {
       spec: {
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "test"
         }
@@ -72,7 +72,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should return view for 'line' input", function () {
     var node = {
       spec: {
-        hints: [ { name: "line" }, { name: "text" } ],
+        hints: [ "line", "text" ],
         input: {
           name: "test"
         }
@@ -92,7 +92,7 @@ describe("builders / textInputViewBuilder", function () {
     var node = {
       spec: {
         visibility: "concealed",
-        hints: [ { name: "line" }, { name: "text" } ],
+        hints: [ "line", "text" ],
         input: {
           name: "test"
         }
@@ -111,7 +111,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should set attribute 'data-lynx-options'", function () {
     var node = {
       spec: {
-        hints: [ { name: "http://iso.org/8601/date" }, { name: "text" } ],
+        hints: [ "http://iso.org/8601/date", "text" ],
         input: {
           name: "test"
         },

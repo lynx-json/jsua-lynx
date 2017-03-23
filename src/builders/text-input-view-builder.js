@@ -2,7 +2,7 @@ export function textInputViewBuilder(node) {
   var view;
   
   var isLine = node.spec.hints.some(function (hint) { 
-    return hint.name === "line";
+    return hint === "line";
   });
   
   if (isLine) {
