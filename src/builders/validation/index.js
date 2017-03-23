@@ -22,10 +22,20 @@ export function addValidationExtensionsToView(view, validation) {
 }
 
 export function addValidationExtensionsToContainerView(view, validation) {
+  function resolveValidationStateOfDescendants() {
+    var validatedViews = view.querySelectorAll("[data-lynx-validation-state]");
+    var validationStates = Array.from(validatedViews)
+      .map(validatedView => validatedView.getAttribute("data-lynx-validation-state"));
+    return resolveValidationState(validationStates);
+  }
+  
+  validation.state = resolveValidationStateOfDescendants();
+  view.setAttribute("data-lynx-validation-state", validation.state);
+  
   view.addEventListener("lynx-validation-state-change", function (evt) {
     if (evt.srcElement === view) return;
     validation.priorState = validation.state;
-    validation.state = resolveValidationState([validation.state, evt.validation.state]);
+    validation.state = resolveValidationStateOfDescendants();
     if (validation.state === validation.priorState) return;
     view.setAttribute("data-lynx-validation-state", validation.state);
     raiseValiditionStateChangedEvent(view, validation);
@@ -33,8 +43,10 @@ export function addValidationExtensionsToContainerView(view, validation) {
 }
 
 export function addValidationExtensionsToInputView(view, validation) {
+  view.setAttribute("data-lynx-validation-state", validation.state);
+  
   view.addEventListener("change", function () {
-    var value = view.getValue();
+    var value = view.lynxGetValue();
     validateValue(validation, value);
     if (validation.state === validation.priorState) return;
     view.setAttribute("data-lynx-validation-state", validation.state);
