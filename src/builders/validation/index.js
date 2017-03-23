@@ -19,6 +19,26 @@ export function addValidationExtensionsToView(view, validation) {
   } else {
     addValidationExtensionsToContainerView(view, validation);
   }
+  
+  view.lynxUpdateValidationContentVisibility = function() {
+    function updateContentTargetVisibility(constraint) {
+      constraint.contentTargets.forEach(contentTarget => {
+        var contentView = findNearestElement(view, "[data-lynx-name='" + contentTarget.name + "']");
+        if (!contentView) return;
+        var visibility = contentTarget.forState === constraint.state ? "visible" : "hidden";
+        contentView.lynxSetVisibility(visibility);
+      });
+    }
+    
+    updateContentTargetVisibility(validation);
+    validation.constraints.forEach(updateContentTargetVisibility);
+  };
+}
+
+function findNearestElement(view, selector) {
+  if (!view || view.matches("html")) return null;
+  if (!selector) return null;
+  return document.querySelector(selector) || findNearestElement(view.parentElement, selector);
 }
 
 export function addValidationExtensionsToContainerView(view, validation) {
@@ -39,6 +59,7 @@ export function addValidationExtensionsToContainerView(view, validation) {
     if (validation.state === validation.priorState) return;
     view.setAttribute("data-lynx-validation-state", validation.state);
     raiseValiditionStateChangedEvent(view, validation);
+    view.lynxUpdateValidationContentVisibility();
   });
 }
 
@@ -48,9 +69,13 @@ export function addValidationExtensionsToInputView(view, validation) {
   view.addEventListener("change", function () {
     var value = view.lynxGetValue();
     validateValue(validation, value);
-    if (validation.state === validation.priorState) return;
-    view.setAttribute("data-lynx-validation-state", validation.state);
-    raiseValiditionStateChangedEvent(view, validation);
+    if (validation.state !== validation.priorState) {
+      view.setAttribute("data-lynx-validation-state", validation.state);
+      raiseValiditionStateChangedEvent(view, validation);
+      view.lynxUpdateValidationContentVisibility();  
+    } else if (validation.changes.length > 0) {
+      view.lynxUpdateValidationContentVisibility();
+    }
   });
 }
 
@@ -79,6 +104,13 @@ export function normalizeValidationConstraintSetObject(validation) {
   var initialConstraintStates = [];
   var initialConstraints = [];
   
+  function normalizeContentTargets(constraint) {
+    ["valid", "invalid", "unknown"].forEach(forState => {
+      var name = constraint[forState];
+      if (name) constraint.contentTargets.push({ forState, name });
+    });
+  }
+  
   Object.getOwnPropertyNames(validation).forEach(propertyName => {
     if (isValidationConstraintName(propertyName) === false) return;
     
@@ -89,6 +121,8 @@ export function normalizeValidationConstraintSetObject(validation) {
       constraint.name = propertyName;
       constraint.state = constraint.state || "unknown";
       constraint.priorState = "";
+      constraint.contentTargets = [];
+      normalizeContentTargets(constraint);
       initialConstraintStates.push(constraint.state);
       initialConstraints.push(constraint);
     });
@@ -97,6 +131,8 @@ export function normalizeValidationConstraintSetObject(validation) {
   validation.state = resolveValidationState(initialConstraintStates);
   validation.priorState = "";
   validation.constraints = initialConstraints;
+  validation.contentTargets = [];
+  normalizeContentTargets(validation);
 }
 
 export function isValidationConstraintName(propertyName) {
