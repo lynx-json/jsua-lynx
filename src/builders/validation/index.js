@@ -1,4 +1,4 @@
-import { noopValidator, requiredValidator, textValidator, numberValidator, contentValidator } from "./validators";
+import { noopValidator, requiredValidator, createRegExpForTextConstraintPattern, textValidator, numberValidator, contentValidator } from "./validators";
 
 export var validators = {
   required: requiredValidator,
@@ -66,15 +66,37 @@ export function addValidationExtensionsToContainerView(view, validation) {
 export function addValidationExtensionsToInputView(view, validation) {
   view.setAttribute("data-lynx-validation-state", validation.state);
   
+  function formatInputValue() {
+    var value = view.lynxGetValue();
+    if (!value || typeof value !== "string") return;
+    
+    var formattedConstraints = validation.constraints.filter(constraint => constraint.name === "text" && 
+      constraint.state === "valid" &&
+      "format" in constraint && 
+      "pattern" in constraint);
+    
+    if (formattedConstraints.length === 0) return;
+    
+    var formattedConstraint = formattedConstraints[0];
+    var regexp = createRegExpForTextConstraintPattern(formattedConstraint.pattern);
+    var formattedValue = value.replace(regexp, formattedConstraint.format);
+    
+    view.lynxSetValue(formattedValue);
+  }
+  
   view.addEventListener("change", function () {
     var value = view.lynxGetValue();
+    
     validateValue(validation, value);
+    
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
       raiseValiditionStateChangedEvent(view, validation);
       view.lynxUpdateValidationContentVisibility();  
+      formatInputValue();
     } else if (validation.changes.length > 0) {
       view.lynxUpdateValidationContentVisibility();
+      formatInputValue();
     }
   });
 }

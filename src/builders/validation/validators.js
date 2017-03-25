@@ -7,6 +7,12 @@ export function requiredValidator(constraint, value) {
   return valid ? "valid" : "invalid";
 }
 
+export function createRegExpForTextConstraintPattern(pattern) {
+  if (pattern.substring(0, 1) !== "^") pattern = "^" + pattern;
+  if (pattern.substring(pattern.length - 1, 1) !== "$") pattern += "$";
+  return new RegExp(pattern);
+}
+
 export function textValidator(constraint, value) {
   var empty = (value === undefined || value === null || value === "");
   
@@ -23,10 +29,10 @@ export function textValidator(constraint, value) {
   }
 
   if (constraint.pattern) {
-    var pattern = constraint.pattern;
-    if (pattern.substring(0, 1) !== "^") pattern = "^" + pattern;
-    if (pattern.substring(pattern.length - 1, 1) !== "$") pattern += "$";
-    if (new RegExp(pattern).test(value) === false) {
+    var regexp = createRegExpForTextConstraintPattern(constraint.pattern);
+    if (!regexp) {
+      return "unknown";
+    } else if (regexp.test(value) === false) {
       return "invalid";
     }
   }
