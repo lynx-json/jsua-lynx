@@ -1,102 +1,108 @@
-import { noopValidator, requiredValidator, createRegExpForTextConstraintPattern, textValidator, numberValidator, contentValidator } from "./validators";
+import * as validators from "./validators";
 
-export var validators = {
-  required: requiredValidator,
-  text: textValidator,
-  number: numberValidator,
-  content: contentValidator
+var validatorsByConstraint = {
+  required: "requiredValidator",
+  text: "textValidator",
+  number: "numberValidator",
+  content: "contentValidator"
 };
 
 export function getValidator(constraintName) {
-  return validators[constraintName] || noopValidator;
+  return validators[validatorsByConstraint[constraintName]] || validators.noopValidator;
+}
+
+export function updateContentTargetVisibility(origin, constraint) {
+  constraint.contentTargets.forEach(contentTarget => {
+    var contentView = exports.findNearestElement(origin, "[data-lynx-name='" + contentTarget.name + "']");
+    if (!contentView) return;
+    var visibility = contentTarget.forState === constraint.state ? "visible" : "hidden";
+    contentView.lynxSetVisibility(visibility);
+  });
 }
 
 export function addValidationExtensionsToView(view, validation) {
-  normalizeValidationConstraintSetObject(validation);
+  exports.normalizeValidationConstraintSetObject(validation);
   
   if (view.matches("[data-lynx-input=true]")) {
-    addValidationExtensionsToInputView(view, validation);
+    exports.addValidationExtensionsToInputView(view, validation);
   } else {
-    addValidationExtensionsToContainerView(view, validation);
+    exports.addValidationExtensionsToContainerView(view, validation);
   }
   
   view.lynxUpdateValidationContentVisibility = function() {
-    function updateContentTargetVisibility(constraint) {
-      constraint.contentTargets.forEach(contentTarget => {
-        var contentView = findNearestElement(view, "[data-lynx-name='" + contentTarget.name + "']");
-        if (!contentView) return;
-        var visibility = contentTarget.forState === constraint.state ? "visible" : "hidden";
-        contentView.lynxSetVisibility(visibility);
-      });
-    }
-    
-    updateContentTargetVisibility(validation);
-    validation.constraints.forEach(updateContentTargetVisibility);
+    exports.updateContentTargetVisibility(view, validation);
+    validation.constraints.forEach(constraint => exports.updateContentTargetVisibility(view, constraint));
   };
 }
 
-function findNearestElement(view, selector) {
+export function findNearestElement(view, selector) {
   if (!view || view.matches("html")) return null;
   if (!selector) return null;
   return document.querySelector(selector) || findNearestElement(view.parentElement, selector);
 }
 
-export function addValidationExtensionsToContainerView(view, validation) {
-  function resolveValidationStateOfDescendants() {
-    var validatedViews = view.querySelectorAll("[data-lynx-validation-state]");
-    var validationStates = Array.from(validatedViews)
-      .map(validatedView => validatedView.getAttribute("data-lynx-validation-state"));
-    return resolveValidationState(validationStates);
-  }
+export function resolveValidationStateOfDescendants(view) {
+  var validatedViews = view.querySelectorAll("[data-lynx-validation-state]");
+  var validationStates = Array.from(validatedViews)
+    .map(validatedView => validatedView.getAttribute("data-lynx-validation-state"));
+  return exports.resolveValidationState(validationStates);
+}
+
+export function validateContainer(view, validation) {
+  validation.changes = [];
   
-  validation.state = resolveValidationStateOfDescendants();
+  validation.priorState = validation.state;
+  validation.state = exports.resolveValidationStateOfDescendants(view);
+  
+  if (validation.state === validation.priorState) return;
+  validation.changes.push(validation);
+}
+
+export function addValidationExtensionsToContainerView(view, validation) {
+  validation.state = exports.resolveValidationStateOfDescendants(view);
   view.setAttribute("data-lynx-validation-state", validation.state);
   
   view.addEventListener("lynx-validation-state-change", function (evt) {
     if (evt.srcElement === view) return;
-    validation.priorState = validation.state;
-    validation.state = resolveValidationStateOfDescendants();
-    if (validation.state === validation.priorState) return;
-    view.setAttribute("data-lynx-validation-state", validation.state);
-    raiseValiditionStateChangedEvent(view, validation);
-    view.lynxUpdateValidationContentVisibility();
-  });
-}
-
-export function addValidationExtensionsToInputView(view, validation) {
-  view.setAttribute("data-lynx-validation-state", validation.state);
-  
-  function formatInputValue() {
-    var value = view.lynxGetValue();
-    if (!value || typeof value !== "string") return;
-    
-    var formattedConstraints = validation.constraints.filter(constraint => constraint.name === "text" && 
-      constraint.state === "valid" &&
-      "format" in constraint && 
-      "pattern" in constraint);
-    
-    if (formattedConstraints.length === 0) return;
-    
-    var formattedConstraint = formattedConstraints[0];
-    var regexp = createRegExpForTextConstraintPattern(formattedConstraint.pattern);
-    var formattedValue = value.replace(regexp, formattedConstraint.format);
-    
-    view.lynxSetValue(formattedValue);
-  }
-  
-  view.addEventListener("change", function () {
-    var value = view.lynxGetValue();
-    
-    validateValue(validation, value);
+    exports.validateContainer(view, validation);
     
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
-      raiseValiditionStateChangedEvent(view, validation);
-      view.lynxUpdateValidationContentVisibility();  
-      formatInputValue();
-    } else if (validation.changes.length > 0) {
+      exports.raiseValiditionStateChangedEvent(view, validation);
       view.lynxUpdateValidationContentVisibility();
-      formatInputValue();
+    }
+  });
+}
+
+export function formatValue(formattedConstraint, value) {
+  var regexp = validators.createRegExpForTextConstraintPattern(formattedConstraint.pattern);
+  var formattedValue = value.replace(regexp, formattedConstraint.format);
+  return formattedValue;
+}
+
+export function addValidationExtensionsToInputView(view, validation) {
+  function isFormattedConstraint(constraint) {
+    return constraint.name === "text" && 
+      constraint.state === "valid" &&
+      "format" in constraint && 
+      "pattern" in constraint;
+  }
+  
+  view.setAttribute("data-lynx-validation-state", validation.state);
+  
+  view.addEventListener("change", function () {
+    var value = view.lynxGetValue();
+    exports.validateValue(validation, value);
+    
+    if (validation.state !== validation.priorState) {
+      view.setAttribute("data-lynx-validation-state", validation.state);
+      exports.raiseValiditionStateChangedEvent(view, validation);
+    }
+    
+    if (validation.changes.length > 0) {
+      view.lynxUpdateValidationContentVisibility();
+      let formattedConstraint = validation.changes.find(isFormattedConstraint);
+      if (formattedConstraint) view.lynxSetValue( exports.formatValue(formattedConstraint, view.lynxGetValue() ) );
     }
   });
 }
@@ -106,16 +112,16 @@ export function validateValue(validation, value) {
   
   validation.constraints.forEach(constraint => {
     constraint.priorState = constraint.state;
-    constraint.state = getValidator(constraint.name)(constraint, value);
+    constraint.state = exports.getValidator(constraint.name)(constraint, value);
     if (constraint.state !== constraint.priorState) validation.changes.push(constraint);
   });
   
   validation.priorState = validation.state;
-  validation.state = resolveValidationState(validation.constraints.map(constraint => constraint.state));
+  validation.state = exports.resolveValidationState(validation.constraints.map(constraint => constraint.state));
   if (validation.state !== validation.priorState) validation.changes.push(validation);
 }
 
-function raiseValiditionStateChangedEvent(view, validation) {
+export function raiseValiditionStateChangedEvent(view, validation) {
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("lynx-validation-state-change", true, false);
   changeEvent.validation = validation;
@@ -150,7 +156,7 @@ export function normalizeValidationConstraintSetObject(validation) {
     });
   });
   
-  validation.state = resolveValidationState(initialConstraintStates);
+  validation.state = exports.resolveValidationState(initialConstraintStates);
   validation.priorState = "";
   validation.constraints = initialConstraints;
   validation.contentTargets = [];

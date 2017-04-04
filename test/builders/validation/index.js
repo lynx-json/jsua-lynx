@@ -22,11 +22,14 @@ describe("validation / validateValue", function () {
     
     var fooValidatorStub = sinon.stub();
     fooValidatorStub.returns("valid");
-    validation.validators.foo = fooValidatorStub;
+    var getValidatorStub = sinon.stub(validation, "getValidator");
+    getValidatorStub.returns(fooValidatorStub);
     
     validation.validateValue(normalizedValidationObj, "");
+    getValidatorStub.restore();
     
     fooValidatorStub.calledOnce.should.be.true;
+    getValidatorStub.calledOnce.should.be.true;
     normalizedValidationObj.state.should.equal("valid");
     normalizedValidationObj.priorState.should.equal("unknown");
     normalizedValidationObj.changes.length.should.equal(2);
@@ -56,16 +59,20 @@ describe("validation / validateValue", function () {
     
     var fooValidatorStub = sinon.stub();
     fooValidatorStub.returns("valid");
-    validation.validators.foo = fooValidatorStub;
     
     var barValidatorStub = sinon.stub();
     barValidatorStub.returns("invalid");
-    validation.validators.bar = barValidatorStub;
+    
+    var getValidatorStub = sinon.stub(validation, "getValidator");
+    getValidatorStub.withArgs("foo").returns(fooValidatorStub);
+    getValidatorStub.withArgs("bar").returns(barValidatorStub);
     
     validation.validateValue(normalizedValidationObj, "");
+    getValidatorStub.restore();
     
     fooValidatorStub.calledOnce.should.be.true;
     barValidatorStub.calledOnce.should.be.true;
+    getValidatorStub.calledTwice.should.be.true;
     normalizedValidationObj.state.should.equal("invalid");
     normalizedValidationObj.priorState.should.equal("unknown");
     normalizedValidationObj.changes.length.should.equal(3);
@@ -208,5 +215,222 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
     validationObj.constraints.length.should.equal(2);
     validationObj.constraints.filter(nameMatches("required")).length.should.equal(1);
     validationObj.constraints.filter(nameMatches("text")).length.should.equal(1);
+  });
+  
+  it("should normalize validation content targets", function () {
+    var validationObj = {
+      required: {
+        invalid: "propertyRefForRequired"
+      },
+      text: {
+        minLength: 2,
+        maxLength: 10,
+        valid: "propertyRefForValidTextLength",
+        invalid: "propertyRefForInvalidTextLength"
+      }
+    };
+    
+    validation.normalizeValidationConstraintSetObject(validationObj);
+    
+    validationObj.constraints[0].contentTargets.length.should.equal(1);
+    validationObj.constraints[0].contentTargets[0].name.should.equal("propertyRefForRequired");
+    validationObj.constraints[0].contentTargets[0].forState.should.equal("invalid");
+    
+    validationObj.constraints[1].contentTargets.length.should.equal(2);
+    validationObj.constraints[1].contentTargets[0].name.should.equal("propertyRefForValidTextLength");
+    validationObj.constraints[1].contentTargets[0].forState.should.equal("valid");
+    validationObj.constraints[1].contentTargets[1].name.should.equal("propertyRefForInvalidTextLength");
+    validationObj.constraints[1].contentTargets[1].forState.should.equal("invalid");
+  });
+});
+
+describe("validation / addValidationExtensionsToView", function () {
+  it("should call the appropriate funcs for input views", function () {
+    var view = {}, validationObj = {};
+    view.matches = function () { return true; };
+    var stubs = [
+      sinon.stub(validation, "normalizeValidationConstraintSetObject"),
+      sinon.stub(validation, "addValidationExtensionsToInputView")
+    ];
+    
+    validation.addValidationExtensionsToView(view, validationObj);
+    stubs.forEach(stub => stub.restore());
+    
+    stubs.forEach(stub => stub.calledOnce.should.equal(true));
+  });
+  
+  it("should call the appropriate funcs for container views", function () {
+    var view = {}, validationObj = {};
+    view.matches = function () { return false; };
+    var stubs = [
+      sinon.stub(validation, "normalizeValidationConstraintSetObject"),
+      sinon.stub(validation, "addValidationExtensionsToContainerView")
+    ];
+    
+    validation.addValidationExtensionsToView(view, validationObj);
+    stubs.forEach(stub => stub.restore());
+    
+    stubs.forEach(stub => stub.calledOnce.should.equal(true));
+  });
+});
+
+describe("validation / addValidationExtensionsToInputView", function () {
+  beforeEach(function () {
+    view = document.createElement("input");
+    view.lynxGetValue = sinon.stub();
+    view.lynxSetValue = sinon.stub();
+    view.lynxUpdateValidationContentVisibility = sinon.stub();
+    sinon.stub(view, "addEventListener");
+    
+    stubs = [
+      sinon.stub(validation, "formatValue"),
+      sinon.stub(validation, "validateValue"),
+      sinon.stub(validation, "raiseValiditionStateChangedEvent")
+    ];
+    
+    validationObj = {
+      state: "valid",
+      priorState: "valid",
+      changes: []
+    };
+  });
+  
+  afterEach(function () {
+    stubs.forEach(stub => stub.restore());
+  });
+  
+  var view, stubs, validationObj;
+  
+  it("should set 'data-lynx-validation-state' attribute", function () {
+    validationObj.state = "invalid"; 
+    validation.addValidationExtensionsToInputView(view, validationObj);
+    view.getAttribute("data-lynx-validation-state").should.equal("invalid");
+  });
+  
+  it("should set 'data-lynx-validation-state' attribute and raise event when validity state changes", function () { 
+    validation.addValidationExtensionsToInputView(view, validationObj);
+    var changeListener = view.addEventListener.getCall(0).args[1];
+    
+    validationObj.state = "invalid";
+    validationObj.priorState = "valid";
+    changeListener();
+    
+    view.lynxGetValue.calledOnce.should.equal(true);
+    validation.validateValue.calledOnce.should.equal(true);
+    view.getAttribute("data-lynx-validation-state").should.equal("invalid");
+    validation.raiseValiditionStateChangedEvent.calledOnce.should.equal(true);
+  });
+  
+  it("should update target content visibility when validation constraints change state", function () { 
+    validation.addValidationExtensionsToInputView(view, validationObj);
+    var changeListener = view.addEventListener.getCall(0).args[1];
+    
+    validationObj.changes.push({});
+    changeListener();
+    
+    view.lynxUpdateValidationContentVisibility.calledOnce.should.equal(true);
+  });
+  
+  it("should format the value when a formatted validation constraint changes state", function () { 
+    validation.addValidationExtensionsToInputView(view, validationObj);
+    var changeListener = view.addEventListener.getCall(0).args[1];
+    
+    validationObj.changes.push({
+      name: "text",
+      state: "valid",
+      pattern: "(\d{5})-?(\d{4})",
+      format: "$1-$2"
+    });
+    
+    changeListener();
+    
+    view.lynxUpdateValidationContentVisibility.calledOnce.should.equal(true);
+    view.lynxGetValue.calledTwice.should.equal(true);
+    validation.formatValue.calledOnce.should.equal(true);
+    view.lynxSetValue.calledOnce.should.equal(true);
+  });
+});
+
+describe("validation / addValidationExtensionsToContainerView", function () {
+  beforeEach(function () {
+    view = document.createElement("div");
+    view.lynxUpdateValidationContentVisibility = sinon.stub();
+    sinon.stub(view, "addEventListener");
+    
+    stubs = [
+      sinon.stub(validation, "resolveValidationStateOfDescendants"),
+      sinon.stub(validation, "raiseValiditionStateChangedEvent"),
+      sinon.stub(validation, "validateContainer")
+    ];
+    
+    validationObj = {
+      state: "valid",
+      priorState: "valid",
+      changes: []
+    };
+  });
+  
+  afterEach(function () {
+    stubs.forEach(stub => stub.restore());
+  });
+  
+  var view, stubs, validationObj;
+  
+  it("should set 'data-lynx-validation-state' attribute", function () {
+    validation.resolveValidationStateOfDescendants.returns("invalid");
+    validation.addValidationExtensionsToContainerView(view, validationObj);
+    view.getAttribute("data-lynx-validation-state").should.equal("invalid");
+  });
+  
+  it("should set 'data-lynx-validation-state' attribute, raise event, and update target content when validity state changes", function () { 
+    validation.addValidationExtensionsToContainerView(view, validationObj);
+    var changeListener = view.addEventListener.getCall(0).args[1];
+    
+    validationObj.state = "invalid";
+    validationObj.priorState = "valid";
+    changeListener({});
+    
+    validation.validateContainer.calledOnce.should.equal(true);
+    view.getAttribute("data-lynx-validation-state").should.equal("invalid");
+    validation.raiseValiditionStateChangedEvent.calledOnce.should.equal(true);
+    view.lynxUpdateValidationContentVisibility.calledOnce.should.equal(true);
+  });
+});
+
+describe("validation / updateContentTargetVisibility", function () {
+  beforeEach(function () {
+    contentView = {
+      lynxSetVisibility: function (visibility) {
+        contentView["data-lynx-visibility"] = visibility;
+      }
+    };
+    
+    constraint = {
+      state: "unknown",
+      contentTargets: []
+    };
+    
+    findNearestElementStub = sinon.stub(validation, "findNearestElement");
+    findNearestElementStub.returns(contentView);
+  });
+  
+  afterEach(function () {
+    findNearestElementStub.restore();
+  });
+  
+  var contentView, constraint, findNearestElementStub;
+  
+  it("should show content for validation constraint state", function () {
+    constraint.state = "valid";
+    constraint.contentTargets.push({ forState: "valid", name: "propertyRef" });
+    validation.updateContentTargetVisibility({}, constraint);
+    contentView["data-lynx-visibility"].should.equal("visible");
+  });
+  
+  it("should hide content not for validation constraint state", function () {
+    constraint.state = "invalid";
+    constraint.contentTargets.push({ forState: "valid", name: "propertyRef" });
+    validation.updateContentTargetVisibility({}, constraint);
+    contentView["data-lynx-visibility"].should.equal("hidden");
   });
 });
