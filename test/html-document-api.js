@@ -4,4 +4,5 @@ if (typeof window === "undefined") {
   global.window = document.defaultView;
   global.Blob = window.Blob;
   global.FileReader = window.FileReader;
+  global.CustomEvent = window.CustomEvent;
 }

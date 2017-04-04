@@ -99,7 +99,7 @@ describe("builders / containerInputViewBuilder", function () {
     });
   });
   
-  it("should add a new view when addValue is called", function () {
+  it("should add a new view when lynxAddValue is called", function () {
     nodeViewBuilderStub.onCall(0).returns(Promise.resolve(document.createElement("textarea")));
     
     var containerInputView;
@@ -107,7 +107,7 @@ describe("builders / containerInputViewBuilder", function () {
     return builders.containerInputViewBuilder(node)
       .then(function (view) {
         containerInputView = view;
-        return view.addValue("A New Value");
+        return view.lynxAddValue("A New Value");
       })
       .then(function (itemView) {
         var actual = containerInputView.querySelector("[data-lynx-container-input-item]");
@@ -143,7 +143,7 @@ describe("builders / containerInputViewBuilder", function () {
     });
   });
   
-  it("should remove a view when removeValue is called", function () {
+  it("should remove a view when lynxRemoveValue is called", function () {
     var textInputValue = "Item One";
     
     node.value.push({
@@ -164,13 +164,94 @@ describe("builders / containerInputViewBuilder", function () {
         .map(selector => view.querySelectorAll(selector))
         .forEach(views => views.length.should.equal(1));
       
-      view.removeValue(textInputValue);
+      view.lynxRemoveValue(textInputValue);
       
       ["[data-lynx-container-input-item]", 
         "[data-lynx-container-input-remove]", 
         "[data-lynx-container-input-value]"]
         .map(selector => view.querySelectorAll(selector))
         .forEach(views => views.length.should.equal(0));
+    });
+  });
+  
+  it("should publish a change event when lynxAddValue is called", function () {
+    nodeViewBuilderStub.onCall(0).returns(Promise.resolve(document.createElement("textarea")));
+    
+    return builders.containerInputViewBuilder(node)
+      .then(function (view) {
+        return new Promise(function (resolve) {
+          view.addEventListener("change", function () {
+            resolve();
+          });
+          view.lynxAddValue("A New Value");
+        });
+      });
+  });
+  
+  it("should publish a change event when the add button is clicked", function () {
+    nodeViewBuilderStub.onCall(0).returns(Promise.resolve(document.createElement("textarea")));
+    
+    return builders.containerInputViewBuilder(node)
+      .then(function (view) {
+        return new Promise(function (resolve) {
+          view.addEventListener("change", function () {
+            resolve();
+          });
+          
+          var addView = view.querySelector("[data-lynx-container-input-add]");
+          expect(addView).to.not.be.null;
+          addView.click();
+        });
+      });
+  });
+  
+  it("should publish a change event when lynxRemoveValue is called", function () {
+    var textInputValue = "Item One";
+    
+    node.value.push({
+      spec: childSpec,
+      value: textInputValue
+    });
+    
+    nodeViewBuilderStub.onCall(0).returns(new Promise(function (resolve) {
+      var view = document.createElement("textarea");
+      view.value = textInputValue;
+      resolve(view);
+    }));
+    
+    return builders.containerInputViewBuilder(node).then(function (view) {
+      return new Promise(function (resolve) {
+        view.addEventListener("change", function () {
+          resolve();
+        });
+        view.lynxRemoveValue(textInputValue);
+      });
+    });
+  });
+  
+  it("should publish a change event when the remove button is clicked", function () {
+    var textInputValue = "Item One";
+    
+    node.value.push({
+      spec: childSpec,
+      value: textInputValue
+    });
+    
+    nodeViewBuilderStub.onCall(0).returns(new Promise(function (resolve) {
+      var view = document.createElement("textarea");
+      view.value = textInputValue;
+      resolve(view);
+    }));
+    
+    return builders.containerInputViewBuilder(node).then(function (view) {
+      var removeView = view.querySelector("[data-lynx-container-input-remove]");
+      expect(removeView).to.not.be.null;
+      return new Promise(function (resolve) {
+        view.addEventListener("change", function () {
+          resolve();
+        });
+        removeView.click();
+      });
     });
   });
 });

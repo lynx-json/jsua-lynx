@@ -8,7 +8,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should return view for 'text' input", function () {
     var node = {
       spec: {
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "test"
         }
@@ -23,10 +23,39 @@ describe("builders / textInputViewBuilder", function () {
     view.name.should.equal(node.spec.input.name);
   });
   
+  it("should add value accessors and publish change events", function () {
+    var node = {
+      spec: {
+        hints: [ "text" ],
+        input: {
+          name: "test"
+        }
+      },
+      value: null
+    };
+    
+    var view = builders.textInputViewBuilder(node);
+    
+    expect(view).to.not.be.null;
+    view.value.should.equal("");
+    expect(view.lynxGetValue).to.not.be.null;
+    expect(view.lynxSetValue).to.not.be.null;
+    view.lynxGetValue().should.equal("");
+    return new Promise(function (resolve) {
+      view.addEventListener("change", function () {
+        view.value.should.equal("testing setter and change event");
+        view.lynxGetValue().should.equal("testing setter and change event");
+        resolve();
+      });
+      
+      view.lynxSetValue("testing setter and change event");
+    });
+  });
+  
   it("should return view with value", function () {
     var node = {
       spec: {
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "test"
         }
@@ -43,7 +72,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should return view for 'line' input", function () {
     var node = {
       spec: {
-        hints: [ { name: "line" }, { name: "text" } ],
+        hints: [ "line", "text" ],
         input: {
           name: "test"
         }
@@ -63,7 +92,7 @@ describe("builders / textInputViewBuilder", function () {
     var node = {
       spec: {
         visibility: "concealed",
-        hints: [ { name: "line" }, { name: "text" } ],
+        hints: [ "line", "text" ],
         input: {
           name: "test"
         }
@@ -82,7 +111,7 @@ describe("builders / textInputViewBuilder", function () {
   it("should set attribute 'data-lynx-options'", function () {
     var node = {
       spec: {
-        hints: [ { name: "http://iso.org/8601/date" }, { name: "text" } ],
+        hints: [ "http://iso.org/8601/date", "text" ],
         input: {
           name: "test"
         },
