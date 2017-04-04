@@ -90,7 +90,7 @@ describe("validators / textValidator", function () {
     validators.textValidator(constraint, "ABCDE").should.equal("invalid");
   });
   
-  it("should return 'valid' when value does not match 'pattern'", function () {
+  it("should return 'valid' when value matches 'pattern'", function () {
     var constraint = { pattern: "\\d*" };
     validators.textValidator(constraint, "12345").should.equal("valid");
   });
