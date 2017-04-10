@@ -18,6 +18,10 @@ export function contentViewBuilder(node) {
         embeddedView.setAttribute("alt", node.value.alt);
       }
       
+      view.lynxGetValue = function () {
+        return result.content.blob;
+      };
+      
       return view;
     });
 }

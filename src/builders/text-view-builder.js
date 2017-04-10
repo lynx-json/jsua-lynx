@@ -7,5 +7,9 @@ export function textViewBuilder(node) {
     view.textContent = node.value.toString();  
   }
   
+  view.lynxGetValue = function () {
+    return view.textContent;
+  };
+  
   return view;
 }

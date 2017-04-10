@@ -1,4 +1,5 @@
 require("../../html-document-api");
+var util = require("../../../lib/builders/util");
 var validation = require("../../../lib/builders/validation");
 var validators = require("../../../lib/builders/validation/validators");
 var chai = require("chai");
@@ -410,7 +411,7 @@ describe("validation / updateContentTargetVisibility", function () {
       contentTargets: []
     };
     
-    findNearestElementStub = sinon.stub(validation, "findNearestElement");
+    findNearestElementStub = sinon.stub(util, "findNearestElement");
     findNearestElementStub.returns(contentView);
   });
   

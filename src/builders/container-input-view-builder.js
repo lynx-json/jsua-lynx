@@ -65,6 +65,29 @@ export function containerInputViewBuilder(node) {
     raiseValueChangeEvent(view);
   };
   
+  view.lynxGetValue = function () {
+    return Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
+      .map(valueView => valueView.value);
+  };
+  
+  view.lynxSetValue = function (values) {
+    view.lynxClearValue();
+    if (!values) return;
+    
+    if (!Array.isArray(values)) values = [values];
+    values.forEach(value => view.lynxAddValue(value));
+  };
+  
+  view.lynxHasValue = function (val) {
+    return Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
+      .some(valueView => valueView.value === val);
+  };
+  
+  view.lynxClearValue = function () {
+    Array.from(view.querySelectorAll("[data-lynx-container-input-item]"))
+      .forEach(itemView => itemView.parentElement.removeChild(itemView));
+  };
+  
   return containers.buildChildViews(node)
     .then(function (childViews) {
       childViews.forEach(appendChildView);
