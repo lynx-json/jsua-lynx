@@ -1,4 +1,4 @@
-import * as util from "../util";
+import * as util from "./util";
 
 export function addOptionsExtensionsToView(inputView, spec) {
   var optionsView;
@@ -128,7 +128,12 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
 
 export function raiseOptionSelectedChangeEvent(optionView) {
   var changeEvent = document.createEvent("Event");
-  changeEvent.initEvent("lynx-option-selected-change", true, false);
+  if (optionView.lynxGetSelected()) {
+    changeEvent.initEvent("lynx-option-selected", true, false);  
+  } else {
+    changeEvent.initEvent("lynx-option-deselected", true, false);
+  }
+  
   optionView.dispatchEvent(changeEvent);
 }
 
