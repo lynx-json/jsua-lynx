@@ -66,7 +66,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxHasValue` - tests an input view's value
 * `lynxClearValue` - clears an input view's value
 * `lynxAddValue` - adds a value to a container input view
-`lynxRemoveValue` - removes a value from a container input view
+* `lynxRemoveValue` - removes a value from a container input view
 * `lynxConnectOptions` - connects an input view that has options with its source of options (if found)
 * `lynxDisconnectOptions` - disconnects an input view from its source of options (if connected)
 
