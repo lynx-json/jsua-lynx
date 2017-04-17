@@ -1,40 +1,32 @@
 export function textInputViewBuilder(node) {
-  var view;
+  var view = document.createElement("div");
   
   var isLine = node.spec.hints.some(function (hint) { 
     return hint === "line";
   });
   
-  if (isLine) {
-    view = document.createElement("input");
-    
-    if (node.spec.visibility === "concealed") {
-      view.type = "password";
-    } else {
-      view.type = "text";
-    }
-  } else {
-     view = document.createElement("textarea");
-  }
+  var textView = isLine ? 
+    document.createElement("input") : 
+    document.createElement("textarea");
   
-  view.name = node.spec.input.name || "";
+  textView.name = node.spec.input.name || "";
   
   if (node.value === null || node.value === undefined) {
-    view.value = "";
+    textView.value = "";
   } else {
-    view.value = node.value.toString();
+    textView.value = node.value.toString();
   }
   
+  view.appendChild(textView);
+  
   view.lynxGetValue = function () {
-    return view.value;
+    return textView.value;
   };
   
   view.lynxSetValue = function (val) {
-    var priorValue = view.value;
-    view.value = val;
-    if (priorValue !== view.value) {
-      raiseValueChangeEvent(view);
-    }
+    if (textView.value === val) return;
+    textView.value = val;
+    raiseValueChangeEvent(textView);
   };
   
   return view;

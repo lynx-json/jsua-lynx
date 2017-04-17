@@ -19,8 +19,11 @@ describe("builders / textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view.value.should.equal("");
-    view.name.should.equal(node.spec.input.name);
+    
+    var valueView = view.querySelector("textarea");
+    expect(valueView).to.not.be.null;
+    valueView.value.should.equal("");
+    valueView.name.should.equal(node.spec.input.name);
   });
   
   it("should add value accessors and publish change events", function () {
@@ -37,13 +40,16 @@ describe("builders / textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view.value.should.equal("");
+    
+    var valueView = view.querySelector("textarea");
+    valueView.value.should.equal("");
     expect(view.lynxGetValue).to.not.be.null;
+    expect(view.lynxGetValue()).to.equal("");
     expect(view.lynxSetValue).to.not.be.null;
-    view.lynxGetValue().should.equal("");
+    
     return new Promise(function (resolve) {
       view.addEventListener("change", function () {
-        view.value.should.equal("testing setter and change event");
+        valueView.value.should.equal("testing setter and change event");
         view.lynxGetValue().should.equal("testing setter and change event");
         resolve();
       });
@@ -66,7 +72,10 @@ describe("builders / textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view.value.should.equal(node.value);
+    
+    var valueView = view.querySelector("textarea");
+    expect(valueView).to.not.be.null;
+    valueView.value.should.equal(node.value);
   });
   
   it("should return view for 'line' input", function () {
@@ -83,45 +92,11 @@ describe("builders / textInputViewBuilder", function () {
     var view = builders.textInputViewBuilder(node);
     
     expect(view).to.not.be.null;
-    view.value.should.equal(node.value);
-    view.name.should.equal(node.spec.input.name);
-    view.type.should.equal("text");
-  });
-  
-  it("should return view for concealed 'line' input", function () {
-    var node = {
-      spec: {
-        visibility: "concealed",
-        hints: [ "line", "text" ],
-        input: {
-          name: "test"
-        }
-      },
-      value: "Hello, World!"
-    };
     
-    var view = builders.textInputViewBuilder(node);
-    
-    expect(view).to.not.be.null;
-    view.value.should.equal(node.value);
-    view.name.should.equal(node.spec.input.name);
-    view.type.should.equal("password");
-  });
-  
-  it("should set attribute 'data-lynx-options'", function () {
-    var node = {
-      spec: {
-        hints: [ "http://iso.org/8601/date", "text" ],
-        input: {
-          name: "test"
-        },
-        options: "other"
-      },
-      value: "2017-03-02"
-    };
-    
-    var view = builders.textInputViewBuilder(node);
-    
-    expect(view).to.not.be.null;
+    var valueView = view.querySelector("input");
+    expect(valueView).to.not.be.null;
+    valueView.value.should.equal(node.value);
+    valueView.name.should.equal(node.spec.input.name);
+    valueView.type.should.equal("text");
   });
 });
