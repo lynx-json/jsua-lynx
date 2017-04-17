@@ -50,17 +50,100 @@ function addVisibilityExtensionsToView(view, initialVisibility) {
   };
   
   view.lynxSetVisibility = function (visibility) {
-    var priorVisibility = view.lynxGetVisibility();
+    if (view.lynxGetVisibility() === visibility) return;
     view.setAttribute("data-lynx-visibility", visibility);
-    if (priorVisibility !== visibility) raiseVisibilityChangedEvent(view);
+    raiseVisibilityChangedEvent(view);
   };
   
   initialVisibility = initialVisibility || "visible";
   view.setAttribute("data-lynx-visibility", initialVisibility);
+  
+  if (initialVisibility !== "concealed" && initialVisibility !== "revealed") return;
+  
+  var concealmentControlView = exports.createConcealmentControlView(view);
+  if (view.firstElementChild) {
+    view.insertBefore(concealmentControlView, view.firstElementChild);
+  } else {
+    view.appendChild(concealmentControlView);
+  }
 }
 
 function raiseVisibilityChangedEvent(view) {
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("lynx-visibility-change", true, false);
   view.dispatchEvent(changeEvent);
+}
+
+export function createConcealmentControlView(view) {
+  let visibilityControlView = document.createElement("button");
+  visibilityControlView.type = "button";
+  visibilityControlView.setAttribute("data-lynx-visibility-conceal", true);
+  
+  
+  var concealView = document.createTextNode("Conceal");
+  
+  view.lynxGetConcealView = function () {
+    return concealView;
+  };
+  
+  view.lynxSetConcealView = function (cv) {
+    concealView = cv;
+    synchronizeVisibilityControlView();
+  };
+  
+  
+  var revealView = document.createTextNode("Reveal");
+  
+  view.lynxGetRevealView = function () {
+    return revealView;
+  };
+  
+  view.lynxSetRevealView = function (rv) {
+    revealView = rv;
+    synchronizeVisibilityControlView();
+  };
+  
+  
+  function synchronizeVisibilityControlView() {
+    while (visibilityControlView.firstChild) {
+      visibilityControlView.removeChild(visibilityControlView.firstChild);
+    }
+    
+    var visibility = view.lynxGetVisibility();
+    
+    if (visibility === "concealed") {
+      visibilityControlView.appendChild(view.lynxGetRevealView());
+    } else if (visibility === "revealed") {
+      visibilityControlView.appendChild(view.lynxGetConcealView());
+    } else {
+      view.removeEventListener("lynx-visibility-change", synchronizeVisibilityControlView);
+      view.removeChild(visibilityControlView);
+      delete view.lynxGetConcealView;
+      delete view.lynxSetConcealView;
+      delete view.lynxGetRevealView;
+      delete view.lynxSetRevealView;
+      visibilityControlView = revealView = concealView = null;
+    }
+  }
+  
+  
+  view.addEventListener("lynx-visibility-change", synchronizeVisibilityControlView);
+  
+  
+  visibilityControlView.addEventListener("click", function (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    
+    var visibility = view.lynxGetVisibility();
+    
+    if (visibility === "concealed") {
+      view.lynxSetVisibility("revealed");
+    } else if (visibility === "revealed") {
+      view.lynxSetVisibility("concealed");
+    }
+  });
+  
+  synchronizeVisibilityControlView();
+  
+  return visibilityControlView;
 }

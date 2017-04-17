@@ -53,6 +53,7 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-container-input-remove` - the control used to remove a value from a `container` input node
 * `data-lynx-container-input-item` - contains the `data-lynx-container-input-value` view and its associated `data-lynx-container-input-remove` control
 * `data-lynx-validation-state` - the current validation state of the view
+* `data-lynx-visibility-conceal` - the control used to toggle a view's `data-lynx-visibility` between `revealed` and `concealed`
 
 ## View Functions
 
@@ -61,6 +62,10 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxGetVisibility` and `lynxSetVisibility` - accessors for getting/setting the visibility of a view.
 * `lynxGetValue` and `lynxSetValue` - accessors for getting/setting the value of an input
 * `lynxAddValue` and `lynxRemoveValue` - accessors for adding/remove values from a container input
+* `lynxGetConcealView` - gets the view that represents the conceal action of a view
+* `lynxSetConcealView` - sets the view that represents the conceal action of a view
+* `lynxGetRevealView` - gets the view that represents the reveal action of a view
+* `lynxSetRevealView` - sets the view that represents the reveal action of a view
 
 ## View Events
 

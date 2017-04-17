@@ -1,1 +1,0 @@
-window.jsuaLynx = require("./lib");

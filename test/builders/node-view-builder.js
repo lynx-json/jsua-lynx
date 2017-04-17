@@ -73,15 +73,12 @@ describe("builders / nodeViewBuilder", function () {
         hints: [ "group", "container" ],
         labeledBy: "node2"
       },
-      value: {
-        scope: "http://lynx-json.org/tests/"
-      }
+      value: {}
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
+      expect(view).to.not.equal(null);
       view.getAttribute("data-lynx-hints").should.equal(node.spec.hints.join(" "));
-      view.getAttribute("data-lynx-scope").should.equal(node.value.scope);
       view.getAttribute("data-lynx-name").should.equal(node.spec.name);
       view.getAttribute("data-lynx-labeled-by").should.equal(node.spec.labeledBy);
     });
@@ -93,15 +90,13 @@ describe("builders / nodeViewBuilder", function () {
         visibility: "visible",
         hints: [ "container" ]
       },
-      value: {
-        scope: "http://lynx-json.org/tests/"
-      }
+      value: {}
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
-      expect(view.lynxGetVisibility).to.not.be.null;
-      expect(view.lynxSetVisibility).to.not.be.null;
+      expect(view).to.not.equal(null);
+      expect(view.lynxGetVisibility).to.not.equal(null);
+      expect(view.lynxSetVisibility).to.not.equal(null);
       view.getAttribute("data-lynx-visibility").should.equal("visible");
       view.lynxGetVisibility().should.equal("visible");
       
@@ -116,6 +111,119 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
   
+  describe("nodes with visibility of `concealed` or `revealed`", function () {
+    var node;
+    
+    beforeEach(function () {
+      node = { 
+        spec: {
+          visibility: "concealed",
+          hints: [ "container" ]
+        },
+        value: {}
+      };
+    });
+    
+    it("should add concealment controls when visibility is `concealed`", function () {
+      return runTest(node, function (view) {
+        expect(view).to.not.equal(null);
+        expect(view.lynxGetConcealView).to.not.equal(null);
+        expect(view.lynxSetConcealView).to.not.equal(null);
+        expect(view.lynxGetRevealView).to.not.equal(null);
+        expect(view.lynxSetRevealView).to.not.equal(null);
+        expect(view.querySelector("[data-lynx-visibility-conceal]")).to.not.equal(null);
+      });
+    });
+    
+    it("should add concealment controls when visibility is `revealed`", function () {
+      node.spec.visibility = "revealed";
+      
+      return runTest(node, function (view) {
+        expect(view).to.not.equal(null);
+        expect(view.lynxGetConcealView).to.not.equal(null);
+        expect(view.lynxSetConcealView).to.not.equal(null);
+        expect(view.lynxGetRevealView).to.not.equal(null);
+        expect(view.lynxSetRevealView).to.not.equal(null);
+        expect(view.querySelector("[data-lynx-visibility-conceal]")).to.not.equal(null);
+      });
+    });
+    
+    it("concealment control should change visibility from `concealed` to `revealed` when clicked", function () {
+      return runTest(node, function (view) {
+        return new Promise(function (resolve) {
+          view.addEventListener("lynx-visibility-change", function () {
+            view.lynxGetVisibility().should.equal("revealed");
+            resolve();
+          });
+          
+          var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+          concealmentControl.click();
+        });
+      });
+    });
+    
+    it("concealment control should change visibility from `revealed` to `concealed` when clicked", function () {
+      node.spec.visibility = "revealed";
+      
+      return runTest(node, function (view) {
+        return new Promise(function (resolve) {
+          view.addEventListener("lynx-visibility-change", function () {
+            view.lynxGetVisibility().should.equal("concealed");
+            resolve();
+          });
+          
+          var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+          concealmentControl.click();
+        });
+      });
+    });
+    
+    it("`lynxSetRevealView` should change the content of the concealment control", function () {
+      return runTest(node, function (view) {
+        var newRevealView = document.createElement("span");
+        newRevealView.textContent = "🔽";
+        view.lynxSetRevealView(newRevealView);
+        expect(view.lynxGetRevealView()).to.equal(newRevealView);
+        
+        var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+        expect(concealmentControl.compareDocumentPosition(newRevealView) & Node.DOCUMENT_POSITION_CONTAINED_BY).to.equal(Node.DOCUMENT_POSITION_CONTAINED_BY);
+      });
+    });
+    
+    it("`lynxSetConcealView` should change the content of the concealment control", function () {
+      node.spec.visibility = "revealed";
+      
+      return runTest(node, function (view) {
+        var newConcealView = document.createElement("span");
+        newConcealView.textContent = "🔼";
+        view.lynxSetConcealView(newConcealView);
+        expect(view.lynxGetConcealView()).to.equal(newConcealView);
+        
+        var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+        
+        var position = concealmentControl.compareDocumentPosition(newConcealView);
+        position = position & Node.DOCUMENT_POSITION_CONTAINED_BY;
+        expect(position).to.equal(Node.DOCUMENT_POSITION_CONTAINED_BY);
+      });
+    });
+    
+    it("setting `visible` should remove the concealment control", function () {
+      return runTest(node, function (view) {
+        view.lynxSetVisibility("visible");
+        var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+        expect(concealmentControl).to.equal(null);
+      });
+    });
+    
+    it("setting `hidden` should remove the concealment control", function () {
+      return runTest(node, function (view) {
+        view.lynxSetVisibility("hidden");
+        var concealmentControl = view.querySelector("[data-lynx-visibility-conceal]");
+        expect(concealmentControl).to.equal(null);
+      });
+    });
+  });
+  
   it("should set attribute 'data-lynx-option'", function () {  
     var node = { 
       spec: { 
@@ -126,7 +234,7 @@ describe("builders / nodeViewBuilder", function () {
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
+      expect(view).to.not.equal(null);
       view.getAttribute("data-lynx-option").should.equal("true");
     });
   });
@@ -142,7 +250,7 @@ describe("builders / nodeViewBuilder", function () {
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
+      expect(view).to.not.equal(null);
       view.getAttribute("data-lynx-input").should.equal("true");
     });
   });
@@ -158,7 +266,7 @@ describe("builders / nodeViewBuilder", function () {
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
+      expect(view).to.not.equal(null);
       view.getAttribute("data-lynx-options").should.equal(node.spec.options);
     });
   });
@@ -174,7 +282,7 @@ describe("builders / nodeViewBuilder", function () {
     };
     
     return runTest(node, function (view) {
-      expect(view).to.not.be.null;
+      expect(view).to.not.equal(null);
       view.getAttribute("data-lynx-submitter").should.equal(node.spec.submitter);
     });
   });
