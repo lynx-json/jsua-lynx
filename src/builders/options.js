@@ -15,28 +15,32 @@ export function addOptionsExtensionsToView(inputView, spec) {
     var optionValueViews = nearestOptionsView.querySelectorAll("[data-lynx-hints~='" + optionValueHint + "']");
     
     exports.initializeOptionsInterface(nearestOptionsView, inputView, isContainerInput);    
+    
     Array.from(optionValueViews).forEach(optionValueView => {
-      var optionView = exports.findOptionView(optionValueView);
+      var optionView = exports.findOptionView(nearestOptionsView, optionValueView);
       if (!optionView) return;
       exports.initializeOptionInterface(nearestOptionsView, optionView, optionValueView, inputView);
     });
     
+    inputView.lynxDisconnectOptions = function () {
+      if (!optionsView) return;
+      optionsView.lynxDisconnectOptions();
+      optionsView = null;
+    };
+    
     optionsView = nearestOptionsView;
-  };
-  
-  inputView.lynxDisconnectOptions = function () {
-    if (!optionsView) return;
-    optionsView.lynxDisconnectOptions();
-    optionsView = null;
+    
+    exports.raiseOptionsConnectedEvent(nearestOptionsView);
   };
 }
 
 export function initializeOptionsInterface(optionsView, inputView, isContainerInput) {
   optionsView.lynxOptions = [];
   
-  optionsView.lynxSelectOption = function (optionView) {
+  optionsView.lynxToggleOption = function (optionView) {
     if (isContainerInput) {
       optionView.lynxToggleSelected();
+      
       if (optionView.lynxGetSelected()) {
         inputView.lynxAddValue(optionView.lynxGetValue());
       } else {
@@ -46,7 +50,7 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
       let selectedOptionView = optionsView.querySelector("[data-lynx-option-selected=true]");
       
       optionView.lynxToggleSelected();
-      if (selectedOptionView && selectedOptionView !== optionView) selectedOptionView.lynxToggleSelected();
+      if (optionView !== selectedOptionView) selectedOptionView.lynxToggleSelected();
       
       if (optionView.lynxGetSelected()) {
         inputView.lynxSetValue( optionView.lynxGetValue() );
@@ -58,7 +62,9 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
   
   function inputChanged() {
     var values = inputView.lynxGetValue();
+    
     if (!Array.isArray(values)) values = [values];
+    
     optionsView.lynxOptions.forEach(optionView => {
       var selected = values.indexOf(optionView.lynxGetValue()) > -1;
       optionView.lynxSetSelected(selected);
@@ -71,25 +77,22 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
     inputView.removeEventListener("change", inputChanged);
     optionsView.lynxOptions.forEach(optionView => optionView.lynxDisconnectOption());
     delete optionsView.lynxOptions;
-    delete optionsView.lynxSelectOption;
+    delete optionsView.lynxToggleOption;
+    delete optionsView.lynxDisconnectOptions;
     exports.raiseOptionsDisonnectedEvent(optionsView);
   };
-  
-  exports.raiseOptionsConnectedEvent(optionsView);
 }
 
 export function initializeOptionInterface(optionsView, optionView, optionValueView, inputView) {
   optionView.lynxSetSelected = function (selected) {
-    var currentState = optionView.lynxGetSelected();
-    if (currentState === selected) return;
+    if (selected === optionView.lynxGetSelected()) return;
     optionView.setAttribute("data-lynx-option-selected", selected);
     exports.raiseOptionSelectedChangeEvent(optionView);
   };
   
   optionView.lynxGetSelected = function () {
     var selected = optionView.getAttribute("data-lynx-option-selected");
-    if (!selected) return false;
-    return JSON.parse(selected);
+    return "true" === selected;
   };
   
   if (optionView !== optionValueView) {
@@ -107,7 +110,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
   };
   
   function optionClicked() {
-    optionsView.lynxSelectOption(optionView);
+    optionsView.lynxToggleOption(optionView);
   }
   
   optionView.addEventListener("click", optionClicked);
@@ -119,6 +122,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
     delete optionView.lynxGetSelected;
     if (optionView !== optionValueView) delete optionView.lynxGetValue;
     delete optionView.lynxToggleSelected;
+    delete optionView.lynxDisconnectOption;
   };
   
   optionsView.lynxOptions.push(optionView);
@@ -128,6 +132,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
 
 export function raiseOptionSelectedChangeEvent(optionView) {
   var changeEvent = document.createEvent("Event");
+  
   if (optionView.lynxGetSelected()) {
     changeEvent.initEvent("lynx-option-selected", true, false);  
   } else {
@@ -149,13 +154,13 @@ export function raiseOptionsDisonnectedEvent(optionsView) {
   optionsView.dispatchEvent(changeEvent);
 }
 
-export function findOptionView(optionValueView) {
-  var optionView = null, currentView = optionValueView;
+export function findOptionView(optionsView, optionValueView) {
+  var currentView = optionValueView;
   
-  while (optionView === null && currentView !== null) {
-    if (currentView.matches("[data-lynx-option=true]")) optionView = currentView;
+  do {
+    if (currentView.matches("[data-lynx-option=true]")) return currentView;
     currentView = currentView.parentElement;
-  }
+  } while (currentView !== optionsView);
   
-  return optionView;
+  return null;
 }
