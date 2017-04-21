@@ -6,11 +6,18 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
-describe("options / addOptionsExtensionsToView", function () {
+function createOptionValueView(value) {
+  var optionValueView = document.createElement("pre");
+  optionValueView.lynxGetValue = sinon.stub();
+  optionValueView.lynxGetValue.returns(value);
+  return optionValueView;
+}
+
+describe("options / addOptionsExtensionsToView / input", function () {
   var inputView, spec, findNearestElementStub;
   
   function stubInputView(inputView) {
-    var value;
+    var value = "";
     inputView.lynxGetValue = function () { return value; };
     inputView.lynxSetValue = function (nv) { value = nv; };
     inputView.lynxHasValue = function (v) { return v === value; };
@@ -88,13 +95,6 @@ describe("options / addOptionsExtensionsToView", function () {
         secondOptionView,
         findOptionViewStub;
     
-    function createOptionValueView(value) {
-      var optionValueView = document.createElement("pre");
-      optionValueView.lynxGetValue = sinon.stub();
-      optionValueView.lynxGetValue.returns(value);
-      return optionValueView;
-    }
-    
     beforeEach(function () {
       nearestOptionsView = document.createElement("div");
       findNearestElementStub.returns(nearestOptionsView);
@@ -141,6 +141,61 @@ describe("options / addOptionsExtensionsToView", function () {
         
         expect(firstOptionView.lynxGetSelected()).to.equal(false);
         firstOptionView.click();
+      });
+    });
+    
+    it("should set the value of input view when an option view is clicked", function () {
+      return new Promise(function (resolve) {
+        function checkInputForValue() {
+          if (inputView.lynxGetValue() === firstOptionView.lynxGetValue()) {
+            return resolve();
+          }
+          
+          setTimeout(checkInputForValue, 10);
+        }
+        
+        inputView.lynxConnectOptions();
+        
+        firstOptionView.click();
+        setTimeout(checkInputForValue, 10);
+      });
+    });
+    
+    it("should change the value of input view when another option view is clicked", function () {
+      return new Promise(function (resolve) {
+        function checkInputForValue() {
+          if (inputView.lynxGetValue() === secondOptionView.lynxGetValue()) {
+            return resolve();
+          }
+          
+          setTimeout(checkInputForValue, 10);
+        }
+        
+        inputView.lynxSetValue("one");
+        querySelectorStub.withArgs("[data-lynx-option-selected=true]").returns(firstOptionView);
+        inputView.lynxConnectOptions();
+        
+        secondOptionView.click();
+        setTimeout(checkInputForValue, 10);
+      });
+    });
+    
+    it("should clear the value of input view when a selected option view is clicked", function () {
+      return new Promise(function (resolve) {
+        function checkInputForValue() {
+          if (inputView.lynxGetValue() === "") {
+            return resolve();
+          }
+          
+          setTimeout(checkInputForValue, 10);
+        }
+        
+        inputView.lynxSetValue("one");
+        querySelectorStub.withArgs("[data-lynx-option-selected=true]").returns(firstOptionView);
+        inputView.lynxConnectOptions();
+        
+        firstOptionView.click();
+        setTimeout(checkInputForValue, 10);
       });
     });
     
@@ -224,6 +279,186 @@ describe("options / addOptionsExtensionsToView", function () {
         inputView.lynxConnectOptions();
         inputView.lynxDisconnectOptions();
       });
+    });
+  });
+});
+
+
+describe("options / addOptionsExtensionsToView / container input", function () {
+  var inputView, 
+      spec, 
+      findNearestElementStub,
+      nearestOptionsView, 
+      querySelectorAllStub, 
+      querySelectorStub,
+      firstOptionValueView, 
+      firstOptionView,
+      secondOptionValueView,
+      secondOptionView,
+      findOptionViewStub;
+  
+  function stubInputView(inputView) {
+    var value = [];
+    inputView.lynxGetValue = function () { return value; };
+    inputView.lynxSetValue = function (nv) { value = nv; };
+    inputView.lynxHasValue = function (v) { return value.indexOf(v) > -1; };
+    inputView.lynxClearValue = function () { value = []; };
+    inputView.lynxAddValue = function (v) { value.push(v); };
+    inputView.lynxRemoveValue = function (v) {
+      var idx = value.indexOf(v);
+      if (idx === -1) return;
+      value.splice(idx, 1);
+    };
+  }
+  
+  beforeEach(function () {
+    inputView = document.createElement("div");
+    inputView.setAttribute("data-lynx-hints", "container");
+    stubInputView(inputView);
+    
+    spec = {
+      hints: [ "container" ],
+      options: "optionsTarget",
+      input: "inputName",
+      children: {
+        hints: [ "http://example.com/foo", "text" ],
+        input: true
+      }
+    };
+    
+    findNearestElementStub = sinon.stub(util, "findNearestElement");
+    
+    nearestOptionsView = document.createElement("div");
+    findNearestElementStub.returns(nearestOptionsView);
+    
+    firstOptionValueView = createOptionValueView("one");
+    firstOptionView = document.createElement("div");
+    
+    secondOptionValueView = createOptionValueView("two");
+    secondOptionView = document.createElement("div");
+    
+    querySelectorAllStub = sinon.stub(nearestOptionsView, "querySelectorAll");
+    querySelectorAllStub.withArgs("[data-lynx-hints~='" + spec.children.hints[0] + "']").returns([firstOptionValueView, secondOptionValueView]);
+    querySelectorStub = sinon.stub(nearestOptionsView, "querySelector");
+    
+    findOptionViewStub = sinon.stub(options, "findOptionView");
+    findOptionViewStub.withArgs(nearestOptionsView, firstOptionValueView).returns(firstOptionView);
+    findOptionViewStub.withArgs(nearestOptionsView, secondOptionValueView).returns(secondOptionView);
+    
+    options.addOptionsExtensionsToView(inputView, spec);
+  });
+  
+  afterEach(function () {
+    findNearestElementStub.restore();
+    querySelectorAllStub.restore();
+    querySelectorStub.restore();
+    findOptionViewStub.restore();
+  });
+  
+  it("should set initial `data-lynx-option-selected` state of option view - none", function () {
+    inputView.lynxConnectOptions();
+    
+    expect(firstOptionView.lynxGetSelected()).to.equal(false);
+    expect(firstOptionView.getAttribute("data-lynx-option-selected")).to.equal("false");
+    expect(secondOptionView.lynxGetSelected()).to.equal(false);
+    expect(secondOptionView.getAttribute("data-lynx-option-selected")).to.equal("false");
+  });
+  
+  it("should set initial `data-lynx-option-selected` state of option view - one", function () {
+    inputView.lynxAddValue("one");
+    inputView.lynxConnectOptions();
+    
+    expect(firstOptionView.lynxGetSelected()).to.equal(true);
+    expect(firstOptionView.getAttribute("data-lynx-option-selected")).to.equal("true");
+    expect(secondOptionView.lynxGetSelected()).to.equal(false);
+    expect(secondOptionView.getAttribute("data-lynx-option-selected")).to.equal("false");
+  });
+  
+  it("should set initial `data-lynx-option-selected` state of option view - many", function () {
+    inputView.lynxAddValue("one");
+    inputView.lynxAddValue("two");
+    inputView.lynxConnectOptions();
+    
+    expect(firstOptionView.lynxGetSelected()).to.equal(true);
+    expect(firstOptionView.getAttribute("data-lynx-option-selected")).to.equal("true");
+    expect(secondOptionView.lynxGetSelected()).to.equal(true);
+    expect(secondOptionView.getAttribute("data-lynx-option-selected")).to.equal("true");
+  });
+  
+  it("should raise `lynx-option-selected` event on deselected option view when clicked", function () {
+    return new Promise(function (resolve) {
+      firstOptionView.addEventListener("lynx-option-selected", function () {
+        expect(firstOptionView.lynxGetSelected()).to.equal(true);
+        resolve();
+      });
+      
+      inputView.lynxConnectOptions();
+      
+      expect(firstOptionView.lynxGetSelected()).to.equal(false);
+      firstOptionView.click();
+    });
+  });
+  
+  it("should add a value to the input view when an option view is clicked", function () {
+    return new Promise(function (resolve) {
+      function checkInputForValue() {
+        if (inputView.lynxHasValue("one")) {
+          return resolve();
+        }
+        
+        setTimeout(checkInputForValue, 10);
+      }
+      
+      inputView.lynxConnectOptions();
+      
+      expect(inputView.lynxHasValue("one")).to.equal(false);
+      firstOptionView.click();
+      setTimeout(checkInputForValue, 10);
+    });
+  });
+  
+  it("should remove a value from the input view when an option view is clicked", function () {
+    return new Promise(function (resolve) {
+      function checkInputForValue() {
+        if (!inputView.lynxHasValue("one")) {
+          return resolve();
+        }
+        
+        setTimeout(checkInputForValue, 10);
+      }
+      
+      inputView.lynxAddValue("one");
+      inputView.lynxConnectOptions();
+      
+      expect(inputView.lynxHasValue("one")).to.equal(true);
+      firstOptionView.click();
+      setTimeout(checkInputForValue, 10);
+    });
+  });
+  
+  it("should set selected states on the option views when the input view's value changes", function () {
+    return new Promise(function (resolve) {
+      function checkOptionViewsForSelected() {
+        if (firstOptionView.lynxGetSelected() && secondOptionView.lynxGetSelected()) {
+          return resolve();
+        }
+        
+        setTimeout(checkInputForValue, 10);
+      }
+      
+      inputView.lynxConnectOptions();
+      
+      expect(firstOptionView.lynxGetSelected()).to.equal(false);
+      expect(secondOptionView.lynxGetSelected()).to.equal(false);
+      
+      inputView.lynxAddValue("one");
+      inputView.lynxAddValue("two");
+      
+      var changeEvent = document.createEvent("Event");
+      changeEvent.initEvent("change", true, false);
+      inputView.dispatchEvent(changeEvent);
+      
+      setTimeout(checkOptionViewsForSelected, 10);
     });
   });
 });

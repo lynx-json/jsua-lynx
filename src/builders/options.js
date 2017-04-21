@@ -50,7 +50,7 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
       let selectedOptionView = optionsView.querySelector("[data-lynx-option-selected=true]");
       
       optionView.lynxToggleSelected();
-      if (optionView !== selectedOptionView) selectedOptionView.lynxToggleSelected();
+      if (selectedOptionView && selectedOptionView !== optionView) selectedOptionView.lynxToggleSelected();
       
       if (optionView.lynxGetSelected()) {
         inputView.lynxSetValue( optionView.lynxGetValue() );
