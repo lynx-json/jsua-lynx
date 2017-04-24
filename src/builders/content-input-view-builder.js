@@ -1,7 +1,5 @@
 import { getBlob, getPromiseForRequest } from "./content-node-helpers";
-import { transfer } from "jsua/lib/transferring";
-import { build } from "jsua/lib/views/building";
-import { finish } from "jsua/lib/views/finishing";
+import { transferring, building } from "jsua";
 
 function updateEmbeddedView(contentInputView, blob) {
   var oldEmbeddedView = contentInputView.querySelector("[data-lynx-content-view]");
@@ -17,7 +15,7 @@ function updateEmbeddedView(contentInputView, blob) {
   };
   
   return Promise.resolve(content)
-    .then(build)
+    .then(building.build)
     .catch(function (err) {
       console.log("Error building embedded content view in content input view.", err);
     })
@@ -86,7 +84,7 @@ export function contentInputViewBuilder(node) {
       promiseForView = view.lynxSetValue(getBlob(node));
     } else if ("src" in node.value) {
       promiseForView = getPromiseForRequest(node)
-        .then(transfer)
+        .then(transferring.transfer)
         .catch(function (err) {
           // intentionally eat a transfer error here b/c primary task is file upload
           return null;

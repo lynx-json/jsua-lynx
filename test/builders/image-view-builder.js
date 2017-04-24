@@ -1,7 +1,7 @@
 require("../html-document-api");
 var contents = require("../../lib/builders/image-view-builder");
-var transferring = require("jsua/lib/transferring");
-var building = require("jsua/lib/views/building");
+var transferring = require("jsua").transferring;
+var building = require("jsua").building;
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

@@ -1,11 +1,10 @@
 import { getPromiseForRequest } from "./content-node-helpers";
-import { transfer } from "jsua/lib/transferring";
-import { build } from "jsua/lib/views/building";
+import { transferring, building } from "jsua";
 
 export function contentViewBuilder(node) {
   return getPromiseForRequest(node)
-    .then(transfer)
-    .then(build)
+    .then(transferring.transfer)
+    .then(building.build)
     .then(function (result) {
       var view = document.createElement("div");
       

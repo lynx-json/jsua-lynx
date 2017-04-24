@@ -1,6 +1,6 @@
 require("../html-document-api");
 var builders = require("../../lib/builders/content-input-view-builder");
-var building = require("jsua/lib/views/building");
+var building = require("jsua").building;
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
