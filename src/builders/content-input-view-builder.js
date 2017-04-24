@@ -59,10 +59,19 @@ export function contentInputViewBuilder(node) {
     };
     
     view.lynxSetValue = function (blob) {
-      if (blob === value) return;
+      if (view.lynxHasValue(blob)) return;
       value = blob;
       raiseValueChangeEvent(view);
       return updateEmbeddedView(view, value);
+    };
+    
+    view.lynxClearValue = function () {
+      view.lynxSetValue(null);
+    };
+    
+    view.lynxHasValue = function (blob) {
+      // TODO: this should compare blob.type and the bytes in the blob
+      return value === blob;
     };
     
     inputView.addEventListener("change", function (evt) {

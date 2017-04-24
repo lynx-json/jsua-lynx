@@ -1,6 +1,7 @@
 import * as building from "../building";
 import * as resolver from "./resolve-view-builder";
-import { addValidationExtensionsToView } from "./validation";
+import * as validation from "./validation";
+import * as options from "./options";
 
 function hasScope(node) {
   return node.value &&
@@ -32,13 +33,12 @@ export function nodeViewBuilder(node) {
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
     if (input) view.setAttribute("data-lynx-input", "true");
-    if (node.spec.options) view.setAttribute("data-lynx-options", node.spec.options);
-    if (node.spec.option) view.setAttribute("data-lynx-option", "true");
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) view.setAttribute("data-lynx-submitter", node.spec.submitter);
-    if (node.spec.validation) addValidationExtensionsToView(view, node.spec.validation);
+    if (node.spec.validation) validation.addValidationExtensionsToView(view, node.spec.validation);
+    if (node.spec.option) view.setAttribute("data-lynx-option", "true");
+    if (node.spec.options) options.addOptionsExtensionsToView(view, node.spec);
     // data-lynx-marker-for
-    // data-lynx-validation-formatted
     // data-lynx-data-* properties
     return view;
   });

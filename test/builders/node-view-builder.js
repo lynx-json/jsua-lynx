@@ -1,5 +1,7 @@
 require("../html-document-api");
 var builders = require("../../lib/builders");
+var options = require("../../lib/builders/options");
+var validation = require("../../lib/builders/validation");
 var resolver = require("../../lib/builders/resolve-view-builder");
 var chai = require("chai");
 var should = chai.should();
@@ -246,7 +248,7 @@ describe("builders / nodeViewBuilder", function () {
         hints: [ { name: "text" } ],
         input: true
       },
-      value: {}
+      value: ""
     };
     
     return runTest(node, function (view) {
@@ -255,19 +257,47 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
   
-  it("should set attribute 'data-lynx-options'", function () {  
+  it("should add options extensions to view", function () {  
     var node = { 
       spec: { 
         name: "node1",
         hints: [ { name: "text" } ],
+        input: true,
         options: "node2"
       },
-      value: {}
+      value: ""
     };
+    
+    sinon.stub(options, "addOptionsExtensionsToView");
+    
+    return runTest(node, function (view) {
+      expect(view).to.not.be.null;
+      options.addOptionsExtensionsToView.calledOnce.should.equal(true);
+      options.addOptionsExtensionsToView.restore();
+    });
+  });
+  
+  it("should add validation extensions to view", function () {  
+    var node = { 
+      spec: { 
+        name: "node1",
+        hints: [ { name: "text" } ],
+        input: true,
+        validation: {
+          required: {
+            invalid: "propertyRef"
+          }
+        }
+      },
+      value: ""
+    };
+    
+    sinon.stub(validation, "addValidationExtensionsToView");
     
     return runTest(node, function (view) {
       expect(view).to.not.equal(null);
-      view.getAttribute("data-lynx-options").should.equal(node.spec.options);
+      validation.addValidationExtensionsToView.calledOnce.should.equal(true);
+      validation.addValidationExtensionsToView.restore();
     });
   });
   

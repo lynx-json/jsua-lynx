@@ -29,6 +29,14 @@ export function textInputViewBuilder(node) {
     raiseValueChangeEvent(textView);
   };
   
+  view.lynxHasValue = function (val) {
+    return view.value === val;
+  };
+  
+  view.lynxClearValue = function () {
+    view.lynxSetValue("");
+  };
+  
   return view;
 }
 

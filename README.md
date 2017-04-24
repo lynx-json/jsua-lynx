@@ -54,18 +54,26 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-container-input-item` - contains the `data-lynx-container-input-value` view and its associated `data-lynx-container-input-remove` control
 * `data-lynx-validation-state` - the current validation state of the view
 * `data-lynx-visibility-conceal` - the control used to toggle a view's `data-lynx-visibility` between `revealed` and `concealed`
+* `data-lynx-option-selected` - the current option selected state of the view
 
 ## View Functions
 
 A view representing a node of a Lynx JSON document may have the following methods/functions:
 
-* `lynxGetVisibility` and `lynxSetVisibility` - accessors for getting/setting the visibility of a view.
-* `lynxGetValue` and `lynxSetValue` - accessors for getting/setting the value of an input
-* `lynxAddValue` and `lynxRemoveValue` - accessors for adding/remove values from a container input
+* `lynxGetVisibility` - gets the visibility of a view
+* `lynxSetVisibility` - sets the visibility of a view
+* `lynxGetValue` - gets the value of a view (text, content, text input, content input, container input, option, and option value views)
+* `lynxSetValue` - sets the value of an input view
+* `lynxHasValue` - tests an input view's value
+* `lynxClearValue` - clears an input view's value
+* `lynxAddValue` - adds a value to a container input view
+* `lynxRemoveValue` - removes a value from a container input view
 * `lynxGetConcealView` - gets the view that represents the conceal action of a view
 * `lynxSetConcealView` - sets the view that represents the conceal action of a view
 * `lynxGetRevealView` - gets the view that represents the reveal action of a view
 * `lynxSetRevealView` - sets the view that represents the reveal action of a view
+* `lynxConnectOptions` - connects an input view that has options with its source of options (if found)
+* `lynxDisconnectOptions` - disconnects an input view from its source of options (if connected)
 
 ## View Events
 
@@ -78,3 +86,7 @@ A view representing a node of a Lynx JSON document may emit the following events
   - `priorState` - the overall validation state for the view prior to the change
   - `constraints` - an array of the validation constraints (conforming Lynx JSON's "Validation Constraint Object" interface) for the view also with their own `state` and `priorState` properties
   - `changes` - an array of references to the validation constraints that have changed state
+* `lynx-options-connected` - emitted when a view that provides options to an input view is connected to the input view
+* `lynx-options-disconnected` - emitted when a view that provides options to an input view is disconnected from the input view
+* `lynx-option-selected` - emitted when a view that provides a value to an input view is selected
+* `lynx-option-deselected` - emitted when a view that provides a value to an input view is deselected

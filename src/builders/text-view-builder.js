@@ -9,5 +9,9 @@ export function textViewBuilder(node) {
     textView.textContent = node.value.toString();  
   }
   
+  view.lynxGetValue = function () {
+    return view.textContent;
+  };
+  
   return view;
 }
