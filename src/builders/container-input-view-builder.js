@@ -57,7 +57,7 @@ export function containerInputViewBuilder(node) {
     var valueToRemove = val || "";
     
     var itemViewsToRemove = Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
-      .filter(valueView => valueToRemove === valueView.value)
+      .filter(valueView => valueToRemove === valueView.lynxGetValue())
       .map(valueView => valueView.parentElement);
       
     if (itemViewsToRemove.length === 0) return;
@@ -67,7 +67,7 @@ export function containerInputViewBuilder(node) {
   
   view.lynxGetValue = function () {
     return Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
-      .map(valueView => valueView.value);
+      .map(valueView => valueView.lynxGetValue());
   };
   
   view.lynxSetValue = function (values) {
@@ -80,7 +80,7 @@ export function containerInputViewBuilder(node) {
   
   view.lynxHasValue = function (val) {
     return Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
-      .some(valueView => valueView.value === val);
+      .some(valueView => valueView.lynxGetValue() === val);
   };
   
   view.lynxClearValue = function () {

@@ -154,6 +154,9 @@ describe("builders / containerInputViewBuilder", function () {
     nodeViewBuilderStub.onCall(0).returns(new Promise(function (resolve) {
       var view = document.createElement("textarea");
       view.value = textInputValue;
+      view.lynxGetValue = function () {
+        return view.value;
+      };
       resolve(view);
     }));
     
@@ -216,6 +219,9 @@ describe("builders / containerInputViewBuilder", function () {
     nodeViewBuilderStub.onCall(0).returns(new Promise(function (resolve) {
       var view = document.createElement("textarea");
       view.value = textInputValue;
+      view.lynxGetValue = function () {
+        return view.value;
+      };
       resolve(view);
     }));
     
