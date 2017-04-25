@@ -1,5 +1,7 @@
 import * as containers from "./container-view-builder";
 import * as url from "url";
+import * as util from "./util";
+import { fetch } from "jsua";
 
 export function submitViewBuilder(node) {
   var view = document.createElement("button");
@@ -18,6 +20,32 @@ export function submitViewBuilder(node) {
   } else if (node.spec.send !== undefined) {
     view.setAttribute("data-lynx-send", node.spec.send);
   }
+  
+  view.addEventListener("click", function (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    
+    var formAction = view.formAction;
+    var formMethod = view.formMethod && view.formMethod.toUpperCase() || "GET";
+    var options = {
+      method: formMethod,
+      origin: view
+    };
+    
+    var formData = util.buildFormData(view);
+
+    if (formData) {
+      if (formMethod === "POST" || formMethod === "PUT") {
+        options.body = formData;
+      } else {
+        var temp = url.parse(formAction);
+        temp.search = "?" + formData.toString();
+        formAction = url.format(temp);
+      }
+    }
+
+    fetch(formAction, options);
+  });
   
   return containers.buildChildViews(node)
     .then(function (childViews) {

@@ -246,14 +246,16 @@ describe("builders / nodeViewBuilder", function () {
       spec: { 
         name: "node1",
         hints: [ { name: "text" } ],
-        input: true
+        input: {
+          name: "foo"
+        }
       },
       value: ""
     };
     
     return runTest(node, function (view) {
       expect(view).to.not.equal(null);
-      view.getAttribute("data-lynx-input").should.equal("true");
+      view.getAttribute("data-lynx-input").should.equal("foo");
     });
   });
   

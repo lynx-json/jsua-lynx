@@ -6,4 +6,11 @@ if (typeof window === "undefined") {
   global.FileReader = window.FileReader;
   global.CustomEvent = window.CustomEvent;
   global.Node = window.Node;
+  global.FormData = window.FormData;
+  
+  if (!window.URLSearchParams) {
+    window.URLSearchParams = require("url-search-params");
+  }
+  
+  global.URLSearchParams = window.URLSearchParams;
 }
