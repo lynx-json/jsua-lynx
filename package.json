@@ -30,7 +30,8 @@
     "mocha": "^3.2.0",
     "sinon": "^1.17.7",
     "smokestack": "^3.4.1",
-    "tape": "^4.6.3"
+    "tape": "^4.6.3",
+    "url-search-params": "^0.7.0"
   },
   "dependencies": {
     "jsua": "github:lynx-json/jsua",

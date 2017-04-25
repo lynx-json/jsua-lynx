@@ -32,7 +32,7 @@ export function nodeViewBuilder(node) {
     addVisibilityExtensionsToView(view, node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
-    if (input) view.setAttribute("data-lynx-input", "true");
+    if (input) view.setAttribute("data-lynx-input", node.spec.input.name || node.spec.name);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) view.setAttribute("data-lynx-submitter", node.spec.submitter);
     if (node.spec.validation) validation.addValidationExtensionsToView(view, node.spec.validation);

@@ -1,5 +1,6 @@
 import * as containers from "./container-view-builder";
 import * as url from "url";
+import { fetch } from "jsua";
 
 export function linkViewBuilder(node) {
   var view = document.createElement("a");
@@ -17,6 +18,12 @@ export function linkViewBuilder(node) {
   } else if (node.spec.follow !== undefined) {
     view.setAttribute("data-lynx-follow", node.spec.follow);
   }
+  
+  view.addEventListener("click", function (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    fetch(view.href, { origin: view });
+  });
   
   return containers.buildChildViews(node)
     .then(function (childViews) {
