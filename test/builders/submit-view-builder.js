@@ -1,7 +1,7 @@
 require("../html-document-api");
 var submits = require("../../lib/builders/submit-view-builder");
 var containers = require("../../lib/builders/container-view-builder");
-var util = require("../../lib/builders/util");
+var util = require("../../lib/util");
 var jsua = require("jsua");
 var chai = require("chai");
 var should = chai.should();

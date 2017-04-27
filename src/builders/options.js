@@ -1,11 +1,11 @@
-import * as util from "./util";
+import * as util from "../util";
 
 export function addOptionsExtensionsToView(inputView, spec) {
   var optionsView;
   var isContainerInput = inputView.matches("[data-lynx-hints~=container]");
   
   inputView.lynxConnectOptions = function () {
-    var nearestOptionsView = util.findNearestElement(inputView, "[data-lynx-name='" + spec.options + "']");
+    var nearestOptionsView = util.findNearestView(inputView, "[data-lynx-name='" + spec.options + "']");
     
     if (optionsView && optionsView === nearestOptionsView) return;
     if (optionsView) inputView.lynxDisconnectOptions();

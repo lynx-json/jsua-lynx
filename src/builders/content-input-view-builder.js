@@ -1,46 +1,6 @@
 import { getBlob, getPromiseForRequest } from "./content-node-helpers";
 import { transferring, building } from "jsua";
 
-function updateEmbeddedView(contentInputView, blob) {
-  var oldEmbeddedView = contentInputView.querySelector("[data-lynx-content-view]");
-  
-  if (!blob) {
-    if (oldEmbeddedView) contentInputView.removeChild(oldEmbeddedView);
-    return Promise.resolve(contentInputView);
-  }
-  
-  var content = {
-    url: blob.name || "",
-    blob: blob
-  };
-  
-  return Promise.resolve(content)
-    .then(building.build)
-    .catch(function (err) {
-      console.log("Error building embedded content view in content input view.", err);
-    })
-    .then(function (result) {
-      var embeddedView;
-      
-      if (result && result.view) {
-        embeddedView = result.view;
-      } else {
-        embeddedView = document.createElement("div");
-        embeddedView.textContent = "View Unavailable";
-      }
-      
-      embeddedView.setAttribute("data-lynx-embedded-view", true);
-      
-      if (oldEmbeddedView) {
-        contentInputView.replaceChild(embeddedView, oldEmbeddedView);
-      } else {
-        contentInputView.appendChild(embeddedView);
-      }
-      
-      return contentInputView;
-    });
-}
-
 export function contentInputViewBuilder(node) {
   return new Promise(function (resolve, reject) {
     var view = document.createElement("div");
@@ -50,7 +10,27 @@ export function contentInputViewBuilder(node) {
     inputView.name = node.spec.input.name || "";
     view.appendChild(inputView);
     
-    var value = null;
+    var value, embeddedView;
+    
+    function setEmbeddedView(newEmbeddedView) {
+      var detached = [];
+      
+      if (embeddedView) {
+        detached.push(view.removeChild(embeddedView));
+      }
+      
+      embeddedView = newEmbeddedView;
+      if (!embeddedView) return detached;
+      
+      view.appendChild(embeddedView);
+      embeddedView.setAttribute("data-lynx-embedded-view", true);
+      
+      if (node.value && node.value.alt) {
+        embeddedView.setAttribute("alt", node.value.alt);
+      }
+      
+      return detached;
+    }
     
     view.lynxGetValue = function () {
       return value;
@@ -59,8 +39,28 @@ export function contentInputViewBuilder(node) {
     view.lynxSetValue = function (blob) {
       if (view.lynxHasValue(blob)) return;
       value = blob;
-      raiseValueChangeEvent(view);
-      return updateEmbeddedView(view, value);
+      
+      if (!blob) {
+        setEmbeddedView(null);
+        raiseValueChangeEvent(view);
+        return Promise.resolve(view);
+      }
+      
+      var content = {
+        url: blob.name || "",
+        blob: blob
+      };
+      
+      return Promise.resolve(content)
+        .then(building.build)
+        .catch(function (err) {
+          console.log("Error building the embedded view for a content input view.", err);
+        })
+        .then(function (result) {
+          setEmbeddedView(result.view);
+          raiseValueChangeEvent(view);
+          return view;
+        });
     };
     
     view.lynxClearValue = function () {
@@ -68,8 +68,17 @@ export function contentInputViewBuilder(node) {
     };
     
     view.lynxHasValue = function (blob) {
-      // TODO: this should compare blob.type and the bytes in the blob
-      return value === blob;
+      return value === blob; // TODO: fix this comparison
+    };
+    
+    view.lynxSetEmbeddedView = function (newView, newBlob) {
+      if (view.lynxHasValue(newBlob)) return;
+      value = newBlob;
+      
+      var detached = setEmbeddedView(newView);
+      raiseValueChangeEvent(view);
+      
+      return detached;
     };
     
     inputView.addEventListener("change", function (evt) {

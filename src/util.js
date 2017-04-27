@@ -1,17 +1,26 @@
-export function findNearestElement(view, selector) {
-  if (!view || !selector || view.matches("html")) return null;
-  return view.querySelector(selector) || findNearestElement(view.parentElement, selector);
+export function findNearestView(view, selector, predicate) {
+  if (!view || !selector || view.matches("[data-jsua-app]")) return null;
+  
+  var matching = view.querySelector(selector);
+  if (!matching) return findNearestView(view.parentElement, selector, predicate);
+  
+  if (predicate) {
+    if (predicate(matching)) return matching;
+    return findNearestView(view.parentElement, selector, predicate);  
+  }
+  
+  return matching;
 }
 
-export function findNearestAncestor(view, selector) {
-  if (!view || !selector || view.matches("html")) return null;
+export function findNearestAncestorView(view, selector) {
+  if (!view || !selector || view.matches("[data-jsua-app]")) return null;
   var parent = view.parentElement;
   if (parent && parent.matches(selector)) return parent;
-  return findNearestAncestor(parent, selector);
+  return findNearestAncestorView(parent, selector);
 }
 
 export function buildFormData(submitView) {
-  var formView = exports.findNearestAncestor(submitView, "[data-lynx-hints~=form]");
+  var formView = exports.findNearestAncestorView(submitView, "[data-lynx-hints~=form]");
   if (!formView) return null;
 
   var formData;
