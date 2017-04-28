@@ -1,6 +1,6 @@
 require("../html-document-api");
 var options = require("../../lib/builders/options");
-var util = require("../../lib/builders/util");
+var util = require("../../lib/util");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
@@ -14,7 +14,7 @@ function createOptionValueView(value) {
 }
 
 describe("options / addOptionsExtensionsToView / input", function () {
-  var inputView, spec, findNearestElementStub;
+  var inputView, spec, findNearestViewStub;
   
   function stubInputView(inputView) {
     var value = "";
@@ -34,13 +34,13 @@ describe("options / addOptionsExtensionsToView / input", function () {
       input: "inputName"
     };
     
-    findNearestElementStub = sinon.stub(util, "findNearestElement");
+    findNearestViewStub = sinon.stub(util, "findNearestView");
     
     options.addOptionsExtensionsToView(inputView, spec);
   });
   
   afterEach(function () {
-    findNearestElementStub.restore();
+    findNearestViewStub.restore();
   });
   
   
@@ -50,7 +50,7 @@ describe("options / addOptionsExtensionsToView / input", function () {
   
   describe("when `lynxConnectOptions` is called on the input view and an options view is not found", function () {
     beforeEach(function () {
-      findNearestElementStub.returns(null);
+      findNearestViewStub.returns(null);
       inputView.lynxConnectOptions();
     });
     
@@ -65,7 +65,7 @@ describe("options / addOptionsExtensionsToView / input", function () {
     
     beforeEach(function () {
       nearestOptionsView = document.createElement("div");
-      findNearestElementStub.returns(nearestOptionsView);
+      findNearestViewStub.returns(nearestOptionsView);
     });
     
     it("should add `lynxDisconnectOptions` function to input view", function () {
@@ -97,7 +97,7 @@ describe("options / addOptionsExtensionsToView / input", function () {
     
     beforeEach(function () {
       nearestOptionsView = document.createElement("div");
-      findNearestElementStub.returns(nearestOptionsView);
+      findNearestViewStub.returns(nearestOptionsView);
       
       firstOptionValueView = createOptionValueView("one");
       firstOptionView = document.createElement("div");
@@ -287,7 +287,7 @@ describe("options / addOptionsExtensionsToView / input", function () {
 describe("options / addOptionsExtensionsToView / container input", function () {
   var inputView, 
       spec, 
-      findNearestElementStub,
+      findNearestViewStub,
       nearestOptionsView, 
       querySelectorAllStub, 
       querySelectorStub,
@@ -326,10 +326,10 @@ describe("options / addOptionsExtensionsToView / container input", function () {
       }
     };
     
-    findNearestElementStub = sinon.stub(util, "findNearestElement");
+    findNearestViewStub = sinon.stub(util, "findNearestView");
     
     nearestOptionsView = document.createElement("div");
-    findNearestElementStub.returns(nearestOptionsView);
+    findNearestViewStub.returns(nearestOptionsView);
     
     firstOptionValueView = createOptionValueView("one");
     firstOptionView = document.createElement("div");
@@ -349,7 +349,7 @@ describe("options / addOptionsExtensionsToView / container input", function () {
   });
   
   afterEach(function () {
-    findNearestElementStub.restore();
+    findNearestViewStub.restore();
     querySelectorAllStub.restore();
     querySelectorStub.restore();
     findOptionViewStub.restore();

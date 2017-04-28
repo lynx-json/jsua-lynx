@@ -39,6 +39,7 @@ export function build(content) {
           view.setAttribute("data-content-url", content.url);
           view.setAttribute("data-content-type", content.blob.type);
           if (doc.realm) view.setAttribute("data-lynx-realm", doc.realm);
+          if (doc.context) view.setAttribute("data-lynx-context", doc.context);
           return view;
         })
         .then(resolve, reject);

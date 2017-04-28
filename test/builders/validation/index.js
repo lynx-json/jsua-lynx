@@ -1,5 +1,5 @@
 require("../../html-document-api");
-var util = require("../../../lib/builders/util");
+var util = require("../../../lib/util");
 var validation = require("../../../lib/builders/validation");
 var validators = require("../../../lib/builders/validation/validators");
 var chai = require("chai");
@@ -411,15 +411,15 @@ describe("validation / updateContentTargetVisibility", function () {
       contentTargets: []
     };
     
-    findNearestElementStub = sinon.stub(util, "findNearestElement");
-    findNearestElementStub.returns(contentView);
+    findNearestViewStub = sinon.stub(util, "findNearestView");
+    findNearestViewStub.returns(contentView);
   });
   
   afterEach(function () {
-    findNearestElementStub.restore();
+    findNearestViewStub.restore();
   });
   
-  var contentView, constraint, findNearestElementStub;
+  var contentView, constraint, findNearestViewStub;
   
   it("should show content for validation constraint state", function () {
     constraint.state = "valid";

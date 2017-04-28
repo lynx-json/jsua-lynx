@@ -35,7 +35,7 @@ describe("builders / contentViewBuilder", function () {
     
     transferStub.returns(Promise.resolve({}));
     
-    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
     
     return contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;

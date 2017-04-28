@@ -24,6 +24,7 @@ A view representing a Lynx JSON document may have the following attributes:
 * `data-content-url` - the document's URL
 * `data-content-type` - the document's content type (`application/lynx+json`)
 * `data-lynx-realm` - the document's realm URI
+* `data-lynx-context` - the document's context URI
 
 A view representing a node of a Lynx JSON document may have the following attributes:
 
@@ -74,6 +75,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxSetRevealView` - sets the view that represents the reveal action of a view
 * `lynxConnectOptions` - connects an input view that has options with its source of options (if found)
 * `lynxDisconnectOptions` - disconnects an input view from its source of options (if connected)
+* `lynxSetEmbeddedView` - sets both the view and the value (Blob) for a content view
 
 ## View Events
 

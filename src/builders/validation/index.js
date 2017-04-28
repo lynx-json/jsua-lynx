@@ -1,4 +1,4 @@
-import * as util from "../util";
+import * as util from "../../util";
 import * as validators from "./validators";
 
 var validatorsByConstraint = {
@@ -14,7 +14,7 @@ export function getValidator(constraintName) {
 
 export function updateContentTargetVisibility(origin, constraint) {
   constraint.contentTargets.forEach(contentTarget => {
-    var contentView = util.findNearestElement(origin, "[data-lynx-name='" + contentTarget.name + "']");
+    var contentView = util.findNearestView(origin, "[data-lynx-name='" + contentTarget.name + "']");
     if (!contentView) return;
     var visibility = contentTarget.forState === constraint.state ? "visible" : "hidden";
     contentView.lynxSetVisibility(visibility);

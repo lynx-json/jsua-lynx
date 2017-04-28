@@ -58,7 +58,7 @@ describe("builders / contentInputViewBuilder", function () {
       expect(contentView).to.be.null;
       inputView.type.should.equal("file");
       inputView.name.should.equal(node.spec.input.name);
-      expect(view.lynxGetValue()).to.be.null;
+      expect(view.lynxGetValue()).to.not.be.ok;
       expect(view.lynxSetValue).to.not.be.undefined;
     });
   });
