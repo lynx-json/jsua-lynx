@@ -31,7 +31,7 @@ export function buildFormData(submitView) {
     formData = new URLSearchParams();
   }
   
-  var inputViews = formView.querySelectorAll("[data-lynx-input]");
+  var inputViews = formView.querySelectorAll("[data-lynx-input]:not([data-lynx-hints~=container])");
 
   Array.from(inputViews).forEach(function (inputView) {
     var inputValues = inputView.lynxGetValue();
