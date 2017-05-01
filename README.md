@@ -42,7 +42,6 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `formaction` - the node's `action` property value (`submit` nodes)
 * `formmethod` - the node's `method` property value (`submit` nodes)
 * `formenctype` - the node's `enctype` property value (`submit` nodes)
-* `data-lynx-send` - the node's `send` property value (`submit` nodes)
 * `data-lynx-embedded-view` - the view for the node's `src` or `data` property value (`content` nodes)
 * `alt` - the node's `alt` property value (`content` nodes)
 * `title` - the node's `alt` property value (`image` nodes)
@@ -68,6 +67,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxClearValue` - clears an input view's value
 * `lynxAddValue` - adds a value to a container input view
 * `lynxRemoveValue` - removes a value from a container input view
+* `lynxGetValidationState` - if the view can be validated, gets the validation state of the view
 * `lynxGetConcealView` - gets the view that represents the conceal action of a view
 * `lynxSetConcealView` - sets the view that represents the conceal action of a view
 * `lynxGetRevealView` - gets the view that represents the reveal action of a view

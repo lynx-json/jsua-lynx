@@ -286,7 +286,7 @@ describe("validation / addValidationExtensionsToInputView", function () {
     stubs = [
       sinon.stub(validation, "formatValue"),
       sinon.stub(validation, "validateValue"),
-      sinon.stub(validation, "raiseValiditionStateChangedEvent")
+      sinon.stub(validation, "raiseValidationStateChangedEvent")
     ];
     
     validationObj = {
@@ -319,7 +319,7 @@ describe("validation / addValidationExtensionsToInputView", function () {
     view.lynxGetValue.calledOnce.should.equal(true);
     validation.validateValue.calledOnce.should.equal(true);
     view.getAttribute("data-lynx-validation-state").should.equal("invalid");
-    validation.raiseValiditionStateChangedEvent.calledOnce.should.equal(true);
+    validation.raiseValidationStateChangedEvent.calledOnce.should.equal(true);
   });
   
   it("should update target content visibility when validation constraints change state", function () { 
@@ -360,7 +360,7 @@ describe("validation / addValidationExtensionsToContainerView", function () {
     
     stubs = [
       sinon.stub(validation, "resolveValidationStateOfDescendants"),
-      sinon.stub(validation, "raiseValiditionStateChangedEvent"),
+      sinon.stub(validation, "raiseValidationStateChangedEvent"),
       sinon.stub(validation, "validateContainer")
     ];
     
@@ -393,7 +393,7 @@ describe("validation / addValidationExtensionsToContainerView", function () {
     
     validation.validateContainer.calledOnce.should.equal(true);
     view.getAttribute("data-lynx-validation-state").should.equal("invalid");
-    validation.raiseValiditionStateChangedEvent.calledOnce.should.equal(true);
+    validation.raiseValidationStateChangedEvent.calledOnce.should.equal(true);
     view.lynxUpdateValidationContentVisibility.calledOnce.should.equal(true);
   });
 });
