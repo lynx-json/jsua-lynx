@@ -13,7 +13,7 @@ export function linkViewBuilder(node) {
   
   view.type = node.value.type;
   
-  var followTimeout = tryGetFollowTimeoutForFollowValue(node);
+  var followTimeout = tryGetFollowTimeout(node);
   
   if (followTimeout) {
     view.addEventListener("jsua-attach", function () {
@@ -41,7 +41,7 @@ export function linkViewBuilder(node) {
     });
 }
 
-function tryGetFollowTimeoutForFollowValue(node) {
+function tryGetFollowTimeout(node) {
   console.log(node.value.follow);
   var follow = +node.value.follow;
   if (isNaN(follow)) follow = +node.spec.follow;
