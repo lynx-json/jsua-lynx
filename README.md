@@ -35,7 +35,6 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-scope` - the node's `scope` (`container` nodes)
 * `href` - the node's `href` property value (`link` nodes)
 * `type` - the node's `type` property value (`link` nodes)
-* `data-lynx-follow` - the node's `follow` property value (`link` nodes)
 * `data-lynx-input` - the node's input name for form data submission
 * `data-lynx-options` - the node's `options` property value (input nodes)
 * `data-lynx-submitter` - the node's `submitter` property value (`form` and input nodes)

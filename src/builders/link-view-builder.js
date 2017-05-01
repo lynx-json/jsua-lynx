@@ -13,10 +13,14 @@ export function linkViewBuilder(node) {
   
   view.type = node.value.type;
   
-  if (node.value.follow !== undefined) {
-    view.setAttribute("data-lynx-follow", node.value.follow);
-  } else if (node.spec.follow !== undefined) {
-    view.setAttribute("data-lynx-follow", node.spec.follow);
+  var followTimeout = tryGetFollowTimeoutForFollowValue(node);
+  
+  if (followTimeout) {
+    view.addEventListener("jsua-attach", function () {
+      setTimeout(function () {
+        view.click();
+      }, followTimeout);
+    });
   }
   
   view.addEventListener("click", function (evt) {
@@ -35,4 +39,12 @@ export function linkViewBuilder(node) {
       
       return view;
     });
+}
+
+function tryGetFollowTimeoutForFollowValue(node) {
+  console.log(node.value.follow);
+  var follow = +node.value.follow;
+  if (isNaN(follow)) follow = +node.spec.follow;
+  if (isNaN(follow)) return;
+  return follow < 10 ? 10 : follow;
 }

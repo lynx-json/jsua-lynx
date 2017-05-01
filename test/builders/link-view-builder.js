@@ -52,24 +52,6 @@ describe("builders / linkViewBuilder", function () {
     });
   });
   
-  it("should set attribute 'follow' when on value", function () {
-    node.value.follow = 0;
-    
-    return links.linkViewBuilder(node).then(function (view) {
-      expect(view).to.not.equal(null);
-      view.getAttribute("data-lynx-follow").should.equal("0");
-    });
-  });
-  
-  it("should set attribute 'follow' when on spec", function () {
-    node.spec.follow = 0;
-    
-    return links.linkViewBuilder(node).then(function (view) {
-      expect(view).to.not.equal(null);
-      view.getAttribute("data-lynx-follow").should.equal("0");
-    });
-  });
-  
   it("should resolve the 'href' if a 'base' URI is present", function () {
     node.base = "http://example.com";
     
@@ -88,6 +70,36 @@ describe("builders / linkViewBuilder", function () {
     
     afterEach(function () {
       fetchStub.restore();
+    });
+    
+    it("should click link when value has 'follow' property", function () {
+      node.value.follow = 0;
+      
+      return new Promise(function (resolve) {
+        links.linkViewBuilder(node).then(function (view) {
+          view.addEventListener("click", function () {
+            expect(fetchStub.calledOnce).to.equal(true);
+            resolve();
+          });
+          
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+        });
+      });
+    });
+    
+    it("should click link when spec has 'follow' property", function () {
+      node.spec.follow = 0;
+      
+      return new Promise(function (resolve) {
+        links.linkViewBuilder(node).then(function (view) {
+          view.addEventListener("click", function () {
+            expect(fetchStub.calledOnce).to.equal(true);
+            resolve();
+          });
+          
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+        });
+      });
     });
     
     it("should fetch", function () {
