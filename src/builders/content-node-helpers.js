@@ -1,10 +1,6 @@
 import * as url from "url";
 
 export function getBlob(node) {
-  if (!node.value.data) {
-    return new Blob([], { type: node.value.type });
-  }
-  
   var buf = new Buffer(node.value.data, node.value.encoding || "utf8");
   var blob = new Blob([buf], { type: node.value.type });
   return blob;

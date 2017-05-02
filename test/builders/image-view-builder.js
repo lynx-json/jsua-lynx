@@ -37,12 +37,12 @@ describe("builders / imageViewBuilder", function () {
     
     transferStub.returns(Promise.resolve({}));
     
-    buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
+    buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
     
     return contents.imageViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
-      view.children.item(0).title.should.equal(node.value.alt);
+      view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
       view.children.item(0).getAttribute("data-lynx-height").should.equal(node.value.height.toString());
       view.children.item(0).getAttribute("data-lynx-width").should.equal(node.value.width.toString());
       transferStub.called.should.be.true;
