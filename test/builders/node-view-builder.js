@@ -229,7 +229,7 @@ describe("builders / nodeViewBuilder", function () {
   it("should set attribute 'data-lynx-option'", function () {  
     var node = { 
       spec: { 
-        hints: [ { name: "group" }, { name: "container" } ],
+        hints: [ "group", "container" ],
         option: true
       },
       value: {}
@@ -245,7 +245,7 @@ describe("builders / nodeViewBuilder", function () {
     var node = { 
       spec: { 
         name: "node1",
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: {
           name: "foo"
         }
@@ -263,7 +263,7 @@ describe("builders / nodeViewBuilder", function () {
     var node = { 
       spec: { 
         name: "node1",
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: true,
         options: "node2"
       },
@@ -283,7 +283,7 @@ describe("builders / nodeViewBuilder", function () {
     var node = { 
       spec: { 
         name: "node1",
-        hints: [ { name: "text" } ],
+        hints: [ "text" ],
         input: true,
         validation: {
           required: {
@@ -300,6 +300,24 @@ describe("builders / nodeViewBuilder", function () {
       expect(view).to.not.equal(null);
       validation.addValidationExtensionsToView.calledOnce.should.equal(true);
       validation.addValidationExtensionsToView.restore();
+    });
+  });
+  
+  it("should add validation extensions to view for forms", function () {  
+    var node = { 
+      spec: { 
+        name: "node1",
+        hints: [ "form" ],
+      },
+      value: {}
+    };
+    
+    var addValidationExtensionsToViewStub = sinon.stub(validation, "addValidationExtensionsToView");
+    
+    return runTest(node, function (view) {
+      addValidationExtensionsToViewStub.restore();
+      expect(view).to.not.equal(null);
+      addValidationExtensionsToViewStub.calledOnce.should.equal(true);
     });
   });
   

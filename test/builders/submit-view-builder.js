@@ -56,22 +56,6 @@ describe("builders / submitViewBuilder", function () {
     });
   });
   
-  it("should set attribute 'send' when on value", function () {
-    node.value.send = "change";
-    
-    return submits.submitViewBuilder(node).then(function (view) {
-      view.getAttribute("data-lynx-send").should.equal("change");
-    });
-  });
-  
-  it("should set attribute 'send' when on spec", function () {
-    node.spec.send = "change";
-    
-    return submits.submitViewBuilder(node).then(function (view) {
-      view.getAttribute("data-lynx-send").should.equal("change");
-    });
-  });
-  
   it("should resolve the 'action' if a 'base' URI is present", function () {
     node.base = "http://example.com";
     
@@ -81,17 +65,19 @@ describe("builders / submitViewBuilder", function () {
   });
   
   describe("when clicked", function () {
-    var fetchStub, buildFormDataStub;
+    var fetchStub, buildFormDataStub, findNearestAncestorViewStub;
     
     beforeEach(function () {
       node.base = "http://example.com";
       fetchStub = sinon.stub(jsua, "fetch");
       buildFormDataStub = sinon.stub(util, "buildFormData");
+      findNearestAncestorViewStub = sinon.stub(util, "findNearestAncestorView");
     });
     
     afterEach(function () {
       fetchStub.restore();
       buildFormDataStub.restore();
+      findNearestAncestorViewStub.restore();
     });
     
     it("should fetch", function () {
@@ -145,6 +131,52 @@ describe("builders / submitViewBuilder", function () {
         expect(fetchStub.calledOnce).to.equal(true);
         var args = fetchStub.getCall(0).args;
         expect(args[0]).to.equal("http://example.com/foo?name=bar");
+      });
+    });
+    
+    it("should click submit when value has 'send' property", function () {
+      node.value.send = "change";
+      var formView = document.createElement("form");
+      formView.lynxGetValidationState = function () { 
+        return "valid"; 
+      };
+      findNearestAncestorViewStub.returns(formView);
+      
+      return new Promise(function (resolve) {
+        submits.submitViewBuilder(node).then(function (view) {
+          view.addEventListener("click", function () {
+            expect(findNearestAncestorViewStub.calledOnce).to.equal(true);
+            expect(buildFormDataStub.calledOnce).to.equal(true);
+            expect(fetchStub.calledOnce).to.equal(true);
+            resolve();
+          });
+          
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+          formView.dispatchEvent(new CustomEvent("lynx-validated"));
+        });
+      });
+    });
+    
+    it("should click submit when spec has 'send' property", function () {
+      node.spec.send = "change";
+      var formView = document.createElement("form");
+      formView.lynxGetValidationState = function () { 
+        return "valid"; 
+      };
+      findNearestAncestorViewStub.returns(formView);
+      
+      return new Promise(function (resolve) {
+        submits.submitViewBuilder(node).then(function (view) {
+          view.addEventListener("click", function () {
+            expect(findNearestAncestorViewStub.calledOnce).to.equal(true);
+            expect(buildFormDataStub.calledOnce).to.equal(true);
+            expect(fetchStub.calledOnce).to.equal(true);
+            resolve();
+          });
+          
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+          formView.dispatchEvent(new CustomEvent("lynx-validated"));
+        });
       });
     });
   });

@@ -57,15 +57,21 @@ export function addValidationExtensionsToContainerView(view, validation) {
   validation.state = exports.resolveValidationStateOfDescendants(view);
   view.setAttribute("data-lynx-validation-state", validation.state);
   
+  view.lynxGetValidationState = function () {
+    return view.getAttribute("data-lynx-validation-state");
+  };
+  
   view.addEventListener("lynx-validation-state-change", function (evt) {
     if (evt.srcElement === view) return;
     exports.validateContainer(view, validation);
     
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
-      exports.raiseValiditionStateChangedEvent(view, validation);
+      exports.raiseValidationStateChangedEvent(view, validation);
       view.lynxUpdateValidationContentVisibility();
     }
+    
+    exports.raiseValidatedEvent(view);
   });
 }
 
@@ -85,13 +91,17 @@ export function addValidationExtensionsToInputView(view, validation) {
   
   view.setAttribute("data-lynx-validation-state", validation.state);
   
+  view.lynxGetValidationState = function () {
+    return view.getAttribute("data-lynx-validation-state");
+  };
+  
   view.addEventListener("change", function () {
     var value = view.lynxGetValue();
     exports.validateValue(validation, value);
     
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
-      exports.raiseValiditionStateChangedEvent(view, validation);
+      exports.raiseValidationStateChangedEvent(view, validation);
     }
     
     if (validation.changes.length > 0) {
@@ -116,10 +126,16 @@ export function validateValue(validation, value) {
   if (validation.state !== validation.priorState) validation.changes.push(validation);
 }
 
-export function raiseValiditionStateChangedEvent(view, validation) {
+export function raiseValidationStateChangedEvent(view, validation) {
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("lynx-validation-state-change", true, false);
   changeEvent.validation = validation;
+  view.dispatchEvent(changeEvent);
+}
+
+export function raiseValidatedEvent(view) {
+  var changeEvent = document.createEvent("Event");
+  changeEvent.initEvent("lynx-validated", true, false);
   view.dispatchEvent(changeEvent);
 }
 

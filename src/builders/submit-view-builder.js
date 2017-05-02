@@ -14,11 +14,9 @@ export function submitViewBuilder(node) {
   
   if (node.value.method) view.formMethod = node.value.method;
   if (node.value.enctype) view.formEnctype = node.value.enctype;
-  
-  if (node.value.send !== undefined) {
-    view.setAttribute("data-lynx-send", node.value.send);
-  } else if (node.spec.send !== undefined) {
-    view.setAttribute("data-lynx-send", node.spec.send);
+    
+  if ("change" === node.value.send || "change" === node.spec.send) {
+    addSendOnChangeExtensionToView(view);
   }
   
   view.addEventListener("click", function (evt) {
@@ -57,4 +55,22 @@ export function submitViewBuilder(node) {
       
       return view;
     });
+}
+
+function addSendOnChangeExtensionToView(view) {
+  view.addEventListener("jsua-attach", function () {
+    var formView = util.findNearestAncestorView(view, "[data-lynx-hints~=form]");
+    if (!formView) return;
+    
+    function autoSubmitFormIfValid() {
+      if (formView.lynxGetValidationState() !== "valid") return;
+      view.click();
+    }
+    
+    formView.addEventListener("lynx-validated", autoSubmitFormIfValid);
+    
+    view.addEventListener("jsua-detach", function () {
+      formView.removeEventListener("lynx-validated", autoSubmitFormIfValid);
+    });
+  });
 }
