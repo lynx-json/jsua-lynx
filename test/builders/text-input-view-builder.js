@@ -1,5 +1,5 @@
 require("../html-document-api");
-var builders = require("../../lib/builders/text-input-view-builder");
+var builders = require("../../dist/builders/text-input-view-builder");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

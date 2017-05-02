@@ -1,5 +1,5 @@
 import { getPromiseForRequest } from "./content-node-helpers";
-import { transferring, building } from "jsua";
+import { transferring, building } from "@lynx-json/jsua";
 
 export function contentViewBuilder(node) {
   var view = document.createElement("div");

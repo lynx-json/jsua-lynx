@@ -1,7 +1,7 @@
 require("../html-document-api");
-var contents = require("../../lib/builders/content-view-builder");
-var transferring = require("jsua").transferring;
-var building = require("jsua").building;
+var contents = require("../../dist/builders/content-view-builder");
+var transferring = require("@lynx-json/jsua").transferring;
+var building = require("@lynx-json/jsua").building;
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

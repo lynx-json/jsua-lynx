@@ -1,5 +1,5 @@
 require("../html-document-api");
-var builders = require("../../lib/builders");
+var builders = require("../../dist/builders");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

@@ -1,8 +1,8 @@
 require("../html-document-api");
-var submits = require("../../lib/builders/submit-view-builder");
-var containers = require("../../lib/builders/container-view-builder");
-var util = require("../../lib/util");
-var jsua = require("jsua");
+var submits = require("../../dist/builders/submit-view-builder");
+var containers = require("../../dist/builders/container-view-builder");
+var util = require("../../dist/util");
+var jsua = require("@lynx-json/jsua");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

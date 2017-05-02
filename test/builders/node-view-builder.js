@@ -1,8 +1,8 @@
 require("../html-document-api");
-var builders = require("../../lib/builders");
-var options = require("../../lib/builders/options");
-var validation = require("../../lib/builders/validation");
-var resolver = require("../../lib/builders/resolve-view-builder");
+var builders = require("../../dist/builders");
+var options = require("../../dist/builders/options");
+var validation = require("../../dist/builders/validation");
+var resolver = require("../../dist/builders/resolve-view-builder");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

@@ -1,5 +1,5 @@
 require("./html-document-api");
-var attaching = require("../lib/attaching");
+var attaching = require("../dist/attaching");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

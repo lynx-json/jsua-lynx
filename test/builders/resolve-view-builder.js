@@ -1,4 +1,4 @@
-var resolveViewBuilder = require("../../lib/builders/resolve-view-builder").resolveViewBuilder;
+var resolveViewBuilder = require("../../dist/builders/resolve-view-builder").resolveViewBuilder;
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

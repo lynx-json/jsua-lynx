@@ -1,6 +1,6 @@
 require("../html-document-api");
-var options = require("../../lib/builders/options");
-var util = require("../../lib/util");
+var options = require("../../dist/builders/options");
+var util = require("../../dist/util");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

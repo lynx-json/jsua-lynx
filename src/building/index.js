@@ -1,4 +1,4 @@
-import * as LYNX from "lynx-parser";
+import * as LYNX from "@lynx-json/lynx-parser";
 import * as builders from "../builders";
 
 export var registrations = [];

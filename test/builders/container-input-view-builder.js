@@ -1,6 +1,6 @@
 require("../html-document-api");
-var builders = require("../../lib/builders/container-input-view-builder");
-var nodes = require("../../lib/builders/node-view-builder");
+var builders = require("../../dist/builders/container-input-view-builder");
+var nodes = require("../../dist/builders/node-view-builder");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

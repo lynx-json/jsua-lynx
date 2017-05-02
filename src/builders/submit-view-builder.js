@@ -1,7 +1,7 @@
 import * as containers from "./container-view-builder";
 import * as url from "url";
 import * as util from "../util";
-import { fetch } from "jsua";
+import { fetch } from "@lynx-json/jsua";
 
 export function submitViewBuilder(node) {
   var view = document.createElement("button");

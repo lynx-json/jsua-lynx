@@ -1,6 +1,6 @@
 require("../html-document-api");
-var builders = require("../../lib/builders/content-input-view-builder");
-var building = require("jsua").building;
+var builders = require("../../dist/builders/content-input-view-builder");
+var building = require("@lynx-json/jsua").building;
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

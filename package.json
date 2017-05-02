@@ -1,8 +1,8 @@
 {
-  "name": "jsua-lynx",
+  "name": "@lynx-json/jsua-lynx",
   "version": "0.1.38",
   "description": "JSUA extensions for the Lynx media type.",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "directories": {
     "test": "test"
   },
@@ -10,7 +10,8 @@
     "test-temp": "browserify tape.js | smokestack --saucelabs",
     "test": "mocha test --recursive --compilers js:babel-register --require babel-polyfill",
     "pretest": "npm run build",
-    "build": "babel node_modules/jsua/src -d node_modules/jsua/lib && babel src -d lib"
+    "prepublish": "npm run build",
+    "build": "babel src -d dist"
   },
   "keywords": [
     "lynx",
@@ -34,7 +35,7 @@
     "url-search-params": "^0.7.0"
   },
   "dependencies": {
-    "jsua": "github:lynx-json/jsua",
-    "lynx-parser": "github:lynx-json/lynx-parser"
+    "@lynx-json/jsua": "^0.1.6",
+    "@lynx-json/lynx-parser": "^0.2.2"
   }
 }

@@ -1,5 +1,5 @@
 require("./html-document-api");
-var util = require("../lib/util");
+var util = require("../dist/util");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;

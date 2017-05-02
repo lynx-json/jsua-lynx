@@ -1,7 +1,7 @@
 require("../../html-document-api");
-var util = require("../../../lib/util");
-var validation = require("../../../lib/builders/validation");
-var validators = require("../../../lib/builders/validation/validators");
+var util = require("../../../dist/util");
+var validation = require("../../../dist/builders/validation");
+var validators = require("../../../dist/builders/validation/validators");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
