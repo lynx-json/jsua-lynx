@@ -1,15 +1,16 @@
 export function findNearestView(view, selector, predicate) {
   if (!view || !selector || view.matches("[data-jsua-app]")) return null;
   
-  var matching = view.querySelector(selector);
-  if (!matching) return findNearestView(view.parentElement, selector, predicate);
+  var matches = Array.from(view.querySelectorAll(selector));
+  if (matches.length === 0) return findNearestView(view.parentElement, selector, predicate);
   
   if (predicate) {
-    if (predicate(matching)) return matching;
-    return findNearestView(view.parentElement, selector, predicate);  
+    let matching = matches.find(predicate);
+    if (matching) return matching;
+    return findNearestView(view.parentElement, selector, predicate);
   }
   
-  return matching;
+  return matches[0];
 }
 
 export function findNearestAncestorView(view, selector) {
