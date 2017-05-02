@@ -9,6 +9,10 @@ function hasScope(node) {
     "scope" in node.value;
 }
 
+function didNotUnderstandNodeViewBuilder(node) {
+  return document.createElement("div");
+}
+
 export function nodeViewBuilder(node) {
   if (!node) return Promise.reject(new Error("'node' param is required."));
   if (!node.spec) return Promise.reject(new Error("'spec' property not found."));
@@ -18,7 +22,7 @@ export function nodeViewBuilder(node) {
   var hints = node.spec.hints;
   var builder = resolver.resolveViewBuilder(building.registrations, hints, input);
   
-  if (!builder) return Promise.reject(new Error("No builder registered for node with input=" + input + " and hints=" + hints.join(",")));
+  if (!builder) builder = didNotUnderstandNodeViewBuilder;
   
   return new Promise(function (resolve, reject) {
     try {

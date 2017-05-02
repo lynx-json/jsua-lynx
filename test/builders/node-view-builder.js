@@ -55,15 +55,13 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
   
-  it("should reject when a view builder is not be resolved", function () {  
+  it("should return an empty view when a view builder is not be resolved", function () {  
     
     resolveViewBuilderStub.returns(null);
     
-    return builders.nodeViewBuilder({ spec: { hints: [ "text" ] } }).catch(function (err) {
+    return builders.nodeViewBuilder({ spec: { hints: [ "text" ] } }).then(function (view) {
+      expect(view).to.be.ok;
       resolveViewBuilderStub.called.should.be.true;
-      throw err;
-    }).catch(function (err) {
-      expect(err).to.be.an("error");
     });
   });
   
