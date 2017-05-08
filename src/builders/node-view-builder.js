@@ -17,26 +17,28 @@ export function nodeViewBuilder(node) {
   if (!node) return Promise.reject(new Error("'node' param is required."));
   if (!node.spec) return Promise.reject(new Error("'spec' property not found."));
   if (!node.spec.hints || node.spec.hints.length === 0) return Promise.reject(new Error("'hints' property not found or zero length."));
-  
+
+  if (node.spec.input && node.spec.input === true) node.spec.input = node.spec.name;
+
   var input = !!node.spec.input;
   var hints = node.spec.hints;
   var builder = resolver.resolveViewBuilder(building.registrations, hints, input);
-  
+
   if (!builder) builder = didNotUnderstandNodeViewBuilder;
-  
-  return new Promise(function (resolve, reject) {
+
+  return new Promise(function(resolve, reject) {
     try {
       let view = builder(node);
       resolve(view);
     } catch (e) {
       reject(e);
     }
-  }).then(function (view) {
+  }).then(function(view) {
     view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
     addVisibilityExtensionsToView(view, node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
-    if (input) view.setAttribute("data-lynx-input", node.spec.input.name || node.spec.name);
+    if (input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) view.setAttribute("data-lynx-submitter", node.spec.submitter);
     if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation || {});
@@ -49,21 +51,21 @@ export function nodeViewBuilder(node) {
 }
 
 function addVisibilityExtensionsToView(view, initialVisibility) {
-  view.lynxGetVisibility = function () {
+  view.lynxGetVisibility = function() {
     return view.getAttribute("data-lynx-visibility");
   };
-  
-  view.lynxSetVisibility = function (visibility) {
+
+  view.lynxSetVisibility = function(visibility) {
     if (view.lynxGetVisibility() === visibility) return;
     view.setAttribute("data-lynx-visibility", visibility);
     raiseVisibilityChangedEvent(view);
   };
-  
+
   initialVisibility = initialVisibility || "visible";
   view.setAttribute("data-lynx-visibility", initialVisibility);
-  
+
   if (initialVisibility !== "concealed" && initialVisibility !== "revealed") return;
-  
+
   var concealmentControlView = exports.createConcealmentControlView(view);
   if (view.firstElementChild) {
     view.insertBefore(concealmentControlView, view.firstElementChild);
@@ -82,39 +84,39 @@ export function createConcealmentControlView(view) {
   let visibilityControlView = document.createElement("button");
   visibilityControlView.type = "button";
   visibilityControlView.setAttribute("data-lynx-visibility-conceal", true);
-  
-  
+
+
   var concealView = document.createTextNode("Conceal");
-  
-  view.lynxGetConcealView = function () {
+
+  view.lynxGetConcealView = function() {
     return concealView;
   };
-  
-  view.lynxSetConcealView = function (cv) {
+
+  view.lynxSetConcealView = function(cv) {
     concealView = cv;
     synchronizeVisibilityControlView();
   };
-  
-  
+
+
   var revealView = document.createTextNode("Reveal");
-  
-  view.lynxGetRevealView = function () {
+
+  view.lynxGetRevealView = function() {
     return revealView;
   };
-  
-  view.lynxSetRevealView = function (rv) {
+
+  view.lynxSetRevealView = function(rv) {
     revealView = rv;
     synchronizeVisibilityControlView();
   };
-  
-  
+
+
   function synchronizeVisibilityControlView() {
     while (visibilityControlView.firstChild) {
       visibilityControlView.removeChild(visibilityControlView.firstChild);
     }
-    
+
     var visibility = view.lynxGetVisibility();
-    
+
     if (visibility === "concealed") {
       visibilityControlView.appendChild(view.lynxGetRevealView());
     } else if (visibility === "revealed") {
@@ -129,25 +131,25 @@ export function createConcealmentControlView(view) {
       visibilityControlView = revealView = concealView = null;
     }
   }
-  
-  
+
+
   view.addEventListener("lynx-visibility-change", synchronizeVisibilityControlView);
-  
-  
-  visibilityControlView.addEventListener("click", function (evt) {
+
+
+  visibilityControlView.addEventListener("click", function(evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    
+
     var visibility = view.lynxGetVisibility();
-    
+
     if (visibility === "concealed") {
       view.lynxSetVisibility("revealed");
     } else if (visibility === "revealed") {
       view.lynxSetVisibility("concealed");
     }
   });
-  
+
   synchronizeVisibilityControlView();
-  
+
   return visibilityControlView;
 }
