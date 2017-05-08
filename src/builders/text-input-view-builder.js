@@ -1,7 +1,7 @@
 export function textInputViewBuilder(node) {
   var view = document.createElement("div");
 
-  var isLine = node.spec.hints.some(function(hint) {
+  var isLine = node.spec.hints.some(function (hint) {
     return hint === "line";
   });
 
@@ -19,21 +19,21 @@ export function textInputViewBuilder(node) {
 
   view.appendChild(textView);
 
-  view.lynxGetValue = function() {
+  view.lynxGetValue = function () {
     return textView.value;
   };
 
-  view.lynxSetValue = function(val) {
+  view.lynxSetValue = function (val) {
     if (textView.value === val) return;
     textView.value = val;
     raiseValueChangeEvent(textView);
   };
 
-  view.lynxHasValue = function(val) {
+  view.lynxHasValue = function (val) {
     return view.value === val;
   };
 
-  view.lynxClearValue = function() {
+  view.lynxClearValue = function () {
     view.lynxSetValue("");
   };
 

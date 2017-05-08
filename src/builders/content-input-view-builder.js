@@ -2,7 +2,7 @@ import { getBlob, getPromiseForRequest } from "./content-node-helpers";
 import { transferring, building } from "@lynx-json/jsua";
 
 export function contentInputViewBuilder(node) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var view = document.createElement("div");
 
     var inputView = document.createElement("input");
@@ -32,11 +32,11 @@ export function contentInputViewBuilder(node) {
       return detached;
     }
 
-    view.lynxGetValue = function() {
+    view.lynxGetValue = function () {
       return value;
     };
 
-    view.lynxSetValue = function(blob) {
+    view.lynxSetValue = function (blob) {
       if (view.lynxHasValue(blob)) return;
       value = blob;
 
@@ -53,25 +53,25 @@ export function contentInputViewBuilder(node) {
 
       return Promise.resolve(content)
         .then(building.build)
-        .catch(function(err) {
+        .catch(function (err) {
           console.log("Error building the embedded view for a content input view.", err);
         })
-        .then(function(result) {
+        .then(function (result) {
           setEmbeddedView(result.view);
           raiseValueChangeEvent(view);
           return view;
         });
     };
 
-    view.lynxClearValue = function() {
+    view.lynxClearValue = function () {
       view.lynxSetValue(null);
     };
 
-    view.lynxHasValue = function(blob) {
+    view.lynxHasValue = function (blob) {
       return value === blob; // TODO: fix this comparison
     };
 
-    view.lynxSetEmbeddedView = function(newView, newBlob) {
+    view.lynxSetEmbeddedView = function (newView, newBlob) {
       if (view.lynxHasValue(newBlob)) return;
       value = newBlob;
 
@@ -81,7 +81,7 @@ export function contentInputViewBuilder(node) {
       return detached;
     };
 
-    inputView.addEventListener("change", function(evt) {
+    inputView.addEventListener("change", function (evt) {
       view.lynxSetValue(inputView.files[0]);
     });
 
@@ -94,11 +94,11 @@ export function contentInputViewBuilder(node) {
     } else if ("src" in node.value) {
       promiseForView = getPromiseForRequest(node)
         .then(transferring.transfer)
-        .catch(function(err) {
+        .catch(function (err) {
           // intentionally eat a transfer error here b/c primary task is file upload
           return null;
         })
-        .then(function(content) {
+        .then(function (content) {
           if (!content) return view;
           content.blob.name = content.url;
           return view.lynxSetValue(content.blob);

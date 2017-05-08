@@ -4,8 +4,8 @@ var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
 
-describe("builders / textInputViewBuilder", function() {
-  it("should return view for 'text' input", function() {
+describe("builders / textInputViewBuilder", function () {
+  it("should return view for 'text' input", function () {
     var node = {
       spec: {
         hints: ["text"],
@@ -24,7 +24,7 @@ describe("builders / textInputViewBuilder", function() {
     valueView.name.should.equal(node.spec.input);
   });
 
-  it("should add value accessors and publish change events", function() {
+  it("should add value accessors and publish change events", function () {
     var node = {
       spec: {
         hints: ["text"],
@@ -43,8 +43,8 @@ describe("builders / textInputViewBuilder", function() {
     expect(view.lynxGetValue()).to.equal("");
     expect(view.lynxSetValue).to.not.be.null;
 
-    return new Promise(function(resolve) {
-      view.addEventListener("change", function() {
+    return new Promise(function (resolve) {
+      view.addEventListener("change", function () {
         valueView.value.should.equal("testing setter and change event");
         view.lynxGetValue().should.equal("testing setter and change event");
         resolve();
@@ -54,7 +54,7 @@ describe("builders / textInputViewBuilder", function() {
     });
   });
 
-  it("should return view with value", function() {
+  it("should return view with value", function () {
     var node = {
       spec: {
         hints: ["text"],
@@ -72,7 +72,7 @@ describe("builders / textInputViewBuilder", function() {
     valueView.value.should.equal(node.value);
   });
 
-  it("should return view for 'line' input", function() {
+  it("should return view for 'line' input", function () {
     var node = {
       spec: {
         hints: ["line", "text"],

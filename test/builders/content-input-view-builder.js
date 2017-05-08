@@ -7,17 +7,17 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 function getBlobValue(blob) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     if (!blob) reject(new Error("'blob' param is required."));
 
     var reader = new FileReader();
 
-    reader.onloadend = function() {
+    reader.onloadend = function () {
       if (!reader.result) reject(new Error("Failed to read Blob."));
       resolve(reader.result);
     };
 
-    reader.onerror = function(err) {
+    reader.onerror = function (err) {
       reject(err);
     };
 
@@ -25,18 +25,18 @@ function getBlobValue(blob) {
   });
 }
 
-describe("builders / contentInputViewBuilder", function() {
-  beforeEach(function() {
+describe("builders / contentInputViewBuilder", function () {
+  beforeEach(function () {
     buildStub = sinon.stub(building, "build");
   });
 
-  afterEach(function() {
+  afterEach(function () {
     buildStub.restore();
   });
 
   var buildStub;
 
-  it("should return view for 'content' input", function() {
+  it("should return view for 'content' input", function () {
     var node = {
       spec: {
         hints: ["content"],
@@ -47,7 +47,7 @@ describe("builders / contentInputViewBuilder", function() {
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
 
-    return builders.contentInputViewBuilder(node).then(function(view) {
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var inputView = view.querySelector("input");
       var contentView = view.querySelector("[data-lynx-embedded-view]");
 
@@ -61,7 +61,7 @@ describe("builders / contentInputViewBuilder", function() {
     });
   });
 
-  it("should set initial UTF-8 encoded value", function() {
+  it("should set initial UTF-8 encoded value", function () {
     var node = {
       spec: {
         hints: ["content"],
@@ -75,7 +75,7 @@ describe("builders / contentInputViewBuilder", function() {
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
 
-    return builders.contentInputViewBuilder(node).then(function(view) {
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.lynxGetValue();
 
@@ -83,12 +83,12 @@ describe("builders / contentInputViewBuilder", function() {
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
-    }).then(function(blobValue) {
+    }).then(function (blobValue) {
       blobValue.should.equal("Hi");
     });
   });
 
-  it("should set initial base64 encoded value", function() {
+  it("should set initial base64 encoded value", function () {
     var node = {
       spec: {
         hints: ["content"],
@@ -103,7 +103,7 @@ describe("builders / contentInputViewBuilder", function() {
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
 
-    return builders.contentInputViewBuilder(node).then(function(view) {
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.lynxGetValue();
 
@@ -111,12 +111,12 @@ describe("builders / contentInputViewBuilder", function() {
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
-    }).then(function(blobValue) {
+    }).then(function (blobValue) {
       blobValue.should.equal("Hi");
     });
   });
 
-  it("lynxSetValue() should set the value", function() {
+  it("lynxSetValue() should set the value", function () {
     var node = {
       spec: {
         hints: ["content"],
@@ -127,10 +127,10 @@ describe("builders / contentInputViewBuilder", function() {
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
 
-    return builders.contentInputViewBuilder(node).then(function(view) {
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var file = new Blob(["Hi"], { type: "text/plain" });
       return view.lynxSetValue(file);
-    }).then(function(view) {
+    }).then(function (view) {
       var contentView = view.querySelector("[data-lynx-embedded-view]");
       var value = view.lynxGetValue();
 
@@ -138,12 +138,12 @@ describe("builders / contentInputViewBuilder", function() {
       expect(value).to.not.be.null;
       value.type.should.equal("text/plain");
       return getBlobValue(value);
-    }).then(function(blobValue) {
+    }).then(function (blobValue) {
       blobValue.should.equal("Hi");
     });
   });
 
-  it("lynxSetValue() should publish change event", function() {
+  it("lynxSetValue() should publish change event", function () {
     var node = {
       spec: {
         hints: ["content"],
@@ -154,11 +154,11 @@ describe("builders / contentInputViewBuilder", function() {
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div") }));
 
-    return builders.contentInputViewBuilder(node).then(function(view) {
+    return builders.contentInputViewBuilder(node).then(function (view) {
       var file = new Blob(["Hi"], { type: "text/plain" });
 
-      return new Promise(function(resolve) {
-        view.addEventListener("change", function() {
+      return new Promise(function (resolve) {
+        view.addEventListener("change", function () {
           resolve();
         });
         view.lynxSetValue(file);

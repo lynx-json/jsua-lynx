@@ -26,14 +26,14 @@ export function nodeViewBuilder(node) {
 
   if (!builder) builder = didNotUnderstandNodeViewBuilder;
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
       let view = builder(node);
       resolve(view);
     } catch (e) {
       reject(e);
     }
-  }).then(function(view) {
+  }).then(function (view) {
     view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
     addVisibilityExtensionsToView(view, node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
@@ -51,11 +51,11 @@ export function nodeViewBuilder(node) {
 }
 
 function addVisibilityExtensionsToView(view, initialVisibility) {
-  view.lynxGetVisibility = function() {
+  view.lynxGetVisibility = function () {
     return view.getAttribute("data-lynx-visibility");
   };
 
-  view.lynxSetVisibility = function(visibility) {
+  view.lynxSetVisibility = function (visibility) {
     if (view.lynxGetVisibility() === visibility) return;
     view.setAttribute("data-lynx-visibility", visibility);
     raiseVisibilityChangedEvent(view);
@@ -85,30 +85,27 @@ export function createConcealmentControlView(view) {
   visibilityControlView.type = "button";
   visibilityControlView.setAttribute("data-lynx-visibility-conceal", true);
 
-
   var concealView = document.createTextNode("Conceal");
 
-  view.lynxGetConcealView = function() {
+  view.lynxGetConcealView = function () {
     return concealView;
   };
 
-  view.lynxSetConcealView = function(cv) {
+  view.lynxSetConcealView = function (cv) {
     concealView = cv;
     synchronizeVisibilityControlView();
   };
 
-
   var revealView = document.createTextNode("Reveal");
 
-  view.lynxGetRevealView = function() {
+  view.lynxGetRevealView = function () {
     return revealView;
   };
 
-  view.lynxSetRevealView = function(rv) {
+  view.lynxSetRevealView = function (rv) {
     revealView = rv;
     synchronizeVisibilityControlView();
   };
-
 
   function synchronizeVisibilityControlView() {
     while (visibilityControlView.firstChild) {
@@ -132,11 +129,9 @@ export function createConcealmentControlView(view) {
     }
   }
 
-
   view.addEventListener("lynx-visibility-change", synchronizeVisibilityControlView);
 
-
-  visibilityControlView.addEventListener("click", function(evt) {
+  visibilityControlView.addEventListener("click", function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
 
