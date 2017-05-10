@@ -32,6 +32,22 @@ export function addOptionsExtensionsToView(inputView, spec) {
     
     exports.raiseOptionsConnectedEvent(nearestOptionsView);
   };
+  
+  function disconnectOptions(evt) {
+    if (evt.srcElement === inputView) {
+      inputView.removeEventListener("jsua-attach", connectOptions);
+      inputView.removeEventListener("jsua-detach", disconnectOptions);
+    }
+    
+    inputView.lynxDisconnectOptions();
+  }
+  
+  function connectOptions() {
+    inputView.lynxConnectOptions();
+  }
+  
+  inputView.addEventListener("jsua-attach", connectOptions);
+  inputView.addEventListener("jsua-detach", disconnectOptions);
 }
 
 export function initializeOptionsInterface(optionsView, inputView, isContainerInput) {
@@ -75,11 +91,12 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
   
   optionsView.lynxDisconnectOptions = function () {
     inputView.removeEventListener("change", inputChanged);
+    var optionViews = optionsView.lynxOptions;
     optionsView.lynxOptions.forEach(optionView => optionView.lynxDisconnectOption());
     delete optionsView.lynxOptions;
     delete optionsView.lynxToggleOption;
     delete optionsView.lynxDisconnectOptions;
-    exports.raiseOptionsDisonnectedEvent(optionsView);
+    exports.raiseOptionsDisonnectedEvent(optionsView, optionViews);
   };
 }
 
@@ -148,9 +165,10 @@ export function raiseOptionsConnectedEvent(optionsView) {
   optionsView.dispatchEvent(changeEvent);
 }
 
-export function raiseOptionsDisonnectedEvent(optionsView) {
+export function raiseOptionsDisonnectedEvent(optionsView, optionViews) {
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("lynx-options-disconnected", true, false);
+  changeEvent.lynxOptions = optionViews;
   optionsView.dispatchEvent(changeEvent);
 }
 

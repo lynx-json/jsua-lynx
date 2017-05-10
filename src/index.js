@@ -1,6 +1,7 @@
 import * as building from "./building";
 import * as builders from "./builders";
 import * as attaching from "./attaching";
+import * as util from "./util";
 
 building.register("container", builders.containerViewBuilder);
 building.register("container", builders.containerInputViewBuilder, true);
@@ -16,5 +17,6 @@ building.register("text", builders.textInputViewBuilder, true);
 export {
   building,
   builders,
-  attaching
+  attaching,
+  util
 };
