@@ -9,7 +9,7 @@ Extensions to the `jsua` package for the Lynx JSON media type.
 `builders.nodeViewBuilder` accepts `result` and then:
   * finds (see `building.register`) the builder that matches the most specific hint
   * passes the `result` object to the builder
-  
+
 `building.register` registers a view builder (for a Lynx JSON node) function that accepts the following params:
   * `hint` - the hint to build views for
   * `builder` - the builder function with signature f(node) -> view || Promise<view>
@@ -25,6 +25,7 @@ A view representing a Lynx JSON document may have the following attributes:
 * `data-content-type` - the document's content type (`application/lynx+json`)
 * `data-lynx-realm` - the document's realm URI
 * `data-lynx-context` - the document's context URI
+* `data-lynx-focus` - the document's focus name
 
 A view representing a node of a Lynx JSON document may have the following attributes:
 
