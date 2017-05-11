@@ -2,6 +2,7 @@ import * as building from "../building";
 import * as resolver from "./resolve-view-builder";
 import * as validation from "./validation";
 import * as options from "./options";
+import * as util from "../util";
 
 function hasScope(node) {
   return node.value &&
@@ -40,7 +41,7 @@ export function nodeViewBuilder(node) {
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
     if (input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
-    if (node.spec.submitter) view.setAttribute("data-lynx-submitter", node.spec.submitter);
+    if (node.spec.submitter) addSubmitterExtensionsToView(view, node.spec.submitter);
     if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation || {});
     if (node.spec.option) view.setAttribute("data-lynx-option", "true");
     if (node.spec.options) options.addOptionsExtensionsToView(view, node.spec);
@@ -48,6 +49,22 @@ export function nodeViewBuilder(node) {
     // data-lynx-data-* properties
     return view;
   });
+}
+
+function addSubmitterExtensionsToView(view, submitterName) {
+  function handleKeyDown(e) {
+    if (e.keyCode !== 13) return;
+
+    let submitter = util.findNearestView(view, "[data-lynx-name='" + submitterName + "']");
+
+    if (submitter && submitter.click && typeof (submitter.click) === "function") {
+      e.stopPropagation();
+      e.preventDefault();
+      submitter.click();
+    }
+  }
+  view.setAttribute("data-lynx-submitter", submitterName);
+  view.addEventListener("keydown", handleKeyDown);
 }
 
 function addVisibilityExtensionsToView(view, initialVisibility) {
