@@ -41,16 +41,7 @@ export function build(content) {
           view.setAttribute("data-content-type", content.blob.type);
           if (doc.realm) view.setAttribute("data-lynx-realm", doc.realm);
           if (doc.context) view.setAttribute("data-lynx-context", doc.context);
-          if (doc.focus) {
-            view.setAttribute("data-lynx-focus", doc.focus);
-            view.addEventListener("jsua-attach", function () {
-              let focusView = util.findNearestView(view, "[data-lynx-name='" + doc.focus + "']");
-              if (focusView) {
-                document.body.scrollTop = focusView.offsetHeight;
-                focusView.focus();
-              }
-            });
-          }
+          if (doc.focus) view.setAttribute("data-lynx-focus", doc.focus);
           return view;
         })
         .then(resolve, reject);

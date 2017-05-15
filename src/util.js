@@ -1,3 +1,5 @@
+import * as url from "url";
+
 export function findNearestView(view, selector, predicate, origin) {
   function query() {
     var result = Array.from(view.querySelectorAll(selector));
@@ -55,4 +57,11 @@ export function buildFormData(submitView) {
   });
   
   return formData;
+}
+
+export function scopeIncludesRealm(scope, realm) {
+  if (!scope || !realm) return false;
+  scope = url.parse(scope).href;
+  realm = url.parse(realm).href;
+  return realm.indexOf(scope) === 0;
 }
