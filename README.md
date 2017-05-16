@@ -92,3 +92,5 @@ A view representing a node of a Lynx JSON document may emit the following events
 * `lynx-options-disconnected` - emitted when a view that provides options to an input view is disconnected from the input view
 * `lynx-option-selected` - emitted when a view that provides a value to an input view is selected
 * `lynx-option-deselected` - emitted when a view that provides a value to an input view is deselected
+* `lynx-marker-here` - emitted when a marker view determines the current view contains the content it marks
+* `lynx-marker-there` - emitted when a marker view determines the current view does not contain the content it marks

@@ -1,4 +1,5 @@
-const jsua = require("@lynx-json/jsua");
+import * as url from "url";
+import * as jsua from "@lynx-json/jsua";
 
 export function resolveSpecFromUrl(specUrl) {
   return new Promise(function (resolve, reject) {
@@ -72,4 +73,11 @@ export function buildFormData(submitView) {
   });
 
   return formData;
+}
+
+export function scopeIncludesRealm(scope, realm) {
+  if (!scope || !realm) return false;
+  scope = url.parse(scope).href;
+  realm = url.parse(realm).href;
+  return realm.indexOf(scope) === 0;
 }
