@@ -10,7 +10,7 @@ export function resolveSpecFromUrl(specUrl) {
         reader.addEventListener("loadend", function () {
           resolve(JSON.parse(reader.result));
         });
-        reader.readAsText();
+        reader.readAsText(content.blob);
       })
       .catch(reject);
   });
