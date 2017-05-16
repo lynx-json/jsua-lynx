@@ -180,3 +180,26 @@ describe("util / findNearestView", function () {
     expect(matching).to.equal(child);
   });
 });
+
+describe("util / scopeIncludesRealm", function () {
+  it("should be true if scope equals realm", function () {
+    var scope = "http://example.com/foo/";
+    var realm = "http://example.com/foo/";
+    var result = util.scopeIncludesRealm(scope, realm);
+    expect(result).to.equal(true);
+  });
+  
+  it("should be true if scope includes realm", function () {
+    var scope = "http://example.com/foo/";
+    var realm = "http://example.com/foo/bar/";
+    var result = util.scopeIncludesRealm(scope, realm);
+    expect(result).to.equal(true);
+  });
+  
+  it("should be true if scheme or host vary by case", function () {
+    var scope = "HTTP://EXAMPLE.COM/foo/";
+    var realm = "http://example.com/foo/";
+    var result = util.scopeIncludesRealm(scope, realm);
+    expect(result).to.equal(true);
+  });
+});

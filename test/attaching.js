@@ -57,26 +57,3 @@ describe("attaching / scopeRealmAttacher", function () {
     expect(attachment.discard).to.equal(true);
   });
 });
-
-describe("attaching / scopeIncludesRealm", function () {
-  it("should be true if scope equals realm", function () {
-    var scope = "http://example.com/foo/";
-    var realm = "http://example.com/foo/";
-    var result = attaching.scopeIncludesRealm(scope, realm);
-    expect(result).to.equal(true);
-  });
-  
-  it("should be true if scope includes realm", function () {
-    var scope = "http://example.com/foo/";
-    var realm = "http://example.com/foo/bar/";
-    var result = attaching.scopeIncludesRealm(scope, realm);
-    expect(result).to.equal(true);
-  });
-  
-  it("should be true if scheme or host vary by case", function () {
-    var scope = "HTTP://EXAMPLE.COM/foo/";
-    var realm = "http://example.com/foo/";
-    var result = attaching.scopeIncludesRealm(scope, realm);
-    expect(result).to.equal(true);
-  });
-});
