@@ -1,26 +1,43 @@
+const jsua = require("@lynx-json/jsua");
+
+export function resolveSpecFromUrl(specUrl) {
+  return new Promise(function (resolve, reject) {
+    jsua.transferring.transfer({ url: specUrl })
+      .catch(reject)
+      .then(function (content) {
+        let reader = new FileReader();
+        reader.addEventListener("loadend", function () {
+          resolve(JSON.parse(reader.result));
+        });
+        reader.readAsText();
+      })
+      .catch(reject);
+  });
+}
+
 export function findNearestView(view, selector, predicate, origin) {
   function query() {
     var result = Array.from(view.querySelectorAll(selector));
-    
+
     if (view !== origin && view.matches(selector)) {
       result.push(view);
     }
-    
+
     return result;
   }
-  
+
   if (!view || !selector || view.matches("[data-jsua-app]")) return null;
   origin = origin || view;
-  
+
   var matches = query();
   if (matches.length === 0) return findNearestView(view.parentElement, selector, predicate, origin);
-  
+
   if (predicate) {
     let matching = matches.find(predicate);
     if (matching) return matching;
     return findNearestView(view.parentElement, selector, predicate, origin);
   }
-  
+
   return matches[0];
 }
 
@@ -42,17 +59,17 @@ export function buildFormData(submitView) {
   } else {
     formData = new URLSearchParams();
   }
-  
+
   var inputViews = formView.querySelectorAll("[data-lynx-input]:not([data-lynx-hints~=container])");
 
   Array.from(inputViews).forEach(function (inputView) {
     var inputValues = inputView.lynxGetValue();
-    if (!Array.isArray(inputValues)) inputValues = [ inputValues ];
-    
+    if (!Array.isArray(inputValues)) inputValues = [inputValues];
+
     inputValues.forEach(function (inputValue) {
-      formData.append(inputView.getAttribute("data-lynx-input"), inputValue);  
+      formData.append(inputView.getAttribute("data-lynx-input"), inputValue);
     });
   });
-  
+
   return formData;
 }
