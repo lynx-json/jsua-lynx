@@ -27,7 +27,7 @@ export function findNearestView(view, selector, predicate, origin) {
     return result;
   }
 
-  if (!view || !selector || view.matches("[data-jsua-app]")) return null;
+  if (!view || !selector || view.matches("[data-jsua-context~=app]")) return null;
   origin = origin || view;
 
   var matches = query();
@@ -43,7 +43,7 @@ export function findNearestView(view, selector, predicate, origin) {
 }
 
 export function findNearestAncestorView(view, selector) {
-  if (!view || !selector || view.matches("[data-jsua-app]")) return null;
+  if (!view || !selector || view.matches("[data-jsua-context~=app]")) return null;
   var parent = view.parentElement;
   if (parent && parent.matches(selector)) return parent;
   return findNearestAncestorView(parent, selector);
