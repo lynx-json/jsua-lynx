@@ -3,6 +3,8 @@ import * as util from "./util";
 export function initialize(rootView) {
   rootView.addEventListener("jsua-attach", function () {
     var markerViews = Array.from(rootView.querySelectorAll("[data-lynx-marker-for]"));
+    if (markerViews.length === 0) return;
+    
     var contexts = Array.from(rootView.querySelectorAll("[data-content-url],[data-lynx-realm]"))
       .reduce((acc, view) => {
         if (view.hasAttribute("data-content-url")) acc.push(view.getAttribute("data-content-url"));
