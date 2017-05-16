@@ -33,7 +33,7 @@ export function build(content) {
       if (evt.target.result === undefined) reject(new Error("'evt.target' object must have a 'result' property."));
 
       var doc;
-      LYNX.parse(evt.target.result, { location: content.url })
+      LYNX.parse(evt.target.result, { location: content.url, resolveSpecURL: util.resolveSpecFromUrl })
         .then(node => doc = node)
         .then(builders.nodeViewBuilder)
         .then(view => {
