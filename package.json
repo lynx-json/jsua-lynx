@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "@lynx-json/jsua": "^0.1.6",
-    "@lynx-json/lynx-parser": "^0.2.6"
+    "@lynx-json/lynx-parser": "^0.2.7"
   }
 }
