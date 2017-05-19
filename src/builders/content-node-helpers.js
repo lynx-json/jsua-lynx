@@ -1,7 +1,9 @@
 import * as url from "url";
 
 export function getBlob(node) {
-  var buf = new Buffer(node.value.data, node.value.encoding || "utf8");
+  var data = node.value.data || "";
+  if (typeof data === "object") data = JSON.stringify(data);
+  var buf = new Buffer(data, node.value.encoding || "utf8");
   var blob = new Blob([buf], { type: node.value.type });
   return blob;
 }
