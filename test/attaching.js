@@ -58,7 +58,7 @@ describe("attaching / scopeRealmAttacher", function () {
   });
 });
 
-describe.only("attaching / createRootAttacher", function () {
+describe("attaching / createRootAttacher", function () {
   it("should throw when 'rootView' param is not set", function () {
     expect(function () {
       attaching.createRootAttacher();

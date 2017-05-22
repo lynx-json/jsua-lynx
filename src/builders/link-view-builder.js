@@ -1,5 +1,5 @@
 import * as containers from "./container-view-builder";
-import * as url from "url";
+import url from "url";
 import { fetch } from "@lynx-json/jsua";
 
 export function linkViewBuilder(node) {

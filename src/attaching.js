@@ -1,5 +1,5 @@
 import * as util from "./util";
-import * as url from "url";
+import url from "url";
 import * as markers from "./markers";
 
 export function scopeRealmAttacher(result) {

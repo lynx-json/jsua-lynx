@@ -1,4 +1,4 @@
-import * as url from "url";
+import url from "url";
 import * as jsua from "@lynx-json/jsua";
 
 export function resolveSpecFromUrl(specUrl) {
