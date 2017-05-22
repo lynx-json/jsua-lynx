@@ -27,6 +27,8 @@ export function scopeRealmAttacher(result) {
 }
 
 export function createRootAttacher(rootView) {
+  if (!rootView) throw new Error("'rootView' param is required.");
+  
   markers.initialize(rootView);
   
   return function rootAttacher(result) {
@@ -41,7 +43,7 @@ export function createRootAttacher(rootView) {
 
       rootView.appendChild(result.view);
       
-      var focusedView = setFocusedView(result.view);
+      var focusedView = exports.setFocusedView(result.view);
       if (!focusedView) result.view.setAttribute("data-jsua-focus", true);
       
       return detachedViews;
@@ -71,11 +73,6 @@ export function isOutOfContext(origin, context) {
   });
   
   return !contextView;
-}
-
-// deprecated - remove when dependencies have been removed
-export function scopeIncludesRealm(scope, realm) {
-  return util.scopeIncludesRealm(scope, realm);
 }
 
 export function findNearestScopedContentView(origin, realm) {

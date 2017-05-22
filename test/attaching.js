@@ -57,3 +57,28 @@ describe("attaching / scopeRealmAttacher", function () {
     expect(attachment.discard).to.equal(true);
   });
 });
+
+describe.only("attaching / createRootAttacher", function () {
+  it("should throw when 'rootView' param is not set", function () {
+    expect(function () {
+      attaching.createRootAttacher();
+    }).to.throw;
+  });
+  
+  it("should return attacher when 'rootView' param is not set", function () {
+    var rootView = document.createElement("div");
+    var attacher = attaching.createRootAttacher(rootView);
+    expect(attacher).to.be.ok;
+  });
+  
+  it("should attach to rootView", function () {
+    var rootView = document.createElement("div");
+    var attacher = attaching.createRootAttacher(rootView);
+    var result = {
+      view: document.createElement("div")
+    };
+    var attachment = attacher(result);
+    var detachedViews = attachment.attach();
+    expect(result.view.parentElement).to.equal(rootView);
+  });
+});
