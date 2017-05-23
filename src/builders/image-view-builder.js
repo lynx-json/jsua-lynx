@@ -53,6 +53,8 @@ function buildAsEmbeddedImageTag(node) {
 
   var imageView = document.createElement("img");
   imageView.src = url.resolve(node.base || "", node.value.src);
+  imageView.setAttribute("data-content-url", imageView.src);
+  imageView.setAttribute("data-content-type", node.value.type);
   view.lynxSetEmbeddedView(imageView, getBlob(node));
 
   return Promise.resolve(view);
