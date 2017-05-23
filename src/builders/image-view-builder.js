@@ -55,10 +55,10 @@ function buildAsEmbeddedImageTag(node) {
   imageView.src = url.resolve(node.base || "", node.value.src);
   view.lynxSetEmbeddedView(imageView, getBlob(node));
 
-  return Promise.resolve(applyImageAttributes(node)(view));
+  return Promise.resolve(view);
 }
 
 export function imageViewBuilder(node) {
-  if (node.value.src) return buildAsEmbeddedImageTag(node);
+  if (node.value.src) return buildAsEmbeddedImageTag(node).then(applyImageAttributes(node));
   else return contentViewBuilder(node).then(applyImageAttributes(node));
 }
