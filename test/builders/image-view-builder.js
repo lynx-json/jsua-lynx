@@ -12,19 +12,50 @@ describe("builders / imageViewBuilder", function () {
     buildStub = sinon.stub(building, "build");
     transferStub = sinon.stub(transferring, "transfer");
   });
-  
+
   afterEach(function () {
     buildStub.restore();
     transferStub.restore();
   });
-  
+
   var buildStub, transferStub;
-  
-  it("should return view for 'image'", function () {
+
+  it("should return view for 'image' without 'src'", function () {
     var node = {
       base: "http://example.com",
       spec: {
-        hints: [ { name: "image" }, { name: "content" } ]
+        hints: [{ name: "image" }, { name: "content" }]
+      },
+      value: {
+        data: "R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+        encoding: "base64",
+        type: "image/jpeg",
+        alt: "A pastoral view",
+        height: 100,
+        width: 100
+      }
+    };
+
+    transferStub.returns(Promise.resolve({}));
+
+    buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
+
+    return contents.imageViewBuilder(node).then(function (view) {
+      expect(view).to.not.be.null;
+      view.children.length.should.equal(1);
+      view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
+      view.children.item(0).getAttribute("data-lynx-height").should.equal(node.value.height.toString());
+      view.children.item(0).getAttribute("data-lynx-width").should.equal(node.value.width.toString());
+      transferStub.called.should.be.true;
+      buildStub.called.should.be.true;
+    });
+  });
+
+  it("should return view for 'image' with 'src'", function () {
+    var node = {
+      base: "http://example.com",
+      spec: {
+        hints: [{ name: "image" }, { name: "content" }]
       },
       value: {
         src: "/foo",
@@ -34,20 +65,21 @@ describe("builders / imageViewBuilder", function () {
         width: 100
       }
     };
-    
+
     transferStub.returns(Promise.resolve({}));
-    
+
     buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
-    
+
     return contents.imageViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
+      view.children.item(0).tagName.toLowerCase().should.equal("img");
+      view.children.item(0).getAttribute("src").should.equal("http://example.com/foo");
       view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
       view.children.item(0).getAttribute("data-lynx-height").should.equal(node.value.height.toString());
       view.children.item(0).getAttribute("data-lynx-width").should.equal(node.value.width.toString());
-      transferStub.called.should.be.true;
-      transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
-      buildStub.called.should.be.true;
+      transferStub.called.should.be.false;
+      buildStub.called.should.be.false;
     });
   });
 });
