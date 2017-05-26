@@ -126,7 +126,8 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
     }
   };
   
-  function optionClicked() {
+  function optionClicked(evt) {
+    evt.stopPropagation();
     optionsView.lynxToggleOption(optionView);
   }
   
