@@ -128,6 +128,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
   
   function optionClicked(evt) {
     evt.stopPropagation();
+    evt.preventDefault();
     optionsView.lynxToggleOption(optionView);
   }
   
