@@ -76,6 +76,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxConnectOptions` - connects an input view that has options with its source of options (if found)
 * `lynxDisconnectOptions` - disconnects an input view from its source of options (if connected)
 * `lynxSetEmbeddedView` - sets both the view and the value (Blob) for a content view
+* `lynxGetFocusableView` - optional function to get the element from a view that is an appropriate focus target (i.e., an input control)
 
 ## View Events
 
