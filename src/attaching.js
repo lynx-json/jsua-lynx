@@ -5,18 +5,18 @@ import * as markers from "./markers";
 export function scopeRealmAttacher(result) {
   var origin = exports.getOrigin(result);
   if (!origin) return;
-  
+
   var view = result.view;
-  
+
   var context = view.getAttribute("data-lynx-context");
   if (exports.isOutOfContext(origin, context)) return { discard: true };
-  
+
   var realm = view.getAttribute("data-lynx-realm");
   if (!realm) return;
-  
+
   var nearestContentView = exports.findNearestScopedContentView(origin, realm);
   if (!nearestContentView) return;
-  
+
   return {
     attach: function () {
       var detachedViews = nearestContentView.lynxSetEmbeddedView(result.view, result.content.blob);
@@ -28,9 +28,9 @@ export function scopeRealmAttacher(result) {
 
 export function createRootAttacher(rootView) {
   if (!rootView) throw new Error("'rootView' param is required.");
-  
+
   markers.initialize(rootView);
-  
+
   return function rootAttacher(result) {
     if (!rootView) return;
 
@@ -42,10 +42,10 @@ export function createRootAttacher(rootView) {
       }
 
       rootView.appendChild(result.view);
-      
+
       var focusedView = exports.setFocusedView(result.view);
       if (!focusedView) result.view.setAttribute("data-jsua-focus", true);
-      
+
       return detachedViews;
     }
 
@@ -64,14 +64,14 @@ export function getOrigin(result) {
 
 export function isOutOfContext(origin, context) {
   if (!context) return false;
-  
+
   var contextView = util.findNearestView(origin, "[data-content-url],[data-lynx-realm]", function (matching) {
     var url = matching.getAttribute("data-content-url");
     var realm = matching.getAttribute("data-lynx-realm");
-    return util.scopeIncludesRealm(context, url) || 
+    return util.scopeIncludesRealm(context, url) ||
       util.scopeIncludesRealm(context, realm);
   });
-  
+
   return !contextView;
 }
 
@@ -84,18 +84,22 @@ export function findNearestScopedContentView(origin, realm) {
 
 export function setFocusedView(view) {
   var focusedViewName;
-  
+
   if (view.hasAttribute("data-content-url")) {
     var contentUrl = url.parse(view.getAttribute("data-content-url"));
     if (contentUrl.hash) focusedViewName = contentUrl.hash.substring(1);
   }
-  
+
   if (!focusedViewName && view.hasAttribute("data-lynx-focus")) focusedViewName = view.getAttribute("data-lynx-focus");
   if (!focusedViewName) return;
-  
+
   var focusedView = util.findNearestView(view, "[data-lynx-name='" + focusedViewName + "']");
   if (!focusedView) return;
-  
+
+  if (focusedView.lynxGetFocusableView) {
+    focusedView = focusedView.lynxGetFocusableView();
+  }
+
   focusedView.setAttribute("data-jsua-focus", true);
   return focusedView;
 }
