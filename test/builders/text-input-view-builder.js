@@ -91,4 +91,22 @@ describe("builders / textInputViewBuilder", function () {
     valueView.name.should.equal(node.spec.input);
     valueView.type.should.equal("text");
   });
+
+  it("should return its input control from lynxGetFocusableView", function () {
+    var node = {
+      spec: {
+        hints: ["line", "text"],
+        input: "test"
+      },
+      value: "Hello, World!"
+    };
+
+    var view = builders.textInputViewBuilder(node);
+
+    expect(view).to.not.be.null;
+
+    var valueView = view.querySelector("input");
+
+    view.lynxGetFocusableView().should.equal(valueView);
+  });
 });

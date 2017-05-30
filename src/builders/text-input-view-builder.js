@@ -37,6 +37,10 @@ export function textInputViewBuilder(node) {
     view.lynxSetValue("");
   };
 
+  view.lynxGetFocusableView = function () {
+    return textView;
+  };
+
   return view;
 }
 
