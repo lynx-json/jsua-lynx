@@ -1,5 +1,6 @@
 require("./html-document-api");
 var attaching = require("../dist/attaching");
+var util = require("../dist/util");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
@@ -84,8 +85,48 @@ describe("attaching / createRootAttacher", function () {
 });
 
 describe("attaching / setFocusedView", function () {
-  it("should choose a focus view based on url hash if it exists");
-  it("should choose a focus view based on the lynx `focus` document property if it exists");
-  it("should set focus to the result of `lynxGetFocusableView` if the function exists and returns a view");
-  it("should set focus to the view itself otherwise");
+  var focusView, findNearestViewStub;
+
+  beforeEach(function () {
+    findNearestViewStub = sinon.stub(util, "findNearestView");
+  });
+
+  afterEach(function () {
+    findNearestViewStub.restore();
+  });
+
+  it("should choose a focus view based on url hash if it exists", function () {
+    var view = document.createElement("div");
+    var focusedView = document.createElement("div");
+    findNearestViewStub.withArgs(view, "[data-lynx-name='a']").returns(focusedView);
+
+    view.setAttribute("data-content-url", "http://example.com/#a");
+    attaching.setFocusedView(view);
+
+    focusedView.hasAttribute("data-jsua-focus").should.be.true;
+  });
+
+  it("should choose a focus view based on the lynx `focus` document property if it exists", function () {
+    var view = document.createElement("div");
+    view.setAttribute("data-lynx-focus", "a");
+    var focusedView = document.createElement("div");
+    findNearestViewStub.withArgs(view, "[data-lynx-name='a']").returns(focusedView);
+    attaching.setFocusedView(view);
+
+    focusedView.hasAttribute("data-jsua-focus").should.be.true;
+  });
+
+  it("should set focus to the result of `lynxGetFocusableView` if that function exists and returns a view", function () {
+    var view = document.createElement("div");
+    var focusedView = document.createElement("div");
+    var internalFocusedView = document.createElement("div");
+    focusedView.lynxGetFocusableView = () => internalFocusedView;
+
+    findNearestViewStub.withArgs(view, "[data-lynx-name='a']").returns(focusedView);
+
+    view.setAttribute("data-content-url", "http://example.com/#a");
+    attaching.setFocusedView(view);
+
+    internalFocusedView.hasAttribute("data-jsua-focus").should.be.true;
+  });
 });
