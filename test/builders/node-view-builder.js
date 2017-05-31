@@ -348,4 +348,6 @@ describe("builders / nodeViewBuilder", function () {
       view.getAttribute("data-lynx-submitter").should.equal(node.spec.submitter);
     });
   });
+
+  it("should resolve for attribute for markers");
 });

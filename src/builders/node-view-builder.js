@@ -3,6 +3,7 @@ import * as resolver from "./resolve-view-builder";
 import * as validation from "./validation";
 import * as options from "./options";
 import * as util from "../util";
+import url from "url";
 
 function hasScope(node) {
   return node.value &&
@@ -45,7 +46,9 @@ export function nodeViewBuilder(node) {
     if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation || {});
     if (node.spec.option) view.setAttribute("data-lynx-option", "true");
     if (node.spec.options) options.addOptionsExtensionsToView(view, node.spec);
-    if (node.spec.hints.indexOf("marker") > -1 && node.value && node.value.for) view.setAttribute("data-lynx-marker-for", node.value.for);
+    if (node.spec.hints.indexOf("marker") > -1 && node.value && node.value.for) {
+      view.setAttribute("data-lynx-marker-for", url.resolve(node.base, node.value.for));
+    }
     // data-lynx-data-* properties
     return view;
   });
