@@ -334,7 +334,8 @@ describe("validation / addValidationExtensionsToInputView", function () {
   
   it("should format the value when a formatted validation constraint changes state", function () { 
     validation.addValidationExtensionsToInputView(view, validationObj);
-    var changeListener = view.addEventListener.getCall(0).args[1];
+    expect(view.addEventListener.getCall(0).args[0]).to.equal("input");
+    var inputListener = view.addEventListener.getCall(0).args[1];
     
     validationObj.changes.push({
       name: "text",
@@ -343,7 +344,7 @@ describe("validation / addValidationExtensionsToInputView", function () {
       format: "$1-$2"
     });
     
-    changeListener();
+    inputListener();
     
     view.lynxUpdateValidationContentVisibility.calledOnce.should.equal(true);
     view.lynxGetValue.calledTwice.should.equal(true);

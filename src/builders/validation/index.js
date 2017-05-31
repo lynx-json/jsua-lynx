@@ -95,7 +95,7 @@ export function addValidationExtensionsToInputView(view, validation) {
     return view.getAttribute("data-lynx-validation-state");
   };
   
-  view.addEventListener("change", function () {
+  view.lynxValidateValue = function () {
     var value = view.lynxGetValue();
     exports.validateValue(validation, value);
     
@@ -109,6 +109,10 @@ export function addValidationExtensionsToInputView(view, validation) {
       let formattedConstraint = validation.changes.find(isFormattedConstraint);
       if (formattedConstraint) view.lynxSetValue( exports.formatValue(formattedConstraint, view.lynxGetValue() ) );
     }
+  };
+  
+  view.addEventListener("input", function () {
+    view.lynxValidateValue();
   });
 }
 
