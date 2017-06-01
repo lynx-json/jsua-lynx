@@ -1,13 +1,12 @@
 import * as util from "../util";
 
 export function addOptionsExtensionsToView(inputView, spec) {
-  var optionsView;
+  var optionsView, appView;
   var isContainerInput = inputView.matches("[data-lynx-hints~=container]");
   
   inputView.lynxConnectOptions = function () {
     var nearestOptionsView = util.findNearestView(inputView, "[data-lynx-name='" + spec.options + "']");
     
-    if (optionsView && optionsView === nearestOptionsView) return;
     if (optionsView) inputView.lynxDisconnectOptions();
     if (!nearestOptionsView) return;
     
@@ -33,21 +32,37 @@ export function addOptionsExtensionsToView(inputView, spec) {
     exports.raiseOptionsConnectedEvent(nearestOptionsView);
   };
   
-  function disconnectOptions(evt) {
+  function onAppViewAttach() {
+    inputView.lynxConnectOptions();
+  }
+  
+  function onInputViewDetach(evt) {
     if (evt.srcElement === inputView) {
-      inputView.removeEventListener("jsua-attach", connectOptions);
-      inputView.removeEventListener("jsua-detach", disconnectOptions);
+      inputView.removeEventListener("jsua-detach", onInputViewDetach);
+    }
+    
+    if (appView) {
+      appView.removeEventListener("jsua-attach", onAppViewAttach);
     }
     
     inputView.lynxDisconnectOptions();
   }
   
-  function connectOptions() {
-    inputView.lynxConnectOptions();
+  function onInputViewAttach() {
+    inputView.removeEventListener("jsua-attach", onInputViewAttach);
+    
+    appView = util.findNearestAncestorView(inputView, "[data-jsua-context~=app]");
+    
+    if (!appView) {
+      console.log("Unable to find ancestor view matching [data-jsua-context~=app]. (Lynx Options)");
+      inputView.lynxConnectOptions();
+    } else {
+      appView.addEventListener("jsua-attach", onAppViewAttach);
+    }
   }
   
-  inputView.addEventListener("jsua-attach", connectOptions);
-  inputView.addEventListener("jsua-detach", disconnectOptions);
+  inputView.addEventListener("jsua-attach", onInputViewAttach);
+  inputView.addEventListener("jsua-detach", onInputViewDetach);
 }
 
 export function initializeOptionsInterface(optionsView, inputView, isContainerInput) {
