@@ -37,9 +37,7 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `href` - the node's `href` property value (`link` nodes)
 * `type` - the node's `type` property value (`link` nodes)
 * `data-lynx-input` - the node's input name for form data submission
-* `data-lynx-options` - the node's `options` property value (input nodes)
 * `data-lynx-submitter` - the node's `submitter` property value (`form` and input nodes)
-* `data-lynx-option` - the view is an option control
 * `formaction` - the node's `action` property value (`submit` nodes)
 * `formmethod` - the node's `method` property value (`submit` nodes)
 * `formenctype` - the node's `enctype` property value (`submit` nodes)
@@ -54,7 +52,10 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-container-input-item` - contains the `data-lynx-container-input-value` view and its associated `data-lynx-container-input-remove` control
 * `data-lynx-validation-state` - the current validation state of the view
 * `data-lynx-visibility-conceal` - the control used to toggle a view's `data-lynx-visibility` between `revealed` and `concealed`
+* `data-lynx-options-name` - the node's `options` property value (input nodes)
+* `data-lynx-options-role=options` - the view is a source of options for an input view
 * `data-lynx-option-selected` - the current option selected state of the view
+
 
 ## View Functions
 

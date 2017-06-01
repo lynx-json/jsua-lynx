@@ -1,6 +1,7 @@
 import * as util from "./util";
 import url from "url";
 import * as markers from "./markers";
+import * as options from "./options";
 
 export function scopeRealmAttacher(result) {
   var origin = exports.getOrigin(result);
@@ -30,6 +31,7 @@ export function createRootAttacher(rootView) {
   if (!rootView) throw new Error("'rootView' param is required.");
 
   markers.initialize(rootView);
+  options.initialize(rootView);
 
   return function rootAttacher(result) {
     if (!rootView) return;

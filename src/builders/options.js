@@ -1,8 +1,9 @@
 import * as util from "../util";
 
 export function addOptionsExtensionsToView(inputView, spec) {
-  var optionsView, appView;
+  var optionsView;
   var isContainerInput = inputView.matches("[data-lynx-hints~=container]");
+  inputView.setAttribute("data-lynx-options-name", spec.options);
   
   inputView.lynxConnectOptions = function () {
     var nearestOptionsView = util.findNearestView(inputView, "[data-lynx-name='" + spec.options + "']");
@@ -22,6 +23,7 @@ export function addOptionsExtensionsToView(inputView, spec) {
     });
     
     inputView.lynxDisconnectOptions = function () {
+      delete inputView.lynxGetOptionsView;
       if (!optionsView) return;
       optionsView.lynxDisconnectOptions();
       optionsView = null;
@@ -29,44 +31,27 @@ export function addOptionsExtensionsToView(inputView, spec) {
     
     optionsView = nearestOptionsView;
     
+    inputView.lynxGetOptionsView = function () {
+      return optionsView;
+    };
+    
     exports.raiseOptionsConnectedEvent(nearestOptionsView);
   };
   
-  function onAppViewAttach() {
-    inputView.lynxConnectOptions();
-  }
-  
   function onInputViewDetach(evt) {
-    if (evt.srcElement === inputView) {
+    if (evt.target === inputView) {
       inputView.removeEventListener("jsua-detach", onInputViewDetach);
-    }
-    
-    if (appView) {
-      appView.removeEventListener("jsua-attach", onAppViewAttach);
-    }
-    
-    inputView.lynxDisconnectOptions();
-  }
-  
-  function onInputViewAttach() {
-    inputView.removeEventListener("jsua-attach", onInputViewAttach);
-    
-    appView = util.findNearestAncestorView(inputView, "[data-jsua-context~=app]");
-    
-    if (!appView) {
-      console.log("Unable to find ancestor view matching [data-jsua-context~=app]. (Lynx Options)");
-      inputView.lynxConnectOptions();
-    } else {
-      appView.addEventListener("jsua-attach", onAppViewAttach);
+      inputView.lynxDisconnectOptions();
     }
   }
   
-  inputView.addEventListener("jsua-attach", onInputViewAttach);
   inputView.addEventListener("jsua-detach", onInputViewDetach);
 }
 
 export function initializeOptionsInterface(optionsView, inputView, isContainerInput) {
   optionsView.lynxOptions = [];
+  
+  optionsView.setAttribute("data-lynx-options-role", "options");
   
   optionsView.lynxToggleOption = function (optionView) {
     if (isContainerInput) {
@@ -91,6 +76,10 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
     }
   };
   
+  optionsView.lynxGetInputView = function () {
+    return inputView;
+  };
+  
   function inputChanged() {
     var values = inputView.lynxGetValue();
     
@@ -111,6 +100,8 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
     delete optionsView.lynxOptions;
     delete optionsView.lynxToggleOption;
     delete optionsView.lynxDisconnectOptions;
+    delete optionsView.lynxGetInputView;
+    optionsView.removeAttribute("data-lynx-options-role");
     exports.raiseOptionsDisonnectedEvent(optionsView, optionViews);
   };
 }
