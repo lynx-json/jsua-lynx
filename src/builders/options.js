@@ -22,12 +22,21 @@ export function addOptionsExtensionsToView(inputView, spec) {
       exports.initializeOptionInterface(nearestOptionsView, optionView, optionValueView, inputView);
     });
     
+    function onInputViewDetach(evt) {
+      if (evt.target === inputView) {
+        inputView.lynxDisconnectOptions();
+      }
+    }
+    
     inputView.lynxDisconnectOptions = function () {
+      inputView.removeEventListener("jsua-detach", onInputViewDetach);
       delete inputView.lynxGetOptionsView;
       if (!optionsView) return;
       optionsView.lynxDisconnectOptions();
       optionsView = null;
     };
+    
+    inputView.addEventListener("jsua-detach", onInputViewDetach);
     
     optionsView = nearestOptionsView;
     
@@ -37,15 +46,6 @@ export function addOptionsExtensionsToView(inputView, spec) {
     
     exports.raiseOptionsConnectedEvent(nearestOptionsView);
   };
-  
-  function onInputViewDetach(evt) {
-    if (evt.target === inputView) {
-      inputView.removeEventListener("jsua-detach", onInputViewDetach);
-      inputView.lynxDisconnectOptions();
-    }
-  }
-  
-  inputView.addEventListener("jsua-detach", onInputViewDetach);
 }
 
 export function initializeOptionsInterface(optionsView, inputView, isContainerInput) {
