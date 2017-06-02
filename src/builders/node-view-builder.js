@@ -49,7 +49,17 @@ export function nodeViewBuilder(node) {
     if (node.spec.hints.indexOf("marker") > -1 && node.value && node.value.for) {
       view.setAttribute("data-lynx-marker-for", url.resolve(node.base, node.value.for));
     }
-    // data-lynx-data-* properties
+
+    if (node.value && typeof node.value === "object" && !Array.isArray(node.value)) {
+      for (var p in node.value) {
+        // Any specified child of the node would be an object with a spec.
+        // This code assumes we only want to put non-object values in the attribute.
+        if (typeof node.value[p] !== "object") {
+          view.setAttribute(`data-lynx-data-${p}`, node.value[p]);
+        }
+      }
+    }
+
     return view;
   });
 }

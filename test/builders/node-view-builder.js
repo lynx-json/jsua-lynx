@@ -349,5 +349,51 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
 
+  it("should set `data-lynx-data-*` attributes for data properties", function () {
+    var node = {
+      spec: {
+        hints: ["container"]
+      },
+      value: {
+        scheduled: true
+      }
+    };
+
+    return runTest(node, function (view) {
+      expect(view).to.not.equal(null);
+      view.getAttribute("data-lynx-data-scheduled").should.equal("true");
+    });
+  });
+
+  it("should not set `data-lynx-data-*` attributes for children of an array", function () {
+    var node = {
+      spec: {
+        hints: ["container"]
+      },
+      value: [
+        0, 1, 2
+      ]
+    };
+
+    return runTest(node, function (view) {
+      expect(view).to.not.equal(null);
+      should.not.exist(view.getAttribute("data-lynx-data-0"));
+    });
+  });
+
+  it("should not set `data-lynx-data-*` attributes for characters in a string", function () {
+    var node = {
+      spec: {
+        hints: ["text"]
+      },
+      value: "abc"
+    };
+
+    return runTest(node, function (view) {
+      expect(view).to.not.equal(null);
+      should.not.exist(view.getAttribute("data-lynx-data-0"));
+    });
+  });
+
   it("should resolve for attribute for markers");
 });
