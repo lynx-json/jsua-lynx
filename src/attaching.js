@@ -89,7 +89,7 @@ export function isStaleContent(origin, transferStartedAt) {
     return ancestorStartedAt > transferStartedAt;
   });
 
-  return !newerAncestor;
+  return !!newerAncestor;
 }
 
 export function findNearestScopedContentView(origin, realm) {
