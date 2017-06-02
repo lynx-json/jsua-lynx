@@ -12,6 +12,9 @@ export function scopeRealmAttacher(result) {
   var context = view.getAttribute("data-lynx-context");
   if (exports.isOutOfContext(origin, context)) return { discard: true };
 
+  var transferStartedAt = view.getAttribute("data-transfer-started-at");
+  if (exports.isStaleContent(origin, transferStartedAt)) return { discard: true };
+
   var realm = view.getAttribute("data-lynx-realm");
   if (!realm) return;
 
@@ -75,6 +78,18 @@ export function isOutOfContext(origin, context) {
   });
 
   return !contextView;
+}
+
+export function isStaleContent(origin, transferStartedAt) {
+  transferStartedAt = parseInt(transferStartedAt);
+  if (!transferStartedAt) return false;
+  var newerAncestor = util.findNearestAncestorView(origin, "[data-transfer-started-at]", function (matching) {
+    var ancestorStartedAt = parseInt(matching.getAttribute("data-transfer-started-at"));
+    if (!ancestorStartedAt) return false;
+    return ancestorStartedAt > transferStartedAt;
+  });
+
+  return !newerAncestor;
 }
 
 export function findNearestScopedContentView(origin, realm) {

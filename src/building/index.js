@@ -37,6 +37,7 @@ export function build(content) {
         .then(node => doc = node)
         .then(builders.nodeViewBuilder)
         .then(view => {
+          if (content.options && content.options.startedAt) view.setAttribute("data-transfer-started-at", content.options.startedAt.valueOf());
           view.setAttribute("data-content-url", content.url);
           view.setAttribute("data-content-type", content.blob.type);
           if (doc.realm) view.setAttribute("data-lynx-realm", doc.realm);

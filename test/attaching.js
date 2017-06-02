@@ -7,7 +7,7 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("attaching / scopeRealmAttacher", function () {
-  var result, getOriginStub, isOutOfContextStub, nearestContentView, findNearestScopedContentViewStub;
+  var result, getOriginStub, isOutOfContextStub, isStaleContentStub, nearestContentView, findNearestScopedContentViewStub;
 
   beforeEach(function () {
     result = {
@@ -25,6 +25,9 @@ describe("attaching / scopeRealmAttacher", function () {
     isOutOfContextStub = sinon.stub(attaching, "isOutOfContext");
     isOutOfContextStub.returns(false);
 
+    isStaleContentStub = sinon.stub(attaching, "isStaleContent");
+    isStaleContentStub.returns(false);
+
     nearestContentView = {};
     nearestContentView.lynxSetEmbeddedView = sinon.stub();
 
@@ -35,6 +38,7 @@ describe("attaching / scopeRealmAttacher", function () {
   afterEach(function () {
     getOriginStub.restore();
     isOutOfContextStub.restore();
+    isStaleContentStub.restore();
     findNearestScopedContentViewStub.restore();
   });
 
@@ -53,6 +57,13 @@ describe("attaching / scopeRealmAttacher", function () {
 
   it("should discard out of context views", function () {
     isOutOfContextStub.returns(true);
+    var attachment = attaching.scopeRealmAttacher(result);
+    expect(attachment).to.not.equal(null);
+    expect(attachment.discard).to.equal(true);
+  });
+
+  it("should discard stale content views", function () {
+    isStaleContentStub.returns(true);
     var attachment = attaching.scopeRealmAttacher(result);
     expect(attachment).to.not.equal(null);
     expect(attachment.discard).to.equal(true);
