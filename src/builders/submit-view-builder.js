@@ -63,7 +63,7 @@ function addSendOnChangeExtensionToView(view) {
     if (!formView) return;
     
     function autoSubmitFormIfValid() {
-      if (formView.lynxGetValidationState() !== "valid") return;
+      if (formView.lynxGetValidationState() === "invalid") return;
       view.click();
     }
     

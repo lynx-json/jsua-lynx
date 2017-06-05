@@ -110,6 +110,10 @@ export function contentInputViewBuilder(node) {
 }
 
 function raiseValueChangeEvent(view) {
+  var inputEvent = document.createEvent("Event");
+  inputEvent.initEvent("input", true, false);
+  view.dispatchEvent(inputEvent);
+  
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("change", true, false);
   view.dispatchEvent(changeEvent);

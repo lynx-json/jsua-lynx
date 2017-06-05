@@ -62,7 +62,7 @@ export function addValidationExtensionsToContainerView(view, validation) {
   };
   
   view.addEventListener("lynx-validation-state-change", function (evt) {
-    if (evt.srcElement === view) return;
+    if (evt.target === view) return;
     exports.validateContainer(view, validation);
     
     if (validation.state !== validation.priorState) {
@@ -70,7 +70,11 @@ export function addValidationExtensionsToContainerView(view, validation) {
       exports.raiseValidationStateChangedEvent(view, validation);
       view.lynxUpdateValidationContentVisibility();
     }
-    
+  });
+  
+  view.addEventListener("input", function () {
+    var validatedDescendants = view.querySelectorAll("[data-lynx-validation-state]");
+    if (validatedDescendants.length > 0) return;
     exports.raiseValidatedEvent(view);
   });
 }
@@ -109,6 +113,8 @@ export function addValidationExtensionsToInputView(view, validation) {
       let formattedConstraint = validation.changes.find(isFormattedConstraint);
       if (formattedConstraint) view.lynxSetValue( exports.formatValue(formattedConstraint, view.lynxGetValue() ) );
     }
+    
+    exports.raiseValidatedEvent(view);
   };
   
   view.addEventListener("input", function () {
@@ -138,9 +144,9 @@ export function raiseValidationStateChangedEvent(view, validation) {
 }
 
 export function raiseValidatedEvent(view) {
-  var changeEvent = document.createEvent("Event");
-  changeEvent.initEvent("lynx-validated", true, false);
-  view.dispatchEvent(changeEvent);
+  var validatedEvent = document.createEvent("Event");
+  validatedEvent.initEvent("lynx-validated", true, false);
+  view.dispatchEvent(validatedEvent);
 }
 
 export function normalizeValidationConstraintSetObject(validation) {
