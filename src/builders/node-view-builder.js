@@ -55,7 +55,7 @@ export function nodeViewBuilder(node) {
         // Any specified child of the node would be an object with a spec.
         // This code assumes we only want to put non-object values in the attribute.
         if (typeof node.value[p] !== "object") {
-          view.setAttribute(`data-lynx-data-${p}`, node.value[p]);
+          view.setAttribute(`data-lynx-var-${p}`, node.value[p]);
         }
       }
     }
