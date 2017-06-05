@@ -55,6 +55,7 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-options-name` - the node's `options` property value (input nodes)
 * `data-lynx-options-role=options` - the view is a source of options for an input view
 * `data-lynx-option-selected` - the current option selected state of the view
+* `data-lynx-var-*` - lynx data (unspecified) properties are added with this namespace
 
 
 ## View Functions

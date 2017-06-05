@@ -349,7 +349,7 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
 
-  it("should set `data-lynx-data-*` attributes for data properties", function () {
+  it("should set `data-lynx-var-*` attributes for data properties", function () {
     var node = {
       spec: {
         hints: ["container"]
@@ -361,11 +361,11 @@ describe("builders / nodeViewBuilder", function () {
 
     return runTest(node, function (view) {
       expect(view).to.not.equal(null);
-      view.getAttribute("data-lynx-data-scheduled").should.equal("true");
+      view.getAttribute("data-lynx-var-scheduled").should.equal("true");
     });
   });
 
-  it("should not set `data-lynx-data-*` attributes for children of an array", function () {
+  it("should not set `data-lynx-var-*` attributes for children of an array", function () {
     var node = {
       spec: {
         hints: ["container"]
@@ -377,11 +377,11 @@ describe("builders / nodeViewBuilder", function () {
 
     return runTest(node, function (view) {
       expect(view).to.not.equal(null);
-      should.not.exist(view.getAttribute("data-lynx-data-0"));
+      should.not.exist(view.getAttribute("data-lynx-var-0"));
     });
   });
 
-  it("should not set `data-lynx-data-*` attributes for characters in a string", function () {
+  it("should not set `data-lynx-var-*` attributes for characters in a string", function () {
     var node = {
       spec: {
         hints: ["text"]
@@ -391,7 +391,7 @@ describe("builders / nodeViewBuilder", function () {
 
     return runTest(node, function (view) {
       expect(view).to.not.equal(null);
-      should.not.exist(view.getAttribute("data-lynx-data-0"));
+      should.not.exist(view.getAttribute("data-lynx-var-0"));
     });
   });
 
