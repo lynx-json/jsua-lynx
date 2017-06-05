@@ -12,14 +12,13 @@ export function scopeRealmAttacher(result) {
   var context = view.getAttribute("data-lynx-context");
   if (exports.isOutOfContext(origin, context)) return { discard: true };
 
-  var transferStartedAt = view.getAttribute("data-transfer-started-at");
-  if (exports.isStaleContent(origin, transferStartedAt)) return { discard: true };
-
   var realm = view.getAttribute("data-lynx-realm");
   if (!realm) return;
 
   var nearestContentView = exports.findNearestScopedContentView(origin, realm);
   if (!nearestContentView) return;
+
+  if (viewIsStale(view, nearestContentView)) return { discard: true };
 
   return {
     attach: function () {
@@ -38,6 +37,8 @@ export function createRootAttacher(rootView) {
 
   return function rootAttacher(result) {
     if (!rootView) return;
+
+    if (viewIsStale(result.view, rootView.firstElementChild)) return { discard: true };
 
     function attachViewToRoot() {
       var detachedViews = [];
@@ -60,6 +61,11 @@ export function createRootAttacher(rootView) {
   };
 }
 
+function viewIsStale(view, reference) {
+  if (!reference) return false;
+  return +reference.getAttribute("data-transfer-started-at") > +view.getAttribute("data-transfer-started-at");
+}
+
 export function getOrigin(result) {
   if (!result) return;
   if (!result.content) return;
@@ -78,18 +84,6 @@ export function isOutOfContext(origin, context) {
   });
 
   return !contextView;
-}
-
-export function isStaleContent(origin, transferStartedAt) {
-  transferStartedAt = parseInt(transferStartedAt);
-  if (!transferStartedAt) return false;
-  var newerAncestor = util.findNearestAncestorView(origin, "[data-transfer-started-at]", function (matching) {
-    var ancestorStartedAt = parseInt(matching.getAttribute("data-transfer-started-at"));
-    if (!ancestorStartedAt) return false;
-    return ancestorStartedAt > transferStartedAt;
-  });
-
-  return !!newerAncestor;
 }
 
 export function findNearestScopedContentView(origin, realm) {

@@ -26,7 +26,7 @@ A view representing a Lynx JSON document may have the following attributes:
 * `data-lynx-realm` - the document's realm URI
 * `data-lynx-context` - the document's context URI
 * `data-lynx-focus` - the document's focus name
-* `data-transfer-started-at` - the time transfer started that resulted in view
+* `data-transfer-started-at` - the start date/time of the transfer that the view represents (see ECMASCript Date.prototype.valueOf()).
 
 A view representing a node of a Lynx JSON document may have the following attributes:
 
