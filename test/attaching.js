@@ -27,6 +27,7 @@ describe("attaching / scopeRealmAttacher", function () {
 
     nearestContentView = {};
     nearestContentView.lynxSetEmbeddedView = sinon.stub();
+    nearestContentView.getAttribute = sinon.stub();
 
     findNearestScopedContentViewStub = sinon.stub(attaching, "findNearestScopedContentView");
     findNearestScopedContentViewStub.returns(nearestContentView);
@@ -53,6 +54,16 @@ describe("attaching / scopeRealmAttacher", function () {
 
   it("should discard out of context views", function () {
     isOutOfContextStub.returns(true);
+    var attachment = attaching.scopeRealmAttacher(result);
+    expect(attachment).to.not.equal(null);
+    expect(attachment.discard).to.equal(true);
+  });
+
+  it("should discard stale content views", function () {
+    let startedAt = new Date().valueOf();
+    let newer = startedAt + 1;
+    nearestContentView.getAttribute.withArgs("data-transfer-started-at").returns(newer.toString());
+    result.content.options = { startedAt: startedAt };
     var attachment = attaching.scopeRealmAttacher(result);
     expect(attachment).to.not.equal(null);
     expect(attachment.discard).to.equal(true);

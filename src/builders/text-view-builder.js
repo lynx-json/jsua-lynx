@@ -1,6 +1,8 @@
 export function textViewBuilder(node) {
   var view = document.createElement("div");
-  var textView = document.createElement("pre");
+  var textView = document.createElement("div");
+  textView.style.whiteSpace = "pre-wrap";
+
   view.appendChild(textView);
 
   if (node.value === null || node.value === undefined) {

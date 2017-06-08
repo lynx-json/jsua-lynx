@@ -18,6 +18,8 @@ export function scopeRealmAttacher(result) {
   var nearestContentView = exports.findNearestScopedContentView(origin, realm);
   if (!nearestContentView) return;
 
+  if (resultIsStale(result, nearestContentView)) return { discard: true };
+
   return {
     attach: function () {
       var detachedViews = nearestContentView.lynxSetEmbeddedView(result.view, result.content.blob);
@@ -35,6 +37,8 @@ export function createRootAttacher(rootView) {
 
   return function rootAttacher(result) {
     if (!rootView) return;
+
+    if (resultIsStale(result, rootView.firstElementChild)) return { discard: true };
 
     function attachViewToRoot() {
       var detachedViews = [];
@@ -55,6 +59,13 @@ export function createRootAttacher(rootView) {
       attach: attachViewToRoot
     };
   };
+}
+
+function resultIsStale(result, reference) {
+  if (!reference) return false;
+  let startedAt = result.content && result.content.options && result.content.options.startedAt && result.content.options.startedAt.valueOf();
+  if (!startedAt) return false;
+  return +reference.getAttribute("data-transfer-started-at") > startedAt;
 }
 
 export function getOrigin(result) {

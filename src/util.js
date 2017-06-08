@@ -42,11 +42,11 @@ export function findNearestView(view, selector, predicate, origin) {
   return matches[0];
 }
 
-export function findNearestAncestorView(view, selector) {
+export function findNearestAncestorView(view, selector, predicate) {
   if (!view || !selector || view.matches("[data-jsua-context~=app]")) return null;
   var parent = view.parentElement;
-  if (parent && parent.matches(selector)) return parent;
-  return findNearestAncestorView(parent, selector);
+  if (parent && parent.matches(selector) && (!predicate || predicate(parent))) return parent;
+  return findNearestAncestorView(parent, selector, predicate);
 }
 
 export function buildFormData(submitView) {
