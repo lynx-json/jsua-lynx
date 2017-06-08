@@ -60,8 +60,10 @@ describe("attaching / scopeRealmAttacher", function () {
   });
 
   it("should discard stale content views", function () {
-    nearestContentView.getAttribute.withArgs("data-transfer-started-at").returns("2");
-    result.view.setAttribute("data-transfer-started-at", "1");
+    let startedAt = new Date().valueOf();
+    let newer = startedAt + 1;
+    nearestContentView.getAttribute.withArgs("data-transfer-started-at").returns(newer.toString());
+    result.content.options = { startedAt: startedAt };
     var attachment = attaching.scopeRealmAttacher(result);
     expect(attachment).to.not.equal(null);
     expect(attachment.discard).to.equal(true);

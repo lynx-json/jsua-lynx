@@ -18,7 +18,7 @@ export function scopeRealmAttacher(result) {
   var nearestContentView = exports.findNearestScopedContentView(origin, realm);
   if (!nearestContentView) return;
 
-  if (viewIsStale(view, nearestContentView)) return { discard: true };
+  if (resultIsStale(result, nearestContentView)) return { discard: true };
 
   return {
     attach: function () {
@@ -38,7 +38,7 @@ export function createRootAttacher(rootView) {
   return function rootAttacher(result) {
     if (!rootView) return;
 
-    if (viewIsStale(result.view, rootView.firstElementChild)) return { discard: true };
+    if (resultIsStale(result, rootView.firstElementChild)) return { discard: true };
 
     function attachViewToRoot() {
       var detachedViews = [];
@@ -61,9 +61,11 @@ export function createRootAttacher(rootView) {
   };
 }
 
-function viewIsStale(view, reference) {
+function resultIsStale(result, reference) {
   if (!reference) return false;
-  return +reference.getAttribute("data-transfer-started-at") > +view.getAttribute("data-transfer-started-at");
+  let startedAt = result.content && result.content.options && result.content.options.startedAt && result.content.options.startedAt.valueOf();
+  if (!startedAt) return false;
+  return +reference.getAttribute("data-transfer-started-at") > startedAt;
 }
 
 export function getOrigin(result) {
