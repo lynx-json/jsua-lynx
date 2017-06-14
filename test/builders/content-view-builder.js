@@ -47,7 +47,7 @@ describe("builders / contentViewBuilder", function () {
     });
   });
 
-  when("replacing the embedded view", function () {
+  describe("replacing the embedded view", function () {
     it("should replace the embedded view with the new embedded view");
     it("should respect presentation-specific restructuring");
   });
