@@ -12,19 +12,19 @@ describe("builders / contentViewBuilder", function () {
     buildStub = sinon.stub(building, "build");
     transferStub = sinon.stub(transferring, "transfer");
   });
-  
+
   afterEach(function () {
     buildStub.restore();
     transferStub.restore();
   });
-  
+
   var buildStub, transferStub;
-  
+
   it("should return view for 'content'", function () {
     var node = {
       base: "http://example.com",
       spec: {
-        hints: [ { name: "content" } ]
+        hints: [{ name: "content" }]
       },
       value: {
         src: "/foo",
@@ -32,11 +32,11 @@ describe("builders / contentViewBuilder", function () {
         alt: "An important doc"
       }
     };
-    
+
     transferStub.returns(Promise.resolve({}));
-    
+
     buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
-    
+
     return contents.contentViewBuilder(node).then(function (view) {
       expect(view).to.not.be.null;
       view.children.length.should.equal(1);
@@ -45,5 +45,10 @@ describe("builders / contentViewBuilder", function () {
       transferStub.lastCall.args[0].should.deep.equal({ url: "http://example.com/foo" });
       buildStub.called.should.be.true;
     });
+  });
+
+  when("replacing the embedded view", function () {
+    it("should replace the embedded view with the new embedded view");
+    it("should respect presentation-specific restructuring");
   });
 });
