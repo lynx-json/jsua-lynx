@@ -50,17 +50,29 @@ describe("building", function () {
   });
 
   describe("registrations", function () {
-    it("should record registrations", function () {
+    it("should record registrations without condition", function () {
       var hint = "text";
       var builder = function () {};
-      var input = true;
 
-      building.register(hint, builder, input);
+      building.register(hint, builder);
 
       building.registrations.length.should.equal(1);
       building.registrations[0].hint.should.equal(hint);
       building.registrations[0].builder.should.equal(builder);
-      building.registrations[0].input.should.equal(input);
+      expect(building.registrations[0].condition).to.equal(undefined);
+    });
+    
+    it("should record registrations with condition", function () {
+      var hint = "text";
+      var builder = function () {};
+      var predicate = function () {};
+
+      building.register(hint, builder, predicate);
+
+      building.registrations.length.should.equal(1);
+      building.registrations[0].hint.should.equal(hint);
+      building.registrations[0].builder.should.equal(builder);
+      building.registrations[0].condition.should.equal(predicate);
     });
   });
 

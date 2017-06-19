@@ -13,7 +13,7 @@ Extensions to the `jsua` package for the Lynx JSON media type.
 `building.register` registers a view builder (for a Lynx JSON node) function that accepts the following params:
   * `hint` - the hint to build views for
   * `builder` - the builder function with signature f(node) -> view || Promise<view>
-  * `input` - `true` if the builder expects the node to contain an `input` specification
+  * `condition` -  a function that accepts a Lynx node param and returns `true` if the builder will build a view for the node or `false` if the builder will not
 
 `building.registrations` returns the registrations added via `building.register`
 

@@ -22,10 +22,7 @@ export function nodeViewBuilder(node) {
 
   if (node.spec.input && node.spec.input === true) node.spec.input = node.spec.name;
 
-  var input = !!node.spec.input;
-  var hints = node.spec.hints;
-  var builder = resolver.resolveViewBuilder(building.registrations, hints, input);
-
+  var builder = resolver.resolveViewBuilder(building.registrations, node);
   if (!builder) builder = didNotUnderstandNodeViewBuilder;
 
   return new Promise(function (resolve, reject) {
@@ -40,7 +37,7 @@ export function nodeViewBuilder(node) {
     addVisibilityExtensionsToView(view, node.spec.visibility);
     if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
-    if (input) view.setAttribute("data-lynx-input", node.spec.input);
+    if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) addSubmitterExtensionsToView(view, node.spec.submitter);
     if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation || {});

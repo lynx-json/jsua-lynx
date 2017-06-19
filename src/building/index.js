@@ -4,13 +4,13 @@ import * as util from "../util";
 
 export var registrations = [];
 
-export function register(hint, builder, input) {
+export function register(hint, builder, condition) {
   if (!hint) throw new Error("'hint' param is required.");
   if (!builder) throw new Error("'builder' param is required.");
-  input = input || false;
+  if (condition && typeof condition !== "function") throw new Error("'condition' param must be a function.");
 
-  var newRegistration = { hint, builder, input };
-  var oldRegistration = registrations.find(registration => registration.hint === hint && registration.input === input);
+  var newRegistration = { hint, builder, condition };
+  var oldRegistration = registrations.find(registration => registration.hint === hint && registration.condition === condition);
 
   if (oldRegistration) {
     let index = registrations.indexOf(oldRegistration);
