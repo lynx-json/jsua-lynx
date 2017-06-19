@@ -1,6 +1,6 @@
 {
   "name": "@lynx-json/jsua-lynx",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "JSUA extensions for the Lynx media type.",
   "main": "dist/index.js",
   "directories": {
