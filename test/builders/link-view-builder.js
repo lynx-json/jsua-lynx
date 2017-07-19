@@ -7,6 +7,13 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
+describe("builders / linkViewBuilder / createDataUri", function () {
+  it("should create data URI for link with utf-8 'data'");
+  it("should create data URI for link with base64 'data'");
+  it("should create data URI for link with JSON object 'data'");
+  it("should create data URI for link with JSON array 'data'");
+});
+
 describe("builders / linkViewBuilder", function () {
   var node, buildChildViewsStub;
   
@@ -60,6 +67,8 @@ describe("builders / linkViewBuilder", function () {
       view.href.should.equal("http://example.com/foo");
     });
   });
+  
+  it("should call createDataUri when 'data' property present");
   
   describe("when clicked", function () {
     var fetchStub;
