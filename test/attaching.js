@@ -52,12 +52,14 @@ describe("attaching / scopeRealmAttacher", function () {
     expect(args[1]).to.equal(result.content.blob);
   });
 
-  it("should discard out of context views", function () {
+  it("should discard out of context views when context view is not found", function () {
     isOutOfContextStub.returns(true);
     var attachment = attaching.scopeRealmAttacher(result);
     expect(attachment).to.not.equal(null);
     expect(attachment.discard).to.equal(true);
   });
+  
+  it("should discard out of context views when context view is found and detached");
 
   it("should discard stale content views", function () {
     let startedAt = new Date().valueOf();

@@ -84,8 +84,17 @@ export function isOutOfContext(origin, context) {
     return util.scopeIncludesRealm(context, url) ||
       util.scopeIncludesRealm(context, realm);
   });
+  
+  if (!contextView) return true;
+  if (exports.isDetached(contextView)) return true;
+  
+  return false;
+}
 
-  return !contextView;
+export function isDetached(view) {
+  var positionMask = document.body.compareDocumentPosition(view);
+  var disconnected = positionMask & Node.DOCUMENT_POSITION_DISCONNECTED;
+  return disconnected === Node.DOCUMENT_POSITION_DISCONNECTED;
 }
 
 export function findNearestScopedContentView(origin, realm) {
