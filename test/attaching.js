@@ -6,6 +6,13 @@ var should = chai.should();
 var expect = chai.expect;
 var sinon = require("sinon");
 
+describe("attaching / isOutOfContext", function () {
+  it("should return false when a view has no context");
+  it("should return false when a view has context and a context view is found");
+  it("should return true when a view has context and a context view is not found because of realm/url mismatch");
+  it("should return true when a view has context and a context view is not found because of detachment");
+});
+
 describe("attaching / scopeRealmAttacher", function () {
   var result, getOriginStub, isOutOfContextStub, nearestContentView, findNearestScopedContentViewStub;
 
@@ -52,14 +59,12 @@ describe("attaching / scopeRealmAttacher", function () {
     expect(args[1]).to.equal(result.content.blob);
   });
 
-  it("should discard out of context views when context view is not found", function () {
+  it("should discard out of context views", function () {
     isOutOfContextStub.returns(true);
     var attachment = attaching.scopeRealmAttacher(result);
     expect(attachment).to.not.equal(null);
     expect(attachment.discard).to.equal(true);
   });
-  
-  it("should discard out of context views when context view is found and detached");
 
   it("should discard stale content views", function () {
     let startedAt = new Date().valueOf();
@@ -95,6 +100,8 @@ describe("attaching / createRootAttacher", function () {
     var detachedViews = attachment.attach();
     expect(result.view.parentElement).to.equal(rootView);
   });
+  
+  it("should discard views that require context");
 });
 
 describe("attaching / setFocusedView", function () {

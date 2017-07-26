@@ -39,6 +39,7 @@ export function createRootAttacher(rootView) {
     if (!rootView) return;
 
     if (resultIsStale(result, rootView.firstElementChild)) return { discard: true };
+    if (result.view.getAttribute("data-lynx-context")) return { discard: true };
 
     function attachViewToRoot() {
       var detachedViews = [];
@@ -79,14 +80,16 @@ export function isOutOfContext(origin, context) {
   if (!context) return false;
 
   var contextView = util.findNearestView(origin, "[data-content-url],[data-lynx-realm]", function (matching) {
+    if (exports.isDetached(matching)) return false;
+    
     var url = matching.getAttribute("data-content-url");
     var realm = matching.getAttribute("data-lynx-realm");
+    
     return util.scopeIncludesRealm(context, url) ||
       util.scopeIncludesRealm(context, realm);
   });
   
   if (!contextView) return true;
-  if (exports.isDetached(contextView)) return true;
   
   return false;
 }
