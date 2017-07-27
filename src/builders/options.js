@@ -6,26 +6,37 @@ export function addOptionsExtensionsToView(inputView, spec) {
   inputView.setAttribute("data-lynx-options-name", spec.options);
   
   inputView.lynxConnectOptions = function () {
-    var nearestOptionsView = util.findNearestView(inputView, "[data-lynx-name='" + spec.options + "']");
+    if (optionsView) return;
     
-    if (optionsView) inputView.lynxDisconnectOptions();
+    var nearestOptionsView = util.findNearestView(inputView, "[data-lynx-name='" + spec.options + "']");
     if (!nearestOptionsView) return;
     
+    optionsView = nearestOptionsView;
+    inputView.setAttribute("data-lynx-options-connected", true);
+    
     var optionValueHint = isContainerInput ? spec.children.hints[0] : spec.hints[0];
-    var optionValueViews = nearestOptionsView.querySelectorAll("[data-lynx-hints~='" + optionValueHint + "']");
     
-    exports.initializeOptionsInterface(nearestOptionsView, inputView, isContainerInput);    
+    function findAndInitializeOptionViews(originView, shouldRaiseOptionAddedEvent) {
+      var optionValueViews = originView.querySelectorAll("[data-lynx-hints~='" + optionValueHint + "']");
+      
+      Array.from(optionValueViews).forEach(optionValueView => {
+        var optionView = exports.findOptionView(optionsView, optionValueView);
+        if (!optionView) return;
+        exports.initializeOptionInterface(optionsView, optionView, optionValueView, inputView);
+        if (shouldRaiseOptionAddedEvent) exports.raiseOptionAttachedEvent(optionView);
+      });
+    }
     
-    Array.from(optionValueViews).forEach(optionValueView => {
-      var optionView = exports.findOptionView(nearestOptionsView, optionValueView);
-      if (!optionView) return;
-      exports.initializeOptionInterface(nearestOptionsView, optionView, optionValueView, inputView);
-    });
+    exports.initializeOptionsInterface(optionsView, inputView, isContainerInput);
+    findAndInitializeOptionViews(optionsView);
     
     function onInputViewDetach(evt) {
-      if (evt.target === inputView) {
-        inputView.lynxDisconnectOptions();
-      }
+      if (evt.target !== inputView) return;
+      inputView.lynxDisconnectOptions();
+    }
+    
+    function onOptionsViewAttach(evt) {
+      findAndInitializeOptionViews(evt.target, true);
     }
     
     inputView.lynxDisconnectOptions = function () {
@@ -33,18 +44,18 @@ export function addOptionsExtensionsToView(inputView, spec) {
       delete inputView.lynxGetOptionsView;
       if (!optionsView) return;
       optionsView.lynxDisconnectOptions();
+      optionsView.removeEventListener("jsua-attach", onOptionsViewAttach);
       optionsView = null;
     };
     
     inputView.addEventListener("jsua-detach", onInputViewDetach);
-    
-    optionsView = nearestOptionsView;
+    optionsView.addEventListener("jsua-attach", onOptionsViewAttach);
     
     inputView.lynxGetOptionsView = function () {
       return optionsView;
     };
     
-    exports.raiseOptionsConnectedEvent(nearestOptionsView);
+    exports.raiseOptionsConnectedEvent(optionsView);
   };
 }
 
@@ -168,16 +179,22 @@ export function raiseOptionSelectedChangeEvent(optionView) {
 }
 
 export function raiseOptionsConnectedEvent(optionsView) {
-  var changeEvent = document.createEvent("Event");
-  changeEvent.initEvent("lynx-options-connected", true, false);
-  optionsView.dispatchEvent(changeEvent);
+  var connectedEvent = document.createEvent("Event");
+  connectedEvent.initEvent("lynx-options-connected", true, false);
+  optionsView.dispatchEvent(connectedEvent);
 }
 
 export function raiseOptionsDisonnectedEvent(optionsView, optionViews) {
-  var changeEvent = document.createEvent("Event");
-  changeEvent.initEvent("lynx-options-disconnected", true, false);
-  changeEvent.lynxOptions = optionViews;
-  optionsView.dispatchEvent(changeEvent);
+  var disconnectedEvent = document.createEvent("Event");
+  disconnectedEvent.initEvent("lynx-options-disconnected", true, false);
+  disconnectedEvent.lynxOptions = optionViews;
+  optionsView.dispatchEvent(disconnectedEvent);
+}
+
+export function raiseOptionAttachedEvent(optionView) {
+  var attached = document.createEvent("Event");
+  attached.initEvent("lynx-option-attached", true, false);
+  optionView.dispatchEvent(attached);
 }
 
 export function findOptionView(optionsView, optionValueView) {

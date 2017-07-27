@@ -54,6 +54,7 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-validation-state` - the current validation state of the view
 * `data-lynx-visibility-conceal` - the control used to toggle a view's `data-lynx-visibility` between `revealed` and `concealed`
 * `data-lynx-options-name` - the node's `options` property value (input nodes)
+* `data-lynx-options-connected` - the input view is connected to its source of options (input nodes)
 * `data-lynx-options-role=options` - the view is a source of options for an input view
 * `data-lynx-option-selected` - the current option selected state of the view
 * `data-lynx-var-*` - lynx data (unspecified) properties are added with this namespace
@@ -97,6 +98,7 @@ A view representing a node of a Lynx JSON document may emit the following events
   - `changes` - an array of references to the validation constraints that have changed state
 * `lynx-options-connected` - emitted when a view that provides options to an input view is connected to the input view
 * `lynx-options-disconnected` - emitted when a view that provides options to an input view is disconnected from the input view
+* `lynx-option-attached` - emitted when an option view has been added to an options view
 * `lynx-option-selected` - emitted when a view that provides a value to an input view is selected
 * `lynx-option-deselected` - emitted when a view that provides a value to an input view is deselected
 * `lynx-marker-here` - emitted when a marker view determines the current view contains the content it marks
