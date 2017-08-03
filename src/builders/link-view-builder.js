@@ -48,7 +48,7 @@ export function linkViewBuilder(node) {
   if (followTimeout) {
     view.addEventListener("jsua-attach", function () {
       setTimeout(function () {
-        view.click();
+        fetch(view.href, { origin: view, automatic: true });
       }, followTimeout);
     });
   }
