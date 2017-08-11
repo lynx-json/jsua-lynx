@@ -49,6 +49,7 @@ export function getHref(node) {
 
 export function linkViewBuilder(node) {
   var view = document.createElement("a");
+  var followTimerId;
   
   view.href = getHref(node);
   if (node.value.type) view.type = node.value.type;
@@ -69,7 +70,7 @@ export function linkViewBuilder(node) {
   
   if (followTimeout) {
     view.addEventListener("jsua-attach", function () {
-      setTimeout(function () {
+      followTimerId = setTimeout(function () {
         fetch(view.href, getOptions(true));
       }, followTimeout);
     });
@@ -78,6 +79,7 @@ export function linkViewBuilder(node) {
   view.addEventListener("click", function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
+    if (followTimerId) clearTimeout(followTimerId);
     fetch(view.href, getOptions());
   });
   
