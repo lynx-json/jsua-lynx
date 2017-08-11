@@ -6,7 +6,6 @@ export function createDataUri(link) {
   var contentType = link.type;
   var encoding = link.encoding || "utf-8";
   
-  if (!contentType) throw new Error("A link with a 'data' property must have a valid 'type' property.");
   if (encoding !== "utf-8" && encoding !== "base64") throw new Error("The 'encoding' property value for a link must be 'utf-8' or 'base64'.");
   
   var dataUri = "data:" + contentType;
@@ -17,9 +16,7 @@ export function createDataUri(link) {
     dataUri += ",";
   }
   
-  var isJSON = /\/json|\+json/;
-  
-  if (encoding === "utf-8" && isJSON.test(contentType)) {
+  if (encoding === "utf-8" && typeof link.data !== "string") {
     dataUri += JSON.stringify(link.data);
   } else {
     dataUri += link.data;
@@ -28,27 +25,52 @@ export function createDataUri(link) {
   return dataUri;
 }
 
+export function getHref(node) {
+  var link = node.value;
+  
+  if ("data" in link) {
+    // data
+    if (!link.type) throw new Error("A link with a 'data' property must have a valid 'type' property.");
+    
+    if (link.type.indexOf("application/lynx+json") > -1) {
+      return "lynx:?ts=" + new Date().valueOf();
+    } else {
+      return exports.createDataUri(link);
+    }
+  } else {
+    // href
+    if (node.base) {
+      return url.resolve(node.base, link.href);
+    } else {
+      return link.href;
+    }
+  }
+}
+
 export function linkViewBuilder(node) {
   var view = document.createElement("a");
   
-  if (node.value.data) {
-    node.value.href = exports.createDataUri(node.value);
-  }
-  
-  if (node.base) {
-    view.href = url.resolve(node.base, node.value.href);  
-  } else {
-    view.href = node.value.href;
-  }
-  
-  view.type = node.value.type;
+  view.href = getHref(node);
+  if (node.value.type) view.type = node.value.type;
   
   var followTimeout = tryGetFollowTimeout(node);
+  
+  function getOptions(automatic) {
+    var options = { origin: view };
+    
+    if (automatic) options.automatic = true;
+    
+    if (view.protocol === "lynx:") {
+      options.document = node.value.data;
+    }
+    
+    return options;
+  }
   
   if (followTimeout) {
     view.addEventListener("jsua-attach", function () {
       setTimeout(function () {
-        fetch(view.href, { origin: view, automatic: true });
+        fetch(view.href, getOptions(true));
       }, followTimeout);
     });
   }
@@ -56,7 +78,7 @@ export function linkViewBuilder(node) {
   view.addEventListener("click", function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    fetch(view.href, { origin: view });
+    fetch(view.href, getOptions());
   });
   
   return containers.buildChildViews(node)

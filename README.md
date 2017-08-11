@@ -2,9 +2,8 @@
 Extensions to the `jsua` package for the Lynx JSON media type.
 
 `building.build` accepts `content` and then:
-  * parses it as Lynx JSON
-  * creates a `result` object `{ content, node }`
-  * passes the `result` object to `builders.nodeViewBuilder`
+  * parses `content.blob` as Lynx JSON and assigns it to the `content.document` property
+  * passes the `content` object to `building.documentViewBuilder`
 
 `builders.nodeViewBuilder` accepts `result` and then:
   * finds (see `building.register`) the builder that matches the most specific hint

@@ -4,10 +4,8 @@ export function getBlob(node) {
   var data = node.value.data || "";
   
   if (typeof data === "object") {
-    if (node.value.type.indexOf("application/lynx+json") > -1) {
-      data.base = data.base || node.base;
-    }
-    
+    // JSON was parsed by Lynx JSON parser
+    // convert it back to a string
     data = JSON.stringify(data);
   }
   
@@ -21,6 +19,23 @@ export function getPromiseForRequest(node) {
   if (node.value.src) {
     var src = url.resolve(node.base || "", node.value.src);
     return Promise.resolve({ url: src });
+  }
+  
+  if (node.value.data && typeof node.value.data === "object") {
+    if (node.value.type && node.value.type.indexOf("application/lynx+json") > -1) {
+      // this Lynx JSON has already been parsed
+      // we can optimize (do not serialize or parse again) 
+      // its transferring and building by using the "lynx" protocol
+      
+      var request = {
+        url: "lynx:?ts=" + new Date().valueOf(),
+        options: {
+          document: node.value.data
+        }
+      };
+      
+      return Promise.resolve(request);
+    }
   }
   
   return new Promise(function (resolve) {
