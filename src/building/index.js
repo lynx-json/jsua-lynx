@@ -32,22 +32,30 @@ export function build(content) {
       if (evt.target === undefined) reject(new Error("'evt' object must have a 'target' property."));
       if (evt.target.result === undefined) reject(new Error("'evt.target' object must have a 'result' property."));
 
-      var doc;
       LYNX.parse(evt.target.result, { location: content.url, resolveSpecURL: util.resolveSpecFromUrl })
-        .then(node => doc = node)
-        .then(builders.nodeViewBuilder)
-        .then(view => {
-          if (content.options && content.options.startedAt) view.setAttribute("data-transfer-started-at", content.options.startedAt.valueOf());
-          view.setAttribute("data-content-url", content.url);
-          view.setAttribute("data-content-type", content.blob.type);
-          if (doc.realm) view.setAttribute("data-lynx-realm", doc.realm);
-          if (doc.context) view.setAttribute("data-lynx-context", doc.context);
-          if (doc.focus) view.setAttribute("data-lynx-focus", doc.focus);
-          return view;
+        .then(function (document) {
+          content.options = content.options || {};
+          content.options.document = document;
+          return content;
         })
+        .then(exports.documentViewBuilder)
         .then(resolve, reject);
     };
 
     fileReader.readAsText(content.blob);
+  });
+}
+
+export function documentViewBuilder(content) {
+  return Promise.resolve(content.options.document)
+  .then(builders.nodeViewBuilder)
+  .then(view => {
+    if (content.options.startedAt) view.setAttribute("data-transfer-started-at", content.options.startedAt.valueOf());
+    if (content.url) view.setAttribute("data-content-url", content.url);
+    if (content.blob && content.blob.type) view.setAttribute("data-content-type", content.blob.type);
+    if (content.options.document.realm) view.setAttribute("data-lynx-realm", content.options.document.realm);
+    if (content.options.document.context) view.setAttribute("data-lynx-context", content.options.document.context);
+    if (content.options.document.focus) view.setAttribute("data-lynx-focus", content.options.document.focus);
+    return view;
   });
 }
