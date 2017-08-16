@@ -1,13 +1,17 @@
 import url from "url";
 import * as jsua from "@lynx-json/jsua";
 
-export function resolveSpecFromUrl(specUrl) {  
+export function resolveSpecFromUrl(specUrl) {
   return new Promise(function (resolve, reject) {
     jsua.transferring.transfer({ url: specUrl })
       .then(function (content) {
         let reader = new FileReader();
         reader.addEventListener("loadend", function () {
-          resolve(JSON.parse(reader.result));
+          try {
+            resolve(JSON.parse(reader.result));
+          } catch (err) {
+            reject(err);
+          }
         });
         reader.readAsText(content.blob);
       })
