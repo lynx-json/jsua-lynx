@@ -81,16 +81,16 @@ export function isOutOfContext(origin, context) {
 
   var contextView = util.findNearestView(origin, "[data-content-url],[data-lynx-realm]", function (matching) {
     if (exports.isDetached(matching)) return false;
-    
+
     var url = matching.getAttribute("data-content-url");
     var realm = matching.getAttribute("data-lynx-realm");
-    
+
     return util.scopeIncludesRealm(context, url) ||
       util.scopeIncludesRealm(context, realm);
   });
-  
+
   if (!contextView) return true;
-  
+
   return false;
 }
 
@@ -116,7 +116,12 @@ export function setFocusedView(view) {
   }
 
   if (!focusedViewName && view.hasAttribute("data-lynx-focus")) focusedViewName = view.getAttribute("data-lynx-focus");
-  if (!focusedViewName) return;
+
+  if (!focusedViewName) {
+    var subview = view.querySelector("[data-lynx-focus]");
+    if (!subview) return;
+    focusedViewName = subview.getAttribute("data-lynx-focus");
+  }
 
   var focusedView = util.findNearestView(view, "[data-lynx-name='" + focusedViewName + "']");
   if (!focusedView) return;
