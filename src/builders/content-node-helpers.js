@@ -18,7 +18,11 @@ export function getBlob(node) {
 export function getPromiseForRequest(node) {
   if (node.value.src) {
     var src = url.resolve(node.base || "", node.value.src);
-    return Promise.resolve({ url: src });
+    
+    let request = { url: src };
+    if (node.value.type) request.options = { type: node.value.type };
+    
+    return Promise.resolve(request);
   }
   
   if (node.value.data && typeof node.value.data === "object") {
@@ -27,10 +31,11 @@ export function getPromiseForRequest(node) {
       // we can optimize (do not serialize or parse again) 
       // its transferring and building by using the "lynx" protocol
       
-      var request = {
+      let request = {
         url: "lynx:?ts=" + new Date().valueOf(),
         options: {
-          document: node.value.data
+          document: node.value.data,
+          type: node.value.type
         }
       };
       
@@ -38,12 +43,23 @@ export function getPromiseForRequest(node) {
     }
   }
   
-  return new Promise(function (resolve) {
+  return new Promise(function (resolve, reject) {
     var blob = getBlob(node);
     var fileReader = new FileReader();
     
     fileReader.onloadend = function (evt) {
-      resolve({ url: evt.target.result });
+      var request = { 
+        url: evt.target.result, 
+        options: { 
+          type: node.value.type 
+        } 
+      };
+      
+      resolve(request);
+    };
+    
+    fileReader.onerror = function (evt) {
+      reject(evt.target.error);
     };
     
     fileReader.readAsDataURL(blob);

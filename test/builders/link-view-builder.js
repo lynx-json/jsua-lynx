@@ -81,32 +81,38 @@ describe("builders / linkViewBuilder", function () {
       fetchStub.restore();
     });
     
-    it("should click link when value has 'follow' property", function () {
+    it("should fetch when value has 'follow' property", function () {
       node.value.follow = 0;
       
       return new Promise(function (resolve) {
-        links.linkViewBuilder(node).then(function (view) {
-          view.addEventListener("click", function () {
-            expect(fetchStub.calledOnce).to.equal(true);
-            resolve();
-          });
-          
+        links.linkViewBuilder(node).then(function (view) {          
           view.dispatchEvent(new CustomEvent("jsua-attach"));
+          
+          setTimeout(function () {
+            if (fetchStub.calledOnce) {
+              resolve();
+            } else {
+              reject(new Error("fetch was not called"));
+            }
+          }, 20);
         });
       });
     });
     
-    it("should click link when spec has 'follow' property", function () {
+    it("should fetch when spec has 'follow' property", function () {
       node.spec.follow = 0;
       
-      return new Promise(function (resolve) {
+      return new Promise(function (resolve, reject) {
         links.linkViewBuilder(node).then(function (view) {
-          view.addEventListener("click", function () {
-            expect(fetchStub.calledOnce).to.equal(true);
-            resolve();
-          });
-          
           view.dispatchEvent(new CustomEvent("jsua-attach"));
+          
+          setTimeout(function () {
+            if (fetchStub.calledOnce) {
+              resolve();
+            } else {
+              reject(new Error("fetch was not called"));
+            }
+          }, 20);
         });
       });
     });
