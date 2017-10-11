@@ -15,8 +15,10 @@ export function submitViewBuilder(node) {
   if (node.value.method) view.formMethod = node.value.method;
   if (node.value.enctype) view.formEnctype = node.value.enctype;
     
-  if ("change" === node.value.send || "change" === node.spec.send) {
-    addSendOnChangeExtensionToView(view);
+  var sendDirective = getSendDirective(node);
+  if (sendDirective) {
+    view.setAttribute("data-lynx-send", sendDirective);
+    addSendExtensionToView(view);
   }
   
   view.addEventListener("click", function (evt) {
@@ -57,20 +59,31 @@ export function submitViewBuilder(node) {
     });
 }
 
-function addSendOnChangeExtensionToView(view) {
+function getSendDirective(node) {
+  if (node.value.send === "change" || node.spec.send === "change") return "change";
+  if (node.value.send === "ready") return "ready";
+}
+
+function addSendExtensionToView(view) {
   view.addEventListener("jsua-attach", function () {
+    var sendDirective = view.getAttribute("data-lynx-send");
     var formView = util.findNearestAncestorView(view, "[data-lynx-hints~=form]");
-    if (!formView) return;
     
     function autoSubmitFormIfValid() {
-      if (formView.lynxGetValidationState() === "invalid") return;
+      if (formView && formView.lynxGetValidationState() === "invalid") return;
       view.click();
     }
     
-    formView.addEventListener("lynx-validated", autoSubmitFormIfValid);
-    
-    view.addEventListener("jsua-detach", function () {
-      formView.removeEventListener("lynx-validated", autoSubmitFormIfValid);
-    });
+    if (sendDirective === "ready") {
+      setTimeout(function () {
+        view.click();
+      }, 10);
+    } else if (sendDirective === "change") {
+      formView.addEventListener("lynx-validated", autoSubmitFormIfValid);
+      
+      view.addEventListener("jsua-detach", function () {
+        formView.removeEventListener("lynx-validated", autoSubmitFormIfValid);
+      });
+    }
   });
 }
