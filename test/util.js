@@ -36,13 +36,13 @@ describe("util / buildFormData", function () {
   });
 
   it("should return URLSearchParams instance for URL encoding", function () {
-    submitView.formEnctype = "application/x-www-form-urlencoded";
+    submitView.setAttribute("data-lynx-submit-enctype", "application/x-www-form-urlencoded");
     var formData = util.buildFormData(submitView);
     expect(formData instanceof URLSearchParams).to.equal(true);
   });
 
   it("should return FormData instance for multipart encoding", function () {
-    submitView.formEnctype = "multipart/form-data";
+    submitView.setAttribute("data-lynx-submit-enctype", "multipart/form-data");
     var formData = util.buildFormData(submitView);
     expect(formData instanceof FormData).to.equal(true);
   });
