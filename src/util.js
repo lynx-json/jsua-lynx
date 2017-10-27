@@ -58,7 +58,7 @@ export function buildFormData(submitView) {
 
   var formData;
 
-  if (submitView.formEnctype === "multipart/form-data") {
+  if (submitView.getAttribute("data-lynx-submit-enctype") === "multipart/form-data") {
     formData = new FormData();
   } else {
     formData = new URLSearchParams();

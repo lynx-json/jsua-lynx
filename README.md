@@ -39,8 +39,8 @@ A view representing a node of a Lynx JSON document may have the following attrib
 * `data-lynx-input` - the node's input name for form data submission
 * `data-lynx-submitter` - the node's `submitter` property value (`form` and input nodes)
 * `formaction` - the node's `action` property value (`submit` nodes)
-* `formmethod` - the node's `method` property value (`submit` nodes)
-* `formenctype` - the node's `enctype` property value (`submit` nodes)
+* `data-lynx-submit-method` - the node's `method` property value (`submit` nodes)
+* `data-lynx-submit-enctype` - the node's `enctype` property value (`submit` nodes)
 * `data-lynx-send` - the node's `send` property value (`submit` nodes)
 * `data-lynx-embedded-view` - the view for the node's `src` or `data` property value (`content` nodes)
 * `alt` - the node's `alt` property value (`content` nodes)

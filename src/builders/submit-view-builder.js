@@ -5,33 +5,33 @@ import { fetch } from "@lynx-json/jsua";
 
 export function submitViewBuilder(node) {
   var view = document.createElement("button");
-  
+
   if (node.base) {
-    view.formAction = url.resolve(node.base, node.value.action);  
+    view.formAction = url.resolve(node.base, node.value.action);
   } else {
     view.formAction = node.value.action;
   }
-  
-  if (node.value.method) view.formMethod = node.value.method;
-  if (node.value.enctype) view.formEnctype = node.value.enctype;
-    
+
+  if (node.value.method) view.setAttribute("data-lynx-submit-method", node.value.method);
+  if (node.value.enctype) view.setAttribute("data-lynx-submit-enctype", node.value.enctype);
+
   var sendDirective = getSendDirective(node);
   if (sendDirective) {
     view.setAttribute("data-lynx-send", sendDirective);
     addSendExtensionToView(view);
   }
-  
+
   view.addEventListener("click", function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    
+
     var formAction = view.formAction;
-    var formMethod = view.formMethod && view.formMethod.toUpperCase() || "GET";
+    var formMethod = view.getAttribute("data-lynx-submit-method") && view.getAttribute("data-lynx-submit-method").toUpperCase() || "GET";
     var options = {
       method: formMethod,
       origin: view
     };
-    
+
     var formData = util.buildFormData(view);
 
     if (formData) {
@@ -46,15 +46,15 @@ export function submitViewBuilder(node) {
 
     fetch(formAction, options);
   });
-  
+
   return containers.buildChildViews(node)
     .then(function (childViews) {
       childViews.forEach(childView => view.appendChild(childView));
-      
+
       if (view.children.length === 0) {
         view.textContent = "Submit";
       }
-      
+
       return view;
     });
 }
@@ -68,19 +68,18 @@ function addSendExtensionToView(view) {
   view.addEventListener("jsua-attach", function () {
     var sendDirective = view.getAttribute("data-lynx-send");
     var formView = util.findNearestAncestorView(view, "[data-lynx-hints~=form]");
-    
+
     function autoSubmitFormIfValid() {
       if (formView && formView.lynxGetValidationState() === "invalid") return;
       view.click();
     }
-    
     if (sendDirective === "ready") {
       setTimeout(function () {
         view.click();
       }, 10);
     } else if (sendDirective === "change") {
       formView.addEventListener("lynx-validated", autoSubmitFormIfValid);
-      
+
       view.addEventListener("jsua-detach", function () {
         formView.removeEventListener("lynx-validated", autoSubmitFormIfValid);
       });
