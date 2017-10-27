@@ -157,7 +157,7 @@ describe("builders / submitViewBuilder", function () {
       });
     });
 
-    it("should click submit when spec has 'send' property", function () {
+    it("should click submit when node spec has 'send=change' property", function () {
       node.spec.send = "change";
       var formView = document.createElement("form");
       formView.lynxGetValidationState = function () {
@@ -179,5 +179,8 @@ describe("builders / submitViewBuilder", function () {
         });
       });
     });
+
+    it("should click submit when node value has 'send=change' property");
+    it("should click submit when node value has 'send=ready' property");
   });
 });
