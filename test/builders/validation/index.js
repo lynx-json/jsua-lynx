@@ -242,25 +242,6 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
 });
 
 describe("validation / addValidationExtensionsToView", function () {
-  it("should add 'data-lynx-validation-required' to view if validation.required exists", function () {
-    var view = {},
-      validationObj = { required: { invalid: "invalidMessage" } };
-    view.setAttribute = function (name, value) {
-      view[name] = value;
-    };
-
-    view.matches = function () { return true; };
-    var stubs = [
-      sinon.stub(validation, "normalizeValidationConstraintSetObject"),
-      sinon.stub(validation, "addValidationExtensionsToInputView")
-    ];
-
-    validation.addValidationExtensionsToView(view, validationObj);
-    stubs.forEach(stub => stub.restore());
-
-    expect(view["data-lynx-validation-required"]).to.equal(true);
-  });
-
   it("should call the appropriate funcs for input views", function () {
     var view = {},
       validationObj = {};

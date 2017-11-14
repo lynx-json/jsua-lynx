@@ -24,8 +24,6 @@ export function updateContentTargetVisibility(origin, constraint) {
 export function addValidationExtensionsToView(view, validation) {
   exports.normalizeValidationConstraintSetObject(validation);
 
-  if (validation.required) view.setAttribute("data-lynx-validation-required", true);
-
   if (view.matches("[data-lynx-input]")) {
     exports.addValidationExtensionsToInputView(view, validation);
   } else {
