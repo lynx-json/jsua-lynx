@@ -74,6 +74,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxRemoveValue` - removes a value from a container input view
 * `lynxValidateValue` - if the view can be validated, performs the validation
 * `lynxGetValidationState` - if the view can be validated, gets the validation state of the view
+* `lynxGetValidationConstraintSetObject` - gets the normalized validation constraint set of a view
 * `lynxGetConcealView` - gets the view that represents the conceal action of a view
 * `lynxSetConcealView` - sets the view that represents the conceal action of a view
 * `lynxGetRevealView` - gets the view that represents the reveal action of a view
