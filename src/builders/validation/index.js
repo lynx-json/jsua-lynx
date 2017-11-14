@@ -24,8 +24,6 @@ export function updateContentTargetVisibility(origin, constraint) {
 export function addValidationExtensionsToView(view, validation) {
   exports.normalizeValidationConstraintSetObject(validation);
 
-  if (validation.required) view.setAttribute("data-lynx-validation-required", true);
-
   if (view.matches("[data-lynx-input]")) {
     exports.addValidationExtensionsToInputView(view, validation);
   } else {
@@ -99,6 +97,10 @@ export function addValidationExtensionsToInputView(view, validation) {
 
   view.lynxGetValidationState = function () {
     return view.getAttribute("data-lynx-validation-state");
+  };
+
+  view.lynxGetValidationConstraintSetObject = function () {
+    return validation;
   };
 
   view.lynxValidateValue = function () {
