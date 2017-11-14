@@ -101,6 +101,10 @@ export function addValidationExtensionsToInputView(view, validation) {
     return view.getAttribute("data-lynx-validation-state");
   };
 
+  view.lynxGetValidationConstraintSetObject = function () {
+    return validation;
+  };
+
   view.lynxValidateValue = function () {
     var value = view.lynxGetValue();
     exports.validateValue(validation, value);

@@ -325,6 +325,11 @@ describe("validation / addValidationExtensionsToInputView", function () {
     view.getAttribute("data-lynx-validation-state").should.equal("invalid");
   });
 
+  it("should allow access to validation contstraint set object", function () {
+    validation.addValidationExtensionsToInputView(view, validationObj);
+    view.lynxGetValidationConstraintSetObject().should.equal(validationObj);
+  });
+
   it("should set 'data-lynx-validation-state' attribute and raise event when validity state changes", function () {
     validation.addValidationExtensionsToInputView(view, validationObj);
     var changeListener = view.addEventListener.getCall(0).args[1];
