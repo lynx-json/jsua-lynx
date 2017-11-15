@@ -1,3 +1,11 @@
+const decimalPattern = /\.(\d*)$/;
+
+function getDecimalPlaces(value) {
+  let result = decimalPattern.exec(value);
+  if (!result || !result[1]) return 0;
+  return result[1].length;
+}
+
 export function noopValidator() {
   return "unknown";
 }
@@ -15,7 +23,7 @@ export function createRegExpForTextConstraintPattern(pattern) {
 
 export function textValidator(constraint, value) {
   var empty = (value === undefined || value === null || value === "");
-  
+
   if (empty) {
     return "valid";
   }
@@ -36,33 +44,36 @@ export function textValidator(constraint, value) {
       return "invalid";
     }
   }
-  
+
   return "valid";
 }
 
 export function numberValidator(constraint, value) {
   var empty = (value === undefined || value === null || value === "");
-  
+
   if (empty) {
     return "valid";
   }
 
-  if(isNaN(+value)){
+  if (isNaN(+value)) {
     return "invalid";
   }
 
-  if (constraint.min && (value < Number(constraint.min))) {
+  if (constraint.min && (+value < +constraint.min)) {
     return "invalid";
   }
 
-  if (constraint.max && (value > Number(constraint.max))) {
+  if (constraint.max && (+value > +constraint.max)) {
     return "invalid";
   }
 
-  if (constraint.step && (value % Number(constraint.step) !== 0)) {
-    return "invalid";
+  if (constraint.step) {
+    let stepDecimals = getDecimalPlaces(constraint.step);
+    let valueDecimals = getDecimalPlaces(value);
+    if (valueDecimals > stepDecimals) return "invalid";
+    if (+(+value % +constraint.step).toFixed(stepDecimals) !== 0) return "invalid";
   }
-  
+
   return "valid";
 }
 
@@ -76,26 +87,26 @@ export function typeMatchesTypeRange(actualType, expectedTypeRange) {
 
 export function contentValidator(constraint, value) {
   var empty = (value === null || value.length === 0);
-  
+
   if (empty) {
     return "valid";
   }
-  
+
   if (constraint.type) {
     var expectedTypeRanges = constraint.type;
-    
+
     if (!Array.isArray(expectedTypeRanges)) {
-      expectedTypeRanges = [ expectedTypeRanges ];
+      expectedTypeRanges = [expectedTypeRanges];
     }
-    
+
     var matchesTypeRange = typeMatchesTypeRange.bind(null, value.type);
-    
+
     if (!expectedTypeRanges.some(matchesTypeRange)) return "invalid";
   }
-  
+
   if (constraint.maxLength && value.length > constraint.maxLength) {
     return "invalid";
   }
-  
+
   return "valid";
 }
