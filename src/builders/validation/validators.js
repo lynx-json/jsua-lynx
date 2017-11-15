@@ -70,7 +70,7 @@ export function numberValidator(constraint, value) {
   if (constraint.step) {
     let decimals = Math.max(getDecimalPlaces(constraint.step), getDecimalPlaces(value));
     let multiplier = decimals === 0 ? 1 : +("1" + "0".repeat(decimals));
-    if (((+value * multiplier) % (+constraint.step * multiplier)) !== 0) return "invalid";
+    if ((+(+value * multiplier).toFixed(0) % +(+constraint.step * multiplier).toFixed(0)) !== 0) return "invalid";
   }
 
   return "valid";

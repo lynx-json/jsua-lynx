@@ -152,17 +152,30 @@ describe("validators / numberValidator", function () {
     validators.numberValidator(constraint, "15").should.equal("invalid");
   });
 
-  it("should return 'valid' when value is divisible by 'step' when accounting for significant digits", function () {
+  it("should return 'valid' when decimal value is divisible by 'step' when simple remainder would fail", function () {
     var constraint = { step: 0.01 };
     var value = "0.34";
-    (+value % constraint.step).should.not.equal(0);
+    (+value % constraint.step).should.not.equal(0); //To indicate that remainder won't suffice
     validators.numberValidator(constraint, value).should.equal("valid");
   });
 
-  it("should return 'invalid' when value has more decimals than 'step' ", function () {
+  it("should return 'valid' when decimal value is divisible by 'step' when multiplication and simple remainder would fail", function () {
+    var constraint = { step: 0.01 };
+    var value = "0.07";
+    ((+value * 100) % (constraint.step * 100)).should.not.equal(0); //To indicate that multiplication plus remainder won't suffice
+    validators.numberValidator(constraint, value).should.equal("valid");
+  });
+
+  it("should return 'invalid' when decimal value is not divisible by 'step'", function () {
     var constraint = { step: 0.01 };
     var value = "0.34001";
     validators.numberValidator(constraint, value).should.equal("invalid");
+  });
+
+  it("should return 'valid' when decimal value is divisible by 'step'", function () {
+    var constraint = { step: 0.01 };
+    var value = "0.34000";
+    validators.numberValidator(constraint, value).should.equal("valid");
   });
 });
 
