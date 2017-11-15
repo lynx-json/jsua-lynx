@@ -1,7 +1,7 @@
 const decimalPattern = /\.(\d*)$/;
 
 function getDecimalPlaces(value) {
-  let result = decimalPattern.exec(value);
+  let result = decimalPattern.exec(value.toString());
   if (!result || !result[1]) return 0;
   return result[1].length;
 }
@@ -68,10 +68,9 @@ export function numberValidator(constraint, value) {
   }
 
   if (constraint.step) {
-    let stepDecimals = getDecimalPlaces(constraint.step);
-    let valueDecimals = getDecimalPlaces(value);
-    if (valueDecimals > stepDecimals) return "invalid";
-    if (+(+value % +constraint.step).toFixed(stepDecimals) !== 0) return "invalid";
+    let decimals = Math.max(getDecimalPlaces(constraint.step), getDecimalPlaces(value));
+    let multiplier = decimals === 0 ? 1 : +("1" + "0".repeat(decimals));
+    if (((+value * multiplier) % (+constraint.step * multiplier)) !== 0) return "invalid";
   }
 
   return "valid";
