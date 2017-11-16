@@ -35,7 +35,12 @@ export function nodeViewBuilder(node) {
   }).then(function (view) {
     view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
     addVisibilityExtensionsToView(view, node.spec.visibility);
-    if (node.spec.name) view.setAttribute("data-lynx-name", node.spec.name);
+    
+    if (node.spec.name) {
+      view.setAttribute("data-lynx-name", node.spec.name);  
+      view.setAttribute("data-jsua-view-uri", url.resolve(node.base, "#" + node.spec.name));
+    }
+    
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
     if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
