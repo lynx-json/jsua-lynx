@@ -37,8 +37,11 @@ export function nodeViewBuilder(node) {
     addVisibilityExtensionsToView(view, node.spec.visibility);
     
     if (node.spec.name) {
-      view.setAttribute("data-lynx-name", node.spec.name);  
-      view.setAttribute("data-jsua-view-uri", url.resolve(node.base, "#" + node.spec.name));
+      view.setAttribute("data-lynx-name", node.spec.name);
+      var fragmentComponent = "#" + node.spec.name;
+      if (node.base) {
+        view.setAttribute("data-jsua-view-uri", url.resolve(node.base, fragmentComponent));
+      }
     }
     
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
