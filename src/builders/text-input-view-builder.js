@@ -30,7 +30,7 @@ export function textInputViewBuilder(node) {
   };
 
   view.lynxHasValue = function (val) {
-    return textView.value === val;
+    return Promise.resolve(textView.value === val);
   };
 
   view.lynxClearValue = function () {

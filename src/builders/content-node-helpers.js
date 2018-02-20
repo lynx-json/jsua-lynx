@@ -65,3 +65,53 @@ export function getPromiseForRequest(node) {
     fileReader.readAsDataURL(blob);
   });
 }
+
+export function areBlobsEqual(left, right) {
+  if (left && !right) return Promise.resolve(false);
+  if (!left && right) return Promise.resolve(false);
+  if (!left && !right) return Promise.resolve(true);
+  if (left.size !== right.size) return Promise.resolve(false);
+  
+  var mediaTypeExp = /^([^\/]*)\/([^;]*)(;|$)/;
+  var leftMediaType = mediaTypeExp.exec(left.type);
+  var rightMediaType = mediaTypeExp.exec(right.type);
+  var mediaTypesAreEqual = leftMediaType &&
+    rightMediaType &&
+    leftMediaType.length >= 3 &&
+    rightMediaType.length >= 3 &&
+    leftMediaType[1] === rightMediaType[1] &&
+    leftMediaType[2] === rightMediaType[2];
+  
+  if (!mediaTypesAreEqual) return Promise.resolve(true);
+  
+  return new Promise(function (resolve) {
+    var leftFileReader = new FileReader();
+    
+    leftFileReader.onload = function () {
+      var leftBytes = leftFileReader.result;
+      var rightFileReader = new FileReader();
+      
+      rightFileReader.onload = function () {
+        var rightBytes = rightFileReader.result;
+        
+        for (var i = 0; i < leftBytes.length; i++) {
+          if (leftBytes[i] !== rightBytes[i]) return resolve(false);
+        }
+        
+        resolve(true);
+      };
+      
+      rightFileReader.onerror = function () {
+        resolve(false);
+      };
+      
+      rightFileReader.readAsArrayBuffer(right);
+    };
+    
+    leftFileReader.onerror = function () {
+      resolve(false);
+    };
+    
+    leftFileReader.readAsArrayBuffer(left);
+  });  
+}

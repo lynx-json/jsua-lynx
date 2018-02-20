@@ -163,7 +163,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
   
   optionsView.lynxOptions.push(optionView);
   optionView.setAttribute("data-lynx-option-selected", false);
-  optionView.lynxSetSelected( inputView.lynxHasValue( optionView.lynxGetValue() ) );
+  inputView.lynxHasValue(optionView.lynxGetValue()).then(optionView.lynxSetSelected);
 }
 
 export function raiseOptionSelectedChangeEvent(optionView) {
