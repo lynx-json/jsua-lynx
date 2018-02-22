@@ -33,7 +33,7 @@ describe("builders / contentViewBuilder", function () {
       }
     };
 
-    transferStub.returns(Promise.resolve({}));
+    transferStub.returns(Promise.resolve({ blob: {} }));
 
     buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
 

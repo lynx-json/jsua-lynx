@@ -92,13 +92,9 @@ export function initializeOptionsInterface(optionsView, inputView, isContainerIn
   };
   
   function inputChanged() {
-    var values = inputView.lynxGetValue();
-    
-    if (!Array.isArray(values)) values = [values];
-    
     optionsView.lynxOptions.forEach(optionView => {
-      var selected = values.indexOf(optionView.lynxGetValue()) > -1;
-      optionView.lynxSetSelected(selected);
+      inputView.lynxHasValue(optionView.lynxGetValue())
+        .then(hasValue => optionView.lynxSetSelected(hasValue));
     });
   }
   
@@ -136,11 +132,7 @@ export function initializeOptionInterface(optionsView, optionView, optionValueVi
   }
   
   optionView.lynxToggleSelected = function () {
-    if (optionView.lynxGetSelected()) {
-      optionView.lynxSetSelected(false);
-    } else {
-      optionView.lynxSetSelected(true);
-    }
+    optionView.lynxSetSelected( !optionView.lynxGetSelected() );
   };
   
   function optionClicked(evt) {
