@@ -53,7 +53,6 @@ describe("builders / contentInputViewBuilder", function () {
 
       expect(view).to.not.be.null;
       expect(inputView).to.not.be.null;
-      expect(contentView).to.be.null;
       inputView.type.should.equal("file");
       inputView.name.should.equal(node.spec.input);
       expect(view.lynxGetValue()).to.not.be.ok;

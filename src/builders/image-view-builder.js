@@ -18,46 +18,23 @@ function applyImageAttributes(node) {
 }
 
 function buildAsEmbeddedImageTag(node) {
-  var view = document.createElement("div");
-  var embeddedView, value;
-
-  view.lynxGetValue = function () {
-    return value;
+  var emptyNode = {
+    base: node.base,
+    spec: { hints: [ "image", "content" ]},
+    value: null
   };
-
-  view.lynxGetEmbeddedView = function () {
-    return embeddedView;
-  };
-
-  view.lynxSetEmbeddedView = function (newView, newBlob) {
-    var detached = [];
-
-    if (embeddedView) {
-      detached.push(view.removeChild(embeddedView));
-    }
-
-    embeddedView = newView;
-    value = newBlob;
-
-    if (!embeddedView) return detached;
-
-    view.appendChild(embeddedView);
-    embeddedView.setAttribute("data-lynx-embedded-view", true);
-
-    if (node.value.alt) {
-      embeddedView.setAttribute("alt", node.value.alt);
-    }
-
-    return detached;
-  };
-
-  var imageView = document.createElement("img");
-  imageView.src = url.resolve(node.base || "", node.value.src);
-  imageView.setAttribute("data-content-url", imageView.src);
-  imageView.setAttribute("data-content-type", node.value.type);
-  view.lynxSetEmbeddedView(imageView, getBlob(node));
-
-  return Promise.resolve(view);
+  
+  if (node.value && node.value.alt) emptyNode.value = { alt: node.value.alt };
+  
+  return contentViewBuilder(emptyNode)
+    .then(function (view) {
+      var imageView = document.createElement("img");
+      imageView.src = url.resolve(node.base || "", node.value.src);
+      imageView.setAttribute("data-content-url", imageView.src);
+      imageView.setAttribute("data-content-type", node.value.type);
+      view.lynxSetEmbeddedView(imageView, new Blob([], { type: node.value.type }));
+      return view;
+    });
 }
 
 export function imageViewBuilder(node) {
