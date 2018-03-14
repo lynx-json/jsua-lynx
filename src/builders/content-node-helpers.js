@@ -29,7 +29,14 @@ export function getPromiseForContent(source, base) {
     var blob = new Blob([buf], { type: source.type });
     blob.name = "";
     
-    var content = { url: "", blob: blob };
+    var content = { 
+      url: "", 
+      blob: blob,
+      options: {
+        base: base
+      }
+    };
+    
     return Promise.resolve(content);
   }
   

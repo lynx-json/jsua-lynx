@@ -43,6 +43,12 @@ export function contentViewBuilder(node) {
           url: blob.name || "",
           blob: blob
         };
+        
+        if (blob.base) {
+          content.options = {
+            base: blob.base
+          };
+        }
 
         Promise.resolve(content)
           .then(building.build)
@@ -87,7 +93,12 @@ export function contentViewBuilder(node) {
     
     return getPromiseForContent(source, node.base)
       .then(function (content) {
-        if (content.blob) content.blob.name = content.url;
+        if (content.blob) {
+          content.blob.name = content.url;
+          if (content.options && content.options.base) {
+            content.blob.base = content.options.base;
+          }
+        }
         return view.lynxSetValue(content.blob);
       }).then(function () {
         return view;
