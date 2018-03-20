@@ -20,7 +20,7 @@ describe("builders / imageViewBuilder", function () {
 
   var buildStub, transferStub;
 
-  it("should return view for 'image' without 'src'", function () {
+  it("should return view for 'image' with 'data'", function () {
     var node = {
       base: "http://example.com",
       spec: {
@@ -36,8 +36,6 @@ describe("builders / imageViewBuilder", function () {
       }
     };
 
-    transferStub.returns(Promise.resolve({}));
-
     buildStub.returns(Promise.resolve({ view: document.createElement("div"), content: { blob: {} } }));
 
     return contents.imageViewBuilder(node).then(function (view) {
@@ -46,8 +44,7 @@ describe("builders / imageViewBuilder", function () {
       view.children.item(0).getAttribute("alt").should.equal(node.value.alt);
       view.children.item(0).getAttribute("data-lynx-height").should.equal(node.value.height.toString());
       view.children.item(0).getAttribute("data-lynx-width").should.equal(node.value.width.toString());
-      transferStub.called.should.be.true;
-      buildStub.called.should.be.true;
+      expect(buildStub.called).to.equal(true);
     });
   });
 

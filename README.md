@@ -68,7 +68,7 @@ A view representing a node of a Lynx JSON document may have the following method
 * `lynxSetVisibility` - sets the visibility of a view
 * `lynxGetValue` - gets the value of a view (text, content, text input, content input, container input, option, and option value views)
 * `lynxSetValue` - sets the value of an input view
-* `lynxHasValue` - tests an input view's value
+* `lynxHasValue` - tests an input view's value and returns a Promise for a boolean
 * `lynxClearValue` - clears an input view's value
 * `lynxAddValue` - adds a value to a container input view
 * `lynxRemoveValue` - removes a value from a container input view

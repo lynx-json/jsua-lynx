@@ -35,13 +35,47 @@ export function containerInputViewBuilder(node) {
   });
   
   view.lynxAddValue = function (val) {
-    var childNode = {
-      base: node.base,
-      spec: JSON.parse(JSON.stringify(node.spec.children)),
-      value: val || null
-    };
+    function initializeChildNode() {
+      var childNode = {
+        base: node.base,
+        spec: JSON.parse(JSON.stringify(node.spec.children))
+      };
+      
+      if (!val) {
+        childNode.value = null;
+        return Promise.resolve(childNode);
+      }
+      
+      if (childNode.spec.hints.some(hint => hint === "text")) {
+        childNode.value = val;
+        return Promise.resolve(childNode);
+      }
+      
+      if (childNode.spec.hints.some(hint => hint === "content")) {
+        return new Promise(function (resolve) {
+          var reader = new FileReader();
+          
+          reader.onload = function () {
+            childNode.value = {
+              src: reader.result
+            };
+            resolve(childNode);
+          };
+          
+          reader.onerror = function () {
+            childNode.value = null;
+            resolve(childNode);
+          };
+          
+          reader.readAsDataURL(val);
+        });
+      }
+      
+      childNode.value = null;
+      return Promise.resolve(childNode);
+    }
     
-    return Promise.resolve(childNode)
+    return initializeChildNode()
       .then(nodeViewBuilder)
       .then(appendChildView)
       .then(function (itemView) {
@@ -79,8 +113,10 @@ export function containerInputViewBuilder(node) {
   };
   
   view.lynxHasValue = function (val) {
-    return Array.from(view.querySelectorAll("[data-lynx-container-input-value]"))
-      .some(valueView => valueView.lynxGetValue() === val);
+    var valueViews = Array.from(view.querySelectorAll("[data-lynx-container-input-value]"));
+    var promisesForHasValue = valueViews.map(valueView => valueView.lynxHasValue(val));
+    return Promise.all(promisesForHasValue)
+      .then(hasValues => hasValues.some(hasValue => hasValue));
   };
   
   view.lynxClearValue = function () {
