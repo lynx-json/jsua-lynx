@@ -25,7 +25,16 @@ export function contentViewBuilder(node) {
     return value;
   };
 
-  view.lynxSetValue = function (blob) {
+  view.lynxSetValue = function (blobOrContent, isContent) {
+    var blob, content;
+    
+    if (isContent) {
+      content = blobOrContent;
+      blob = content.blob;
+    } else {
+      blob = blobOrContent;
+    }
+    
     return new Promise(function (resolve) {
       view.lynxHasValue(blob).then(function (hasValue) {
         if (hasValue) {
@@ -38,15 +47,11 @@ export function contentViewBuilder(node) {
           setEmbeddedView(document.createElement("div"));
           return resolve(view);
         }
-
-        var content = {
-          url: blob.name || "",
-          blob: blob
-        };
         
-        if (blob.base) {
-          content.options = {
-            base: blob.base
+        if (!content) {
+          content = {
+            url: blob.name || "",
+            blob: blob
           };
         }
 
@@ -93,13 +98,7 @@ export function contentViewBuilder(node) {
     
     return getPromiseForContent(source, node.base)
       .then(function (content) {
-        if (content.blob) {
-          content.blob.name = content.url;
-          if (content.options && content.options.base) {
-            content.blob.base = content.options.base;
-          }
-        }
-        return view.lynxSetValue(content.blob);
+        return view.lynxSetValue(content, true);
       }).then(function () {
         return view;
       });
