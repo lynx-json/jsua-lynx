@@ -99,6 +99,24 @@ describe("builders / linkViewBuilder", function () {
       });
     });
     
+    it("should not fetch when value has null 'follow' property", function () {
+      node.value.follow = null;
+      
+      return new Promise(function (resolve, reject) {
+        links.linkViewBuilder(node).then(function (view) {          
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+          
+          setTimeout(function () {
+            if (fetchStub.calledOnce) {
+              reject(new Error("fetch was called"));
+            } else {
+              resolve();
+            }
+          }, 20);
+        });
+      });
+    });
+    
     it("should fetch when spec has 'follow' property", function () {
       node.spec.follow = 0;
       
@@ -111,6 +129,24 @@ describe("builders / linkViewBuilder", function () {
               resolve();
             } else {
               reject(new Error("fetch was not called"));
+            }
+          }, 20);
+        });
+      });
+    });
+    
+    it("should not fetch when spec has null 'follow' property", function () {
+      node.spec.follow = null;
+      
+      return new Promise(function (resolve, reject) {
+        links.linkViewBuilder(node).then(function (view) {
+          view.dispatchEvent(new CustomEvent("jsua-attach"));
+          
+          setTimeout(function () {
+            if (fetchStub.calledOnce) {
+              reject(new Error("fetch was called"));
+            } else {
+              resolve();
             }
           }, 20);
         });

@@ -96,6 +96,8 @@ export function linkViewBuilder(node) {
 }
 
 function tryGetFollowTimeout(node) {
+  if (node.value.follow === null) delete node.value.follow;
+  if (node.spec.follow === null) delete node.spec.follow;
   var follow = +node.value.follow;
   if (isNaN(follow)) follow = +node.spec.follow;
   if (isNaN(follow)) return;
