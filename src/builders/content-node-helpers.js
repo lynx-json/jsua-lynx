@@ -9,9 +9,10 @@ export var brokenContent = {
 export function getPromiseForContent(source, base) {
   if (source.src) {
     var src = url.resolve(base || "", source.src);
+    var request = { url: src, options: {} };
     
-    let request = { url: src };
-    if (source.type) request.options = { type: source.type };
+    if (source.type) request.options.type = source.type;
+    if (source.media) request.options.media = source.media;
     
     return transferring.transfer(request)
       .catch(function (err) {
@@ -36,6 +37,8 @@ export function getPromiseForContent(source, base) {
         base: base
       }
     };
+    
+    if (source.media) content.options.media = source.media;
     
     return Promise.resolve(content);
   }
