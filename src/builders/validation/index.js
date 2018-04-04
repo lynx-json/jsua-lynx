@@ -22,7 +22,7 @@ export function updateContentTargetVisibility(origin, constraint) {
 }
 
 export function addValidationExtensionsToView(view, validation) {
-  exports.normalizeValidationConstraintSetObject(validation);
+  validation = exports.normalizeValidationConstraintSetObject(validation);
 
   if (view.matches("[data-lynx-input]")) {
     exports.addValidationExtensionsToInputView(view, validation);
@@ -186,6 +186,8 @@ export function normalizeValidationConstraintSetObject(validation) {
   validation.constraints = initialConstraints;
   validation.contentTargets = [];
   normalizeContentTargets(validation);
+  
+  return validation;
 }
 
 export function isValidationConstraintName(propertyName) {

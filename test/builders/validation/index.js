@@ -140,16 +140,14 @@ describe("validation / resolveValidationState", function () {
 
 describe("validation / normalizeValidationConstraintSetObject", function () {
   it("should add properties: 'state', 'priorState', and 'constraints'", function () {
-    var validationObj = {};
+    var actual = validation.normalizeValidationConstraintSetObject({});
 
-    validation.normalizeValidationConstraintSetObject(validationObj);
-
-    expect(validationObj).to.have.property("state");
-    expect(validationObj).to.have.property("priorState");
-    expect(validationObj).to.have.property("constraints");
-    validationObj.state.should.equal("unknown");
-    validationObj.priorState.should.equal("");
-    validationObj.constraints.length.should.equal(0);
+    expect(actual).to.have.property("state");
+    expect(actual).to.have.property("priorState");
+    expect(actual).to.have.property("constraints");
+    actual.state.should.equal("unknown");
+    actual.priorState.should.equal("");
+    actual.constraints.length.should.equal(0);
   });
 
   it("should add constraint object to 'constraints' array", function () {
@@ -161,12 +159,12 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
       }
     };
 
-    validation.normalizeValidationConstraintSetObject(validationObj);
+    var actual = validation.normalizeValidationConstraintSetObject(validationObj);
 
-    validationObj.constraints.length.should.equal(1);
-    validationObj.constraints[0].name.should.equal("text");
-    validationObj.constraints[0].state.should.equal("unknown");
-    validationObj.constraints[0].priorState.should.equal("");
+    actual.constraints.length.should.equal(1);
+    actual.constraints[0].name.should.equal("text");
+    actual.constraints[0].state.should.equal("unknown");
+    actual.constraints[0].priorState.should.equal("");
   });
 
   it("should add arrays of constraint objects to 'constraints' array", function () {
@@ -182,11 +180,11 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
       ]
     };
 
-    validation.normalizeValidationConstraintSetObject(validationObj);
+    var actual = validation.normalizeValidationConstraintSetObject(validationObj);
 
-    validationObj.constraints.length.should.equal(2);
-    validationObj.constraints[0].name.should.equal("text");
-    validationObj.constraints[1].name.should.equal("text");
+    actual.constraints.length.should.equal(2);
+    actual.constraints[0].name.should.equal("text");
+    actual.constraints[1].name.should.equal("text");
   });
 
   it("should add multiple constraint object types to 'constraints' array", function () {
@@ -207,11 +205,11 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
       }
     };
 
-    validation.normalizeValidationConstraintSetObject(validationObj);
+    var actual = validation.normalizeValidationConstraintSetObject(validationObj);
 
-    validationObj.constraints.length.should.equal(2);
-    validationObj.constraints.filter(nameMatches("required")).length.should.equal(1);
-    validationObj.constraints.filter(nameMatches("text")).length.should.equal(1);
+    actual.constraints.length.should.equal(2);
+    actual.constraints.filter(nameMatches("required")).length.should.equal(1);
+    actual.constraints.filter(nameMatches("text")).length.should.equal(1);
   });
 
   it("should normalize validation content targets", function () {
@@ -227,17 +225,24 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
       }
     };
 
-    validation.normalizeValidationConstraintSetObject(validationObj);
+    var actual = validation.normalizeValidationConstraintSetObject(validationObj);
 
-    validationObj.constraints[0].contentTargets.length.should.equal(1);
-    validationObj.constraints[0].contentTargets[0].name.should.equal("propertyRefForRequired");
-    validationObj.constraints[0].contentTargets[0].forState.should.equal("invalid");
+    actual.constraints[0].contentTargets.length.should.equal(1);
+    actual.constraints[0].contentTargets[0].name.should.equal("propertyRefForRequired");
+    actual.constraints[0].contentTargets[0].forState.should.equal("invalid");
 
-    validationObj.constraints[1].contentTargets.length.should.equal(2);
-    validationObj.constraints[1].contentTargets[0].name.should.equal("propertyRefForValidTextLength");
-    validationObj.constraints[1].contentTargets[0].forState.should.equal("valid");
-    validationObj.constraints[1].contentTargets[1].name.should.equal("propertyRefForInvalidTextLength");
-    validationObj.constraints[1].contentTargets[1].forState.should.equal("invalid");
+    actual.constraints[1].contentTargets.length.should.equal(2);
+    actual.constraints[1].contentTargets[0].name.should.equal("propertyRefForValidTextLength");
+    actual.constraints[1].contentTargets[0].forState.should.equal("valid");
+    actual.constraints[1].contentTargets[1].name.should.equal("propertyRefForInvalidTextLength");
+    actual.constraints[1].contentTargets[1].forState.should.equal("invalid");
+  });
+  
+  it.only("should not err when called twice with same validation constraint set object", function () {
+    expect(function () {
+      var actual = validation.normalizeValidationConstraintSetObject({});
+      actual = validation.normalizeValidationConstraintSetObject(actual);
+    }).to.not.throw();
   });
 });
 
