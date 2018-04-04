@@ -238,10 +238,11 @@ describe("validation / normalizeValidationConstraintSetObject", function () {
     actual.constraints[1].contentTargets[1].forState.should.equal("invalid");
   });
   
-  it.only("should not err when called twice with same validation constraint set object", function () {
+  it("should not err when called twice with same validation constraint set object", function () {
     expect(function () {
-      var actual = validation.normalizeValidationConstraintSetObject({});
-      actual = validation.normalizeValidationConstraintSetObject(actual);
+      var validationObj = {};
+      validation.normalizeValidationConstraintSetObject(validationObj);
+      validation.normalizeValidationConstraintSetObject(validationObj);
     }).to.not.throw();
   });
 });

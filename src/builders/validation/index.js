@@ -156,6 +156,12 @@ export function raiseValidatedEvent(view) {
 export function normalizeValidationConstraintSetObject(validation) {
   var initialConstraintStates = [];
   var initialConstraints = [];
+  
+  if (validation) {
+    validation = JSON.parse(JSON.stringify(validation));
+  } else {
+    validation = {};
+  }
 
   function normalizeContentTargets(constraint) {
     ["valid", "invalid", "unknown"].forEach(forState => {

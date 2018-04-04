@@ -48,7 +48,7 @@ export function nodeViewBuilder(node) {
     if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) addSubmitterExtensionsToView(view, node.spec.submitter);
-    if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation || {});
+    if (node.spec.validation || node.spec.hints.some(hint => hint === "form")) validation.addValidationExtensionsToView(view, node.spec.validation);
     if (node.spec.option) view.setAttribute("data-lynx-option", "true");
     if (node.spec.options) options.addOptionsExtensionsToView(view, node.spec);
     if (node.spec.hints.indexOf("marker") > -1 && node.value && node.value.for) {
