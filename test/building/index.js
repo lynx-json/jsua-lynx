@@ -1,6 +1,7 @@
 require("../html-document-api");
 var building = require("../../dist/building");
 var builders = require("../../dist/builders");
+var nodes = require("../../dist/builders/node-view-builder");
 var chai = require("chai");
 var should = chai.should();
 var expect = chai.expect;
@@ -61,7 +62,7 @@ describe("building", function () {
       building.registrations[0].builder.should.equal(builder);
       expect(building.registrations[0].condition).to.equal(undefined);
     });
-    
+
     it("should record registrations with condition", function () {
       var hint = "text";
       var builder = function () {};
@@ -220,6 +221,28 @@ describe("building", function () {
           expect(view).to.not.be.null;
           view.getAttribute("data-lynx-focus").should.equal(node.focus);
         });
+    });
+  });
+
+  describe("setNodeViewBuilder", function () {
+    var originalNodeViewBuilder = builders.nodeViewBuilder;
+
+    function newNodeViewBuilder(node) {
+      return {
+        test: true
+      };
+    }
+
+    beforeEach(function () {
+      building.setNodeViewBuilder(newNodeViewBuilder);
+    });
+
+    afterEach(function() {
+      building.setNodeViewBuilder(originalNodeViewBuilder);
+    });
+
+    it("should set the internal nodeViewBuilder to the builder parameter", function () {
+      nodes.nodeViewBuilder({}).test.should.equal(true);
     });
   });
 });

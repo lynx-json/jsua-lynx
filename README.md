@@ -16,6 +16,8 @@ Extensions to the `jsua` package for the Lynx JSON media type.
 
 `building.registrations` returns the registrations added via `building.register`
 
+`building.setNodeViewBuilder` sets the default nodeViewBuilder, accepting a function with signature f(node) -> view || Promise<view>
+
 ## View Attributes
 
 A view representing a Lynx JSON document may have the following attributes:
