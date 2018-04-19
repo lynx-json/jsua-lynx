@@ -1,6 +1,7 @@
 import * as LYNX from "@lynx-json/lynx-parser";
 import * as builders from "../builders";
 import * as util from "../util";
+import * as nodes from "../builders/node-view-builder";
 
 export var registrations = [];
 
@@ -58,4 +59,8 @@ export function documentViewBuilder(content) {
     if (content.options.document.focus) view.setAttribute("data-lynx-focus", content.options.document.focus);
     return view;
   });
+}
+
+export function setNodeViewBuilder(builder) {
+  builders.nodeViewBuilder = nodes.nodeViewBuilder = builder;
 }
