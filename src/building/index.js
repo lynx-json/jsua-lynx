@@ -62,5 +62,5 @@ export function documentViewBuilder(content) {
 }
 
 export function setNodeViewBuilder(builder) {
-  builders.nodeViewBuilder = nodes.nodeViewBuilder = builder;
+  nodes.nodeViewBuilder = builder;
 }

@@ -241,10 +241,7 @@ describe("building", function () {
       building.setNodeViewBuilder(originalNodeViewBuilder);
     });
 
-    it("should set builders.nodeViewBuilder to the builder parameter", function () {
-      builders.nodeViewBuilder({}).test.should.equal(true);
-
-      // Internally, view builders import the "node-view-builders" module directly.
+    it("should set the internal nodeViewBuilder to the builder parameter", function () {
       nodes.nodeViewBuilder({}).test.should.equal(true);
     });
   });
