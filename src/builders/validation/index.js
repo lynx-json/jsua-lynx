@@ -66,8 +66,8 @@ export function addValidationExtensionsToContainerView(view, validation) {
     exports.validateContainer(view, validation);
 
     if (validation.state !== validation.priorState) {
-      view.setAttribute("data-lynx-validation-state", validation.state);
       view.lynxUpdateValidationContentVisibility();
+      view.setAttribute("data-lynx-validation-state", validation.state);
       exports.raiseValidationStateChangedEvent(view, validation);
     }
   });
