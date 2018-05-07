@@ -67,8 +67,8 @@ export function addValidationExtensionsToContainerView(view, validation) {
 
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
-      exports.raiseValidationStateChangedEvent(view, validation);
       view.lynxUpdateValidationContentVisibility();
+      exports.raiseValidationStateChangedEvent(view, validation);
     }
   });
 
@@ -107,13 +107,14 @@ export function addValidationExtensionsToInputView(view, validation) {
     var value = view.lynxGetValue();
     exports.validateValue(validation, value);
 
+    if(validation.changes.length > 0) view.lynxUpdateValidationContentVisibility();
+
     if (validation.state !== validation.priorState) {
       view.setAttribute("data-lynx-validation-state", validation.state);
       exports.raiseValidationStateChangedEvent(view, validation);
     }
 
     if (validation.changes.length > 0) {
-      view.lynxUpdateValidationContentVisibility();
       let formattedConstraint = validation.changes.find(isFormattedConstraint);
       if (formattedConstraint) view.lynxSetValue(exports.formatValue(formattedConstraint, view.lynxGetValue()));
     }
