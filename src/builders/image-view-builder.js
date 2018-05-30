@@ -8,10 +8,16 @@ function applyImageAttributes(node) {
     if (!embeddedView) return view;
 
     var height = parseInt(node.value.height);
-    if (height) embeddedView.setAttribute("data-lynx-height", height);
+    if (height) {
+      embeddedView.height = height;
+      embeddedView.setAttribute("data-lynx-height", height);
+    }
 
     var width = parseInt(node.value.width);
-    if (width) embeddedView.setAttribute("data-lynx-width", width);
+    if (width) {
+      embeddedView.width = width;
+      embeddedView.setAttribute("data-lynx-width", width);
+    }
 
     return view;
   };
@@ -20,12 +26,12 @@ function applyImageAttributes(node) {
 function buildAsEmbeddedImageTag(node) {
   var emptyNode = {
     base: node.base,
-    spec: { hints: [ "image", "content" ]},
+    spec: { hints: ["image", "content"] },
     value: null
   };
-  
+
   if (node.value && node.value.alt) emptyNode.value = { alt: node.value.alt };
-  
+
   return contentViewBuilder(emptyNode)
     .then(function (view) {
       var imageView = document.createElement("img");
