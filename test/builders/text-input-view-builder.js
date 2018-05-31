@@ -92,6 +92,27 @@ describe("builders / textInputViewBuilder", function () {
     valueView.type.should.equal("text");
   });
 
+  it("should return view for 'line' input with 'concealed' visibility", function () {
+    var node = {
+      spec: {
+        visibility: "concealed",
+        hints: ["line", "text"],
+        input: "test"
+      },
+      value: "Hello, World!"
+    };
+
+    var view = builders.textInputViewBuilder(node);
+
+    expect(view).to.not.be.null;
+
+    var valueView = view.querySelector("input");
+    expect(valueView).to.not.be.null;
+    valueView.value.should.equal(node.value);
+    valueView.name.should.equal(node.spec.input);
+    valueView.type.should.equal("password");
+  });
+
   it("should return its input control from lynxGetFocusableView", function () {
     var node = {
       spec: {
