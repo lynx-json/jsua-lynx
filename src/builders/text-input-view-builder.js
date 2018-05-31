@@ -1,13 +1,35 @@
-export function textInputViewBuilder(node) {
-  var view = document.createElement("div");
-
+function createTextView(node, view) {
+  var result;
   var isLine = node.spec.hints.some(function (hint) {
     return hint === "line";
   });
 
-  var textView = isLine ?
-    document.createElement("input") :
-    document.createElement("textarea");
+  if (isLine) {
+    result = document.createElement("input");
+
+    if (node.spec.visibility === "concealed") {
+      result.type = "password";
+    }
+
+    if (node.spec.visibility === "concealed" || node.spec.visibility === "revealed") {
+      view.addEventListener("lynx-visibility-change", function () {
+        if (view.lynxGetVisibility() === "concealed") {
+          result.type = "password";
+        } else {
+          result.type = "text";
+        }
+      });
+    }
+  } else {
+    result = document.createElement("textarea");
+  }
+
+  return result;
+}
+
+export function textInputViewBuilder(node) {
+  var view = document.createElement("div");
+  var textView = createTextView(node, view);
 
   textView.name = node.spec.input || "";
 
@@ -48,7 +70,7 @@ function raiseValueChangeEvent(view) {
   var inputEvent = document.createEvent("Event");
   inputEvent.initEvent("input", true, false);
   view.dispatchEvent(inputEvent);
-  
+
   var changeEvent = document.createEvent("Event");
   changeEvent.initEvent("change", true, false);
   view.dispatchEvent(changeEvent);
