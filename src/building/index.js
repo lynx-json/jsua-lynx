@@ -4,6 +4,7 @@ import * as util from "../util";
 import * as nodes from "../builders/node-view-builder";
 
 export var registrations = [];
+nodes.setRegistrations(registrations);
 
 export function register(hint, builder, condition) {
   if (!hint) throw new Error("'hint' param is required.");

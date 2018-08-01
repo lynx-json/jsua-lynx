@@ -1,9 +1,13 @@
-import * as building from "../building";
 import * as resolver from "./resolve-view-builder";
 import * as validation from "./validation";
 import * as options from "./options";
 import * as util from "../util";
 import url from "url";
+
+var registrations;
+export function setRegistrations(r) {
+  registrations = r;
+}
 
 function hasScope(node) {
   return node.value &&
@@ -22,7 +26,7 @@ export function nodeViewBuilder(node) {
 
   if (node.spec.input && node.spec.input === true) node.spec.input = node.spec.name;
 
-  var builder = resolver.resolveViewBuilder(building.registrations, node);
+  var builder = resolver.resolveViewBuilder(registrations, node);
   if (!builder) builder = didNotUnderstandNodeViewBuilder;
 
   return new Promise(function (resolve, reject) {
@@ -35,7 +39,7 @@ export function nodeViewBuilder(node) {
   }).then(function (view) {
     view.setAttribute("data-lynx-hints", node.spec.hints.join(" "));
     addVisibilityExtensionsToView(view, node.spec.visibility);
-    
+
     if (node.spec.name) {
       view.setAttribute("data-lynx-name", node.spec.name);
       var fragmentComponent = "#" + node.spec.name;
@@ -43,7 +47,7 @@ export function nodeViewBuilder(node) {
         view.setAttribute("data-jsua-view-uri", url.resolve(node.base, fragmentComponent));
       }
     }
-    
+
     if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
     if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
@@ -59,7 +63,7 @@ export function nodeViewBuilder(node) {
       for (var p in node.value) {
         // Any specified child of the node would be an object with a spec.
         // This code assumes we only want to put non-object values in the attribute.
-        if (typeof node.value[p] !== "object") {
+        if (p !== "data" && typeof node.value[p] !== "object") {
           view.setAttribute(`data-lynx-var-${p}`, node.value[p]);
         }
       }
