@@ -50,7 +50,7 @@ export function build(content) {
 
 export function documentViewBuilder(content) {
   return Promise.resolve(content.options.document)
-  .then(builders.nodeViewBuilder)
+  .then(nodes.nodeViewBuilder)
   .then(view => {
     if (content.options.startedAt) view.setAttribute("data-transfer-started-at", content.options.startedAt.valueOf());
     if (content.url) view.setAttribute("data-content-url", content.url);

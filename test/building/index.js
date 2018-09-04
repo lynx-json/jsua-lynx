@@ -80,6 +80,7 @@ describe("building", function () {
   describe("build", function () {
     beforeEach(function () {
       nodeViewBuilderStub = sinon.stub(builders, "nodeViewBuilder");
+      building.setNodeViewBuilder(nodeViewBuilderStub);
     });
 
     afterEach(function () {
