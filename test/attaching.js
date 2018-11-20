@@ -7,6 +7,7 @@ var expect = chai.expect;
 var sinon = require("sinon");
 
 describe("attaching / isOutOfContext", function () {
+  it("should return true when an origin view is detached");
   it("should return false when a view has no context");
   it("should return false when a view has context and a context view is found");
   it("should return true when a view has context and a context view is not found because of realm/url mismatch");
@@ -100,7 +101,7 @@ describe("attaching / createRootAttacher", function () {
     var detachedViews = attachment.attach();
     expect(result.view.parentElement).to.equal(rootView);
   });
-  
+
   it("should discard views that require context");
 });
 
