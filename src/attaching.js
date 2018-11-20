@@ -77,6 +77,7 @@ export function getOrigin(result) {
 }
 
 export function isOutOfContext(origin, context) {
+  if (exports.isDetached(origin)) return true;
   if (!context) return false;
 
   var contextView = util.findNearestView(origin, "[data-content-url],[data-lynx-realm]", function (matching) {
