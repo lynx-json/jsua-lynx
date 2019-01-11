@@ -44,11 +44,11 @@ export function nodeViewBuilder(node) {
       view.setAttribute("data-lynx-name", node.spec.name);
       var fragmentComponent = "#" + node.spec.name;
       if (node.base) {
-        view.setAttribute("data-jsua-view-uri", url.resolve(node.base, fragmentComponent));
+        view.setAttribute("data-jsua-view-uri", util.resolveUrlForNode(node, fragmentComponent));
       }
     }
 
-    if (hasScope(node)) view.setAttribute("data-lynx-scope", node.value.scope);
+    if (hasScope(node)) view.setAttribute("data-lynx-scope", util.resolveUrlForNode(node, node.value.scope));
     if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) addSubmitterExtensionsToView(view, node.spec.submitter);
@@ -56,7 +56,7 @@ export function nodeViewBuilder(node) {
     if (node.spec.option) view.setAttribute("data-lynx-option", "true");
     if (node.spec.options) options.addOptionsExtensionsToView(view, node.spec);
     if (node.spec.hints.indexOf("marker") > -1 && node.value && node.value.for) {
-      view.setAttribute("data-lynx-marker-for", url.resolve(node.base, node.value.for));
+      view.setAttribute("data-lynx-marker-for", util.resolveUrlForNode(node, node.value.for));
     }
 
     if (node.value && typeof node.value === "object" && !Array.isArray(node.value)) {

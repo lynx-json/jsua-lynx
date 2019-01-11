@@ -395,5 +395,38 @@ describe("builders / nodeViewBuilder", function () {
     });
   });
 
-  it("should resolve for attribute for markers");
+  it("should set resolved for attribute for markers", function () {
+    var node = {
+      base: 'http://example.com/',
+      spec: {
+        hints: ['marker', 'container']
+      },
+      value: {
+        for: '/foo'
+      }
+    };
+
+    return runTest(node, function (view) {
+      expect(view).to.not.equal(null);
+      expect('http://example.com/foo').to.equal(view.getAttribute('data-lynx-marker-for'));
+    });
+  });
+
+  it("should set resolved scope attribute for objects with scope", function () {
+    var node = {
+      base: 'http://example.com/',
+      spec: {
+        hints: ['content']
+      },
+      value: {
+        scope: '/foo'
+      }
+    };
+
+    return runTest(node, function (view) {
+      expect(view).to.not.equal(null);
+      expect('http://example.com/foo').to.equal(view.getAttribute('data-lynx-scope'));
+    });
+  });
+
 });

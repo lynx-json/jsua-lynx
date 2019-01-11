@@ -47,7 +47,23 @@ describe("attaching / scopeRealmAttacher", function () {
     findNearestScopedContentViewStub.restore();
   });
 
-  it("should attach to a scoped content view", function () {
+  it("should attach to a scoped content view with realm", function () {
+    var attachment = attaching.scopeRealmAttacher(result);
+
+    expect(attachment).to.not.equal(undefined);
+    expect(attachment.attach).to.not.equal(undefined);
+    attachment.attach();
+
+    expect(nearestContentView.lynxSetEmbeddedView.calledOnce).to.equal(true);
+    var args = nearestContentView.lynxSetEmbeddedView.getCall(0).args;
+    expect(args[0]).to.equal(result.view);
+    expect(args[1]).to.equal(result.content.blob);
+  });
+
+  it("should attach to a scoped content view with content url", function () {
+    result.view.setAttribute("data-content-url", "http://example.com/foo/");
+    result.view.removeAttribute("data-lynx-realm");
+
     var attachment = attaching.scopeRealmAttacher(result);
 
     expect(attachment).to.not.equal(undefined);

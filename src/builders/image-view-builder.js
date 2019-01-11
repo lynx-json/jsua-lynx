@@ -1,6 +1,7 @@
 import url from "url";
 import { contentViewBuilder } from "./content-view-builder";
 import { getBlob } from "./content-node-helpers";
+import * as util from "../util";
 
 function applyImageAttributes(node) {
   return function (view) {
@@ -35,7 +36,7 @@ function buildAsEmbeddedImageTag(node) {
   return contentViewBuilder(emptyNode)
     .then(function (view) {
       var imageView = document.createElement("img");
-      imageView.src = url.resolve(node.base || "", node.value.src);
+      imageView.src = util.resolveUrlForNode(node, node.value.src);
       imageView.setAttribute("data-content-url", imageView.src);
       imageView.setAttribute("data-content-type", node.value.type);
       view.lynxSetEmbeddedView(imageView, new Blob([], { type: node.value.type }));

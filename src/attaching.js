@@ -13,9 +13,10 @@ export function scopeRealmAttacher(result) {
   if (exports.isOutOfContext(origin, context)) return { discard: true };
 
   var realm = view.getAttribute("data-lynx-realm");
-  if (!realm) return;
+  var contentUrl = view.getAttribute("data-content-url");
 
-  var nearestContentView = exports.findNearestScopedContentView(origin, realm);
+  var nearestContentView = exports.findNearestScopedContentView(origin, contentUrl) || exports.findNearestScopedContentView(origin, realm);
+
   if (!nearestContentView) return;
 
   if (resultIsStale(result, nearestContentView)) return { discard: true };
@@ -102,6 +103,8 @@ export function isDetached(view) {
 }
 
 export function findNearestScopedContentView(origin, realm) {
+  if (!realm) return null;
+
   return util.findNearestView(origin, "[data-lynx-hints~=content][data-lynx-scope]", function (matching) {
     var scope = matching.getAttribute("data-lynx-scope");
     return util.scopeIncludesRealm(scope, realm);
