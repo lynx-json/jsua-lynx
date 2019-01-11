@@ -411,22 +411,4 @@ describe("builders / nodeViewBuilder", function () {
       expect('http://example.com/foo').to.equal(view.getAttribute('data-lynx-marker-for'));
     });
   });
-
-  it("should set resolved scope attribute for objects with scope", function () {
-    var node = {
-      base: 'http://example.com/',
-      spec: {
-        hints: ['content']
-      },
-      value: {
-        scope: '/foo'
-      }
-    };
-
-    return runTest(node, function (view) {
-      expect(view).to.not.equal(null);
-      expect('http://example.com/foo').to.equal(view.getAttribute('data-lynx-scope'));
-    });
-  });
-
 });

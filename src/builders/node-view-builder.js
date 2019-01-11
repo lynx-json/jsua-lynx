@@ -2,17 +2,10 @@ import * as resolver from "./resolve-view-builder";
 import * as validation from "./validation";
 import * as options from "./options";
 import * as util from "../util";
-import url from "url";
 
 var registrations;
 export function setRegistrations(r) {
   registrations = r;
-}
-
-function hasScope(node) {
-  return node.value &&
-    typeof node.value === "object" &&
-    "scope" in node.value;
 }
 
 function didNotUnderstandNodeViewBuilder(node) {
@@ -48,7 +41,6 @@ export function nodeViewBuilder(node) {
       }
     }
 
-    if (hasScope(node)) view.setAttribute("data-lynx-scope", util.resolveUrlForNode(node, node.value.scope));
     if (!!node.spec.input) view.setAttribute("data-lynx-input", node.spec.input);
     if (node.spec.labeledBy) view.setAttribute("data-lynx-labeled-by", node.spec.labeledBy);
     if (node.spec.submitter) addSubmitterExtensionsToView(view, node.spec.submitter);
