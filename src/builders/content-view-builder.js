@@ -1,16 +1,23 @@
 import { brokenContent, getPromiseForContent, areBlobsEqual } from "./content-node-helpers";
 import { media, building } from "@lynx-json/jsua";
+import * as util from "../util";
 
 export function contentViewBuilder(node) {
   var view = document.createElement("div");
   var value, embeddedView;
 
+  function hasScope(node) {
+    return node.value &&
+      typeof node.value === "object" &&
+      "scope" in node.value;
+  }
+
   function setEmbeddedView(newView) {
     var detached = [];
-    
+
     embeddedView.parentElement.replaceChild(newView, embeddedView);
     detached.push(embeddedView);
-    
+
     embeddedView = newView;
     embeddedView.setAttribute("data-lynx-embedded-view", true);
 
@@ -27,27 +34,27 @@ export function contentViewBuilder(node) {
 
   view.lynxSetValue = function (blobOrContent, isContent) {
     var blob, content;
-    
+
     if (isContent) {
       content = blobOrContent;
       blob = content.blob;
     } else {
       blob = blobOrContent;
     }
-    
+
     return new Promise(function (resolve) {
       view.lynxHasValue(blob).then(function (hasValue) {
         if (hasValue) {
           return resolve();
         }
-        
+
         value = blob;
 
         if (!blob) {
           setEmbeddedView(document.createElement("div"));
           return resolve(view);
         }
-        
+
         if (!content) {
           content = {
             url: blob.name || "",
@@ -65,7 +72,7 @@ export function contentViewBuilder(node) {
             setEmbeddedView(result.view);
             resolve(view);
           });
-      });  
+      });
     });
   };
 
@@ -81,21 +88,26 @@ export function contentViewBuilder(node) {
     value = newBlob;
     return setEmbeddedView(newView);
   };
-  
+
   view.lynxGetEmbeddedView = function () {
     return embeddedView;
   };
-  
+
+  if (hasScope(node)) {
+    node.value.scope = util.resolveUrlForNode(node, node.value.scope);
+    view.setAttribute("data-lynx-scope", node.value.scope);
+  }
+
   embeddedView = document.createElement("div");
   embeddedView.setAttribute("role", "presentation");
   embeddedView.setAttribute("data-lynx-embedded-view", true);
   view.appendChild(embeddedView);
 
   if (!node.value) return Promise.resolve(view);
-  
+
   function tryGetPromiseForView(source) {
     if (!media.supports(source)) return;
-    
+
     return getPromiseForContent(source, node.base)
       .then(function (content) {
         return view.lynxSetValue(content, true);
@@ -103,15 +115,15 @@ export function contentViewBuilder(node) {
         return view;
       });
   }
-  
+
   var sources = [];
   if (node.value.sources) node.value.sources.forEach(source => sources.push(source.value));
   sources.push(node.value);
-  
+
   var promiseForView = sources.reduce(function (pv, cv) {
     if (pv) return pv;
     return tryGetPromiseForView(cv);
   }, null);
-  
+
   return promiseForView || view.lynxSetValue(brokenContent.blob);
 }

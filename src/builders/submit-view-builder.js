@@ -6,11 +6,7 @@ import { fetch } from "@lynx-json/jsua";
 export function submitViewBuilder(node) {
   var view = document.createElement("button");
 
-  if (node.base) {
-    view.formAction = url.resolve(node.base, node.value.action);
-  } else {
-    view.formAction = node.value.action;
-  }
+  view.formAction = util.resolveUrlForNode(node, node.value.action);
 
   if (node.value.method) view.setAttribute("data-lynx-submit-method", node.value.method);
   if (node.value.enctype) view.setAttribute("data-lynx-submit-enctype", node.value.enctype);

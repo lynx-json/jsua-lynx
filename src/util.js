@@ -84,3 +84,7 @@ export function scopeIncludesRealm(scope, realm) {
   realm = url.parse(realm).href;
   return realm.indexOf(scope) === 0;
 }
+
+export function resolveUrlForNode(node, relativeOrAbsoluteUrl) {
+  return url.resolve(node.base || '', relativeOrAbsoluteUrl);
+}
