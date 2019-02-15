@@ -61,7 +61,7 @@ export function addValidationExtensionsToContainerView(view, validation) {
     return view.getAttribute("data-lynx-validation-state");
   };
 
-  view.addEventListener("lynx-validation-state-change", function (evt) {
+  function recalculateValidity(evt) {
     if (evt.target === view) return;
     exports.validateContainer(view, validation);
 
@@ -70,7 +70,10 @@ export function addValidationExtensionsToContainerView(view, validation) {
       view.setAttribute("data-lynx-validation-state", validation.state);
       exports.raiseValidationStateChangedEvent(view, validation);
     }
-  });
+  }
+
+  view.addEventListener("lynx-validation-state-change", recalculateValidity);
+  view.addEventListener("jsua-attach", recalculateValidity);
 
   view.addEventListener("input", function () {
     var validatedDescendants = view.querySelectorAll("[data-lynx-validation-state]");
@@ -157,7 +160,7 @@ export function raiseValidatedEvent(view) {
 export function normalizeValidationConstraintSetObject(validation) {
   var initialConstraintStates = [];
   var initialConstraints = [];
-  
+
   if (validation) {
     validation = JSON.parse(JSON.stringify(validation));
   } else {
@@ -193,7 +196,7 @@ export function normalizeValidationConstraintSetObject(validation) {
   validation.constraints = initialConstraints;
   validation.contentTargets = [];
   normalizeContentTargets(validation);
-  
+
   return validation;
 }
 
